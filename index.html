@@ -82,103 +82,297 @@
             overflow: visible;
         }
 
-        .state-path {
-            fill: #4a90e2;
-            stroke: #2c3e50;
-            stroke-width: 1;
-            cursor: pointer;
-            transition: fill 0.2s ease;
-            transform-origin: center;
-        }
+        /* Enhanced State Path Styles */
+.state-path {
+    fill: #4a90e2;
+    stroke: #2c3e50;
+    stroke-width: 1;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    transform-origin: center;
+}
 
-        .state-path:hover {
-             fill: #e74c3c;
-        }
+.state-path:hover,
+.state-path.hovered {
+    fill: #e74c3c;
+    stroke: #c0392b;
+    stroke-width: 2;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
 
-        #tooltip {
-            position: absolute;
-            display: none;
-            width: 260px;
-            height: 150px;
-            background-color: white;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 14px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            white-space: normal;
-            z-index: 1000;
-            color: #333;
-            pointer-events: none;
-        }
+.state-path.active {
+    fill: #27ae60;
+    stroke: #1e8449;
+    stroke-width: 2;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+}
 
+.state-path:focus {
+    outline: none;
+    stroke: #f39c12;
+    stroke-width: 3;
+}
 
-        .state-info {
-            margin-bottom: 20px;
-        }
+/* Enhanced Tooltip Styles */
+#tooltip {
+    position: absolute;
+    display: none;
+    max-width: 280px;
+    min-width: 200px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 1px solid #e1e8ed;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    font-size: 13px;
+    z-index: 1000;
+    color: #2c3e50;
+    pointer-events: none;
+    backdrop-filter: blur(10px);
+    transform: translateZ(0); /* Hardware acceleration */
+}
 
-        .state-name {
-            font-size: 1.8rem;
-            color: #2c3e50;
-            margin-bottom: 15px;
-            text-align: center;
-        }
+.tooltip-header {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 7px 7px 0 0;
+    font-weight: 600;
+    font-size: 14px;
+    margin: -1px -1px 0 -1px;
+}
 
-        .data-section {
-            margin-bottom: 25px;
-            padding: 15px;
-            background: rgba(74, 144, 226, 0.1);
-            border-radius: 8px;
-            border-left: 4px solid #4a90e2;
-        }
+.tooltip-content {
+    padding: 10px 12px;
+}
 
-        .data-section h3 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-        }
+.tooltip-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 0;
+    border-bottom: 1px solid #ecf0f1;
+}
 
-        .data-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-            padding: 3px 0;
-        }
+.tooltip-row:last-child {
+    border-bottom: none;
+}
 
-        .data-item strong {
-            color: #34495e;
-        }
+.tooltip-label {
+    font-weight: 500;
+    color: #7f8c8d;
+    font-size: 12px;
+}
 
-        .party-dem {
-            color: #3498db;
-            font-weight: bold;
-        }
+.tooltip-value {
+    font-weight: 600;
+    text-align: right;
+    max-width: 140px;
+    word-wrap: break-word;
+}
 
-        .party-rep {
-            color: #e74c3c;
-            font-weight: bold;
-        }
+/* State Info Panel Enhancements */
+.state-info {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+    border: 1px solid #e8f0fe;
+}
 
-        .no-selection {
-            text-align: center;
-            color: #7f8c8d;
-            font-style: italic;
-            margin-top: 50px;
-        }
+.state-name {
+    color: #2c3e50;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-align: center;
+    border-bottom: 3px solid #3498db;
+    padding-bottom: 10px;
+}
 
-        @media (max-width: 768px) {
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            #us-map {
-                height: 300px;
-            }
-        }
+.data-section {
+    margin-bottom: 24px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 16px;
+    border-left: 4px solid #3498db;
+}
+
+.data-section h3 {
+    color: #2c3e50;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-icon {
+    font-size: 18px;
+}
+
+.data-grid {
+    display: grid;
+    gap: 8px;
+}
+
+.data-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #e8f0fe;
+    transition: all 0.2s ease;
+}
+
+.data-item:hover {
+    background: #f0f8ff;
+    border-color: #3498db;
+    transform: translateY(-1px);
+}
+
+.data-label {
+    font-weight: 500;
+    color: #7f8c8d;
+    font-size: 14px;
+}
+
+.data-value {
+    font-weight: 600;
+    color: #2c3e50;
+    text-align: right;
+    max-width: 60%;
+    word-wrap: break-word;
+}
+
+/* Political Party Colors */
+.party-dem {
+    color: #3498db !important;
+    font-weight: 600;
+}
+
+.party-rep {
+    color: #e74c3c !important;
+    font-weight: 600;
+}
+
+/* Special Value Styling */
+.electoral-votes {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: white !important;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
+.money {
+    color: #27ae60 !important;
+    font-weight: 700;
+}
+
+.margin {
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+}
+
+.turnout {
+    color: #8e44ad !important;
+    font-weight: 700;
+}
+
+/* Loading States */
+.loading-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: #7f8c8d;
+}
+
+.help-text {
+    font-size: 12px;
+    color: #bdc3c7;
+    margin-top: 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #tooltip {
+        max-width: 240px;
+        min-width: 180px;
+        font-size: 12px;
+    }
+    
+    .tooltip-header {
+        font-size: 13px;
+        padding: 6px 10px;
+    }
+    
+    .tooltip-content {
+        padding: 8px 10px;
+    }
+    
+    .state-info {
+        padding: 16px;
+        margin: 16px 0;
+    }
+    
+    .state-name {
+        font-size: 24px;
+    }
+    
+    .data-section {
+        padding: 12px;
+    }
+    
+    .data-item {
+        padding: 6px 10px;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .state-path {
+        fill: #5dade2;
+        stroke: #34495e;
+    }
+    
+    .state-path:hover,
+    .state-path.hovered {
+        fill: #ec7063;
+        stroke: #c0392b;
+    }
+    
+    #tooltip {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        border-color: #4a5568;
+        color: #ecf0f1;
+    }
+    
+    .tooltip-header {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    }
+    
+    .state-info {
+        background: #2c3e50;
+        border-color: #4a5568;
+        color: #ecf0f1;
+    }
+    
+    .data-section {
+        background: #34495e;
+    }
+    
+    .data-item {
+        background: #2c3e50;
+        border-color: #4a5568;
+    }
+    
+    .data-item:hover {
+        background: #34495e;
+    }
+}
     </style>
 </head>
 <body>
@@ -570,185 +764,289 @@
         </div>
     </div>
 <script>
-  const tooltip = document.getElementById('tooltip');
-  const stateInfoPanel = document.getElementById('state-info');
+ // Enhanced Interactive US Map Script
+const tooltip = document.getElementById('tooltip');
+const stateInfoPanel = document.getElementById('state-info');
 
-  const stateNames = {
-    AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California',
-    CO: 'Colorado', CT: 'Connecticut', DE: 'Delaware', FL: 'Florida', GA: 'Georgia',
-    HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois', IN: 'Indiana', IA: 'Iowa',
-    KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine', MD: 'Maryland',
-    MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota', MS: 'Mississippi', MO: 'Missouri',
-    MT: 'Montana', NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire', NJ: 'New Jersey',
-    NM: 'New Mexico', NY: 'New York', NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio',
-    OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania', RI: 'Rhode Island', SC: 'South Carolina',
-    SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas', UT: 'Utah', VT: 'Vermont',
-    VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming',
-    DC: 'District of Columbia'
-  };
+const stateNames = {
+  AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California',
+  CO: 'Colorado', CT: 'Connecticut', DE: 'Delaware', FL: 'Florida', GA: 'Georgia',
+  HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois', IN: 'Indiana', IA: 'Iowa',
+  KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine', MD: 'Maryland',
+  MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota', MS: 'Mississippi', MO: 'Missouri',
+  MT: 'Montana', NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire', NJ: 'New Jersey',
+  NM: 'New Mexico', NY: 'New York', NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio',
+  OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania', RI: 'Rhode Island', SC: 'South Carolina',
+  SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas', UT: 'Utah', VT: 'Vermont',
+  VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming',
+  DC: 'District of Columbia'
+};
 
-  const stateData = {
-    CA: {
-      name: 'California',
-      governor: 'Gavin Newsom (D)',
-      senators: ['Dianne Feinstein (D)', 'Alex Padilla (D)'],
-      electoralVotes: 54,
-      lastElection: {
-        winner: 'Biden (D)',
-        margin: '+29.2%',
-        turnout: '71.4%'
-      },
-      campaignFinance: {
-        total: '$1.2B',
-        topDonor: 'Tech Industry',
-        pacSpending: '$450M'
-      }
+const stateData = {
+  CA: {
+    name: 'California',
+    governor: 'Gavin Newsom (D)',
+    senators: ['Dianne Feinstein (D)', 'Alex Padilla (D)'],
+    electoralVotes: 54,
+    lastElection: {
+      winner: 'Biden (D)',
+      margin: '+29.2%',
+      turnout: '71.4%'
     },
-    TX: {
-      name: 'Texas',
-      governor: 'Greg Abbott (R)',
-      senators: ['John Cornyn (R)', 'Ted Cruz (R)'],
-      electoralVotes: 40,
-      lastElection: {
-        winner: 'Trump (R)',
-        margin: '+5.6%',
-        turnout: '66.7%'
-      },
-      campaignFinance: {
-        total: '$890M',
-        topDonor: 'Oil & Gas',
-        pacSpending: '$320M'
-      }
+    campaignFinance: {
+      total: '$1.2B',
+      topDonor: 'Tech Industry',
+      pacSpending: '$450M'
+    }
+  },
+  TX: {
+    name: 'Texas',
+    governor: 'Greg Abbott (R)',
+    senators: ['John Cornyn (R)', 'Ted Cruz (R)'],
+    electoralVotes: 40,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+5.6%',
+      turnout: '66.7%'
     },
-    FL: {
-      name: 'Florida',
-      governor: 'Ron DeSantis (R)',
-      senators: ['Marco Rubio (R)', 'Rick Scott (R)'],
-      electoralVotes: 30,
-      lastElection: {
-        winner: 'Trump (R)',
-        margin: '+3.3%',
-        turnout: '77.3%'
-      },
-      campaignFinance: {
-        total: '$675M',
-        topDonor: 'Tourism Industry',
-        pacSpending: '$280M'
-      }
+    campaignFinance: {
+      total: '$890M',
+      topDonor: 'Oil & Gas',
+      pacSpending: '$320M'
+    }
+  },
+  FL: {
+    name: 'Florida',
+    governor: 'Ron DeSantis (R)',
+    senators: ['Marco Rubio (R)', 'Rick Scott (R)'],
+    electoralVotes: 30,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+3.3%',
+      turnout: '77.3%'
     },
-    // ...Add more states as needed
-  };
+    campaignFinance: {
+      total: '$675M',
+      topDonor: 'Tourism Industry',
+      pacSpending: '$280M'
+    }
+  },
+  // Add more states as needed
+};
 
-  document.querySelectorAll('.state-path').forEach(path => {
-    const stateCode = path.id;
+// Improved tooltip positioning function
+function positionTooltip(e, tooltip) {
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  const tooltipRect = tooltip.getBoundingClientRect();
+  
+  let left = e.clientX + 12;
+  let top = e.clientY - tooltipRect.height - 12;
+  
+  // Adjust horizontal position if tooltip would go off-screen
+  if (left + tooltipRect.width > viewportWidth) {
+    left = e.clientX - tooltipRect.width - 12;
+  }
+  
+  // Adjust vertical position if tooltip would go off-screen
+  if (top < 0) {
+    top = e.clientY + 12;
+  }
+  
+  tooltip.style.left = `${left}px`;
+  tooltip.style.top = `${top}px`;
+}
 
-    // Hover: Show tooltip
-    path.addEventListener('mousemove', (e) => {
-      const data = stateData[stateCode];
-      let tooltipContent = `<strong>${stateNames[stateCode] || stateCode}</strong>`;
-
-      if (data) {
-        tooltipContent += `
-          <br>Governor: ${data.governor}
-          <br>Winner: ${data.lastElection.winner}
-          <br>Margin: ${data.lastElection.margin}
-        `;
-      } else {
-        tooltipContent += `<br><em>Data loading...</em>`;
-      }
-
-      tooltip.innerHTML = tooltipContent;
-      tooltip.style.left = `${e.clientX + 10}px`;
-      tooltip.style.top = `${e.clientY + 10}px`;
-      tooltip.style.display = 'block';
-    });
-
-    // Leave: Hide tooltip
-    path.addEventListener('mouseleave', () => {
-      tooltip.style.display = 'none';
-    });
-
-    // Click: Show full state info panel
-    path.addEventListener('click', () => {
-      document.querySelectorAll('.state-path').forEach(s => s.classList.remove('active'));
-      path.classList.add('active');
-      displayStateInfo(stateCode);
-    });
-  });
-
-  function displayStateInfo(stateCode) {
+// Debounced tooltip update for better performance
+let tooltipTimeout;
+function updateTooltip(e, stateCode) {
+  clearTimeout(tooltipTimeout);
+  tooltipTimeout = setTimeout(() => {
     const data = stateData[stateCode];
-
-    if (!data) {
-      stateInfoPanel.innerHTML = `
-        <div class="state-info">
-          <h2 class="state-name">${stateCode}</h2>
-          <p>Data is being updated...</p>
+    const stateName = stateNames[stateCode] || stateCode;
+    
+    let tooltipContent = `<div class="tooltip-header">${stateName}</div>`;
+    
+    if (data) {
+      const winnerParty = data.lastElection.winner.includes('(D)') ? 'dem' : 'rep';
+      tooltipContent += `
+        <div class="tooltip-content">
+          <div class="tooltip-row">
+            <span class="tooltip-label">Governor:</span>
+            <span class="tooltip-value">${data.governor}</span>
+          </div>
+          <div class="tooltip-row">
+            <span class="tooltip-label">2024 Winner:</span>
+            <span class="tooltip-value party-${winnerParty}">${data.lastElection.winner}</span>
+          </div>
+          <div class="tooltip-row">
+            <span class="tooltip-label">Margin:</span>
+            <span class="tooltip-value">${data.lastElection.margin}</span>
+          </div>
+          <div class="tooltip-row">
+            <span class="tooltip-label">Electoral Votes:</span>
+            <span class="tooltip-value">${data.electoralVotes}</span>
+          </div>
         </div>
       `;
-      return;
+    } else {
+      tooltipContent += `<div class="tooltip-content"><em>Loading data...</em></div>`;
     }
+    
+    tooltip.innerHTML = tooltipContent;
+    tooltip.style.display = 'block';
+    positionTooltip(e, tooltip);
+  }, 16); // ~60fps
+}
 
-    const winnerClass = data.lastElection.winner.includes('(D)') ? 'party-dem' : 'party-rep';
-
+// Enhanced state info display with better error handling
+function displayStateInfo(stateCode) {
+  const data = stateData[stateCode];
+  const stateName = stateNames[stateCode] || stateCode;
+  
+  if (!data) {
     stateInfoPanel.innerHTML = `
       <div class="state-info">
-        <h2 class="state-name">${data.name}</h2>
-        
-        <div class="data-section">
-          <h3>🏛️ Current Leadership</h3>
-          <div class="data-item">
-            <span>Governor:</span>
-            <span class="${data.governor.includes('(D)') ? 'party-dem' : 'party-rep'}">${data.governor}</span>
-          </div>
-          <div class="data-item">
-            <span>Senator 1:</span>
-            <span class="${data.senators[0].includes('(D)') ? 'party-dem' : 'party-rep'}">${data.senators[0]}</span>
-          </div>
-          <div class="data-item">
-            <span>Senator 2:</span>
-            <span class="${data.senators[1].includes('(D)') ? 'party-dem' : 'party-rep'}">${data.senators[1]}</span>
-          </div>
-          <div class="data-item">
-            <span>Electoral Votes:</span>
-            <span><strong>${data.electoralVotes}</strong></span>
-          </div>
-        </div>
-
-        <div class="data-section">
-          <h3>📊 2024 Election Results</h3>
-          <div class="data-item">
-            <span>Winner:</span>
-            <span class="${winnerClass}">${data.lastElection.winner}</span>
-          </div>
-          <div class="data-item">
-            <span>Margin:</span>
-            <span><strong>${data.lastElection.margin}</strong></span>
-          </div>
-          <div class="data-item">
-            <span>Voter Turnout:</span>
-            <span><strong>${data.lastElection.turnout}</strong></span>
-          </div>
-        </div>
-
-        <div class="data-section">
-          <h3>💰 Campaign Finance</h3>
-          <div class="data-item">
-            <span>Total Raised:</span>
-            <span><strong>${data.campaignFinance.total}</strong></span>
-          </div>
-          <div class="data-item">
-            <span>Top Donor Industry:</span>
-            <span>${data.campaignFinance.topDonor}</span>
-          </div>
-          <div class="data-item">
-            <span>PAC Spending:</span>
-            <span><strong>${data.campaignFinance.pacSpending}</strong></span>
-          </div>
+        <h2 class="state-name">${stateName}</h2>
+        <div class="loading-message">
+          <p>📊 Loading state data...</p>
+          <p class="help-text">Click on another state or try again later.</p>
         </div>
       </div>
     `;
+    return;
   }
+
+  const winnerClass = data.lastElection.winner.includes('(D)') ? 'party-dem' : 'party-rep';
+
+  stateInfoPanel.innerHTML = `
+    <div class="state-info">
+      <h2 class="state-name">${data.name}</h2>
+      
+      <div class="data-section">
+        <h3><span class="section-icon">🏛️</span> Current Leadership</h3>
+        <div class="data-grid">
+          <div class="data-item">
+            <span class="data-label">Governor:</span>
+            <span class="data-value ${data.governor.includes('(D)') ? 'party-dem' : 'party-rep'}">${data.governor}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">Senior Senator:</span>
+            <span class="data-value ${data.senators[0].includes('(D)') ? 'party-dem' : 'party-rep'}">${data.senators[0]}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">Junior Senator:</span>
+            <span class="data-value ${data.senators[1].includes('(D)') ? 'party-dem' : 'party-rep'}">${data.senators[1]}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">Electoral Votes:</span>
+            <span class="data-value electoral-votes">${data.electoralVotes}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="data-section">
+        <h3><span class="section-icon">📊</span> 2024 Election Results</h3>
+        <div class="data-grid">
+          <div class="data-item">
+            <span class="data-label">Winner:</span>
+            <span class="data-value ${winnerClass}">${data.lastElection.winner}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">Margin:</span>
+            <span class="data-value margin">${data.lastElection.margin}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">Voter Turnout:</span>
+            <span class="data-value turnout">${data.lastElection.turnout}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="data-section">
+        <h3><span class="section-icon">💰</span> Campaign Finance</h3>
+        <div class="data-grid">
+          <div class="data-item">
+            <span class="data-label">Total Raised:</span>
+            <span class="data-value money">${data.campaignFinance.total}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">Top Donor Industry:</span>
+            <span class="data-value">${data.campaignFinance.topDonor}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">PAC Spending:</span>
+            <span class="data-value money">${data.campaignFinance.pacSpending}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Enhanced event listeners with better performance
+document.addEventListener('DOMContentLoaded', () => {
+  const statePaths = document.querySelectorAll('.state-path');
+  
+  statePaths.forEach(path => {
+    const stateCode = path.id;
+    
+    // Optimized hover events
+    path.addEventListener('mouseenter', (e) => {
+      path.classList.add('hovered');
+      updateTooltip(e, stateCode);
+    });
+    
+    path.addEventListener('mousemove', (e) => {
+      if (tooltip.style.display === 'block') {
+        positionTooltip(e, tooltip);
+      }
+    });
+    
+    path.addEventListener('mouseleave', () => {
+      path.classList.remove('hovered');
+      tooltip.style.display = 'none';
+      clearTimeout(tooltipTimeout);
+    });
+    
+    // Enhanced click handling
+    path.addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      // Remove active class from all states
+      statePaths.forEach(s => s.classList.remove('active'));
+      path.classList.add('active');
+      
+      // Hide tooltip on click
+      tooltip.style.display = 'none';
+      
+      // Display state info
+      displayStateInfo(stateCode);
+      
+      // Smooth scroll to info panel if it exists
+      if (stateInfoPanel && stateInfoPanel.offsetTop) {
+        stateInfoPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+  });
+});
+
+// Handle window resize for tooltip positioning
+window.addEventListener('resize', () => {
+  if (tooltip.style.display === 'block') {
+    tooltip.style.display = 'none';
+  }
+});
+
+// Keyboard navigation support
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    tooltip.style.display = 'none';
+    document.querySelectorAll('.state-path.active').forEach(path => {
+      path.classList.remove('active');
+    });
+  }
+});
 </script>
 </body>
 </html>
