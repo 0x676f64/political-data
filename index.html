@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Political Data Dashboard</title>
-  <style>
+<style>
         * {
             margin: 0;
             padding: 0;
@@ -46,6 +46,7 @@
             grid-template-columns: 1fr 1fr;
             gap: 30px;
             margin-bottom: 30px;
+            height: 300px;
         }
 
         .map-container {
@@ -62,6 +63,7 @@
             padding: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             backdrop-filter: blur(10px);
+            width: 100%;
         }
 
         .map-title {
@@ -70,356 +72,359 @@
             color: #333;
             font-size: 1.5rem;
         }
-    /* Enhanced State Path Styles */
-    .state-path {
-        fill: #1b4e81;
-        stroke: #2c3e50;
-        stroke-width: 1;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        transform-origin: center;
-    }
 
-    .state-path:hover,
-    .state-path.hovered {
-        fill: #d20f26;
-        stroke: #a10d20;
-        stroke-width: 2;
-        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-    }
-
-    .state-path.active {
-        fill: #15773e;
-        stroke: #0c3b1f;
-        stroke-width: 2;
-        filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
-    }
-
-    .state-path:focus {
-        outline: none;
-        stroke: #f39c12;
-        stroke-width: 3;
-    }
-
-    /* Enhanced Tooltip Styles */
-    #tooltip {
-        position: absolute;
-        display: none;
-        max-width: 280px;
-        min-width: 200px;
-        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-        border: 1px solid #e1e8ed;
-        border-radius: 8px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-        font-size: 13px;
-        z-index: 1000;
-        color: #2c3e50;
-        pointer-events: none;
-        backdrop-filter: blur(10px);
-        transform: translateZ(0); /* Hardware acceleration */
-    }
-
-    .tooltip-header {
-        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-        color: white;
-        padding: 8px 12px;
-        border-radius: 7px 7px 0 0;
-        font-weight: 600;
-        font-size: 14px;
-        margin: -1px -1px 0 -1px;
-    }
-
-    .tooltip-content {
-        padding: 10px 12px;
-    }
-
-    .tooltip-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 3px 0;
-        border-bottom: 1px solid #ecf0f1;
-    }
-
-    .tooltip-row:last-child {
-        border-bottom: none;
-    }
-
-    .tooltip-label {
-        font-weight: 500;
-        color: #7f8c8d;
-        font-size: 12px;
-    }
-
-    .tooltip-value {
-        font-weight: 600;
-        text-align: right;
-        max-width: 140px;
-        word-wrap: break-word;
-    }
-
-    /* State Info Panel Enhancements */
-    .state-info {
-        background: #ffffff;
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        margin: 20px 0;
-        border: 1px solid #e8f0fe;
-    }
-
-    .state-name {
-        color: #2c3e50;
-        font-size: 28px;
-        font-weight: 700;
-        margin-bottom: 20px;
-        text-align: center;
-        border-bottom: 3px solid #3498db;
-        padding-bottom: 10px;
-    }
-
-    .data-section {
-        margin-bottom: 24px;
-        background: #f8f9fa;
-        border-radius: 8px;
-        padding: 16px;
-        border-left: 4px solid #3498db;
-    }
-
-    .data-section h3 {
-        color: #f8f9fa;
-        font-size: 16px;
-        font-weight: 600;
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .section-icon {
-        font-size: 18px;
-    }
-
-    .data-grid {
-        display: grid;
-        gap: 8px;
-    }
-
-    .data-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px 12px;
-        background: white;
-        border-radius: 6px;
-        border: 1px solid #e8f0fe;
-        transition: all 0.2s ease;
-    }
-
-    .data-item:hover {
-        background: #f0f8ff;
-        border-color: #3498db;
-        transform: translateY(-1px);
-    }
-
-    .data-label {
-        font-weight: 500;
-        color: #7f8c8d;
-        font-size: 14px;
-    }
-
-    .data-value {
-        font-weight: 600;
-        color: #2c3e50;
-        text-align: right;
-        max-width: 60%;
-        word-wrap: break-word;
-    }
-
-    /* Political Party Colors */
-    .party-dem {
-        color: #3498db !important;
-        font-weight: 600;
-    }
-
-    .party-rep {
-        color: #e74c3c !important;
-        font-weight: 600;
-    }
-
-    /* Special Value Styling */
-    .electoral-votes {
-        background: linear-gradient(135deg, #f39c12, #e67e22);
-        color: white !important;
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-weight: 700;
-    }
-
-    .money {
-        color: #27ae60 !important;
-        font-weight: 700;
-    }
-
-    .margin {
-        font-family: 'Courier New', monospace;
-        font-weight: 700;
-    }
-
-    .turnout {
-        color: #8e44ad !important;
-        font-weight: 700;
-    }
-
-    /* Loading States */
-    .loading-message {
-        text-align: center;
-        padding: 40px 20px;
-        color: #7f8c8d;
-    }
-
-    .help-text {
-        font-size: 12px;
-        color: #bdc3c7;
-        margin-top: 8px;
-    }
-
-    /* US Map Container - Responsive */
-    #us-map {
-        width: 100%;
-        max-width: 1300px;
-        height: auto;
-        border: 2px solid #e0e0e0;
-        border-radius: 10px;
-        background: #f8f9fa;
-        overflow: visible;
-        display: block;
-        margin: 0 auto;
-    }
-
-    /* SVG Responsive Styling */
-    #us-map svg {
-        width: 100%;
-        height: auto;
-        max-width: 1372px;
-        display: block;
-    }
-
-    /* Responsive breakpoints for the map */
-    @media (max-width: 1400px) {
-        #us-map {
-            max-width: 95%;
-        }
-    }
-
-    @media (max-width: 1200px) {
-        #us-map {
-            max-width: 100%;
-            border-radius: 8px;
-        }
-    }
-
-    @media (max-width: 992px) {
-        #us-map {
-            border-radius: 6px;
-            border-width: 1px;
-        }
-    }
-
-    @media (max-width: 768px) {
-        #us-map {
-            margin: 10px;
-            border-radius: 4px;
-            background: #ffffff;
-        }
-    }
-
-    @media (max-width: 576px) {
-        #us-map {
-            margin: 5px;
-            border: 1px solid #ddd;
-        }
-    }
-        #tooltip {
-            max-width: 240px;
-            min-width: 180px;
-            font-size: 12px;
-        }
-        
-        .tooltip-header {
-            font-size: 13px;
-            padding: 6px 10px;
-        }
-        
-        .tooltip-content {
-            padding: 8px 10px;
-        }
-        
-        .state-info {
-            padding: 16px;
-            margin: 16px 0;
-        }
-        
-        .state-name {
-            font-size: 24px;
-        }
-        
-        .data-section {
-            padding: 12px;
-        }
-        
-        .data-item {
-            padding: 6px 10px;
-        }
-
-    /* Dark Mode Support */
-    @media (prefers-color-scheme: dark) {
+        /* Enhanced State Path Styles */
         .state-path {
             fill: #1b4e81;
-            stroke: #0b253f;
+            stroke: #2c3e50;
+            stroke-width: 1;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform-origin: center;
         }
-        
+
         .state-path:hover,
         .state-path.hovered {
             fill: #d20f26;
-            stroke: #490c13;
+            stroke: #a10d20;
+            stroke-width: 2;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
         }
-        
+
+        .state-path.active {
+            fill: #15773e;
+            stroke: #0c3b1f;
+            stroke-width: 2;
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+        }
+
+        .state-path:focus {
+            outline: none;
+            stroke: #f39c12;
+            stroke-width: 3;
+        }
+
+        /* Enhanced Tooltip Styles */
         #tooltip {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            border-color: #4a5568;
-            color: #ecf0f1;
+            position: absolute;
+            display: none;
+            max-width: 280px;
+            min-width: 200px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            font-size: 13px;
+            z-index: 1000;
+            color: #2c3e50;
+            pointer-events: none;
+            backdrop-filter: blur(10px);
+            transform: translateZ(0); /* Hardware acceleration */
         }
-        
+
         .tooltip-header {
             background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 7px 7px 0 0;
+            font-weight: 600;
+            font-size: 14px;
+            margin: -1px -1px 0 -1px;
         }
-        
+
+        .tooltip-content {
+            padding: 10px 12px;
+        }
+
+        .tooltip-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 3px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .tooltip-row:last-child {
+            border-bottom: none;
+        }
+
+        .tooltip-label {
+            font-weight: 500;
+            color: #7f8c8d;
+            font-size: 12px;
+        }
+
+        .tooltip-value {
+            font-weight: 600;
+            text-align: right;
+            max-width: 140px;
+            word-wrap: break-word;
+        }
+
+        /* State Info Panel Enhancements */
         .state-info {
-            background: #2c3e50;
-            border-color: #4a5568;
-            color: #ecf0f1;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+            border: 1px solid #e8f0fe;
         }
-        
+
+        .state-name {
+            color: #77a2ce;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
         .data-section {
-            background: #34495e;
+            margin-bottom: 24px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 16px;
+            border-left: 4px solid #3498db;
         }
-        
+
+        .data-section h3 {
+            color: #f8f9fa;
+            font-size: 12x;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-icon {
+            font-size: 16x;
+        }
+
+        .data-grid {
+            display: grid;
+            gap: 8px;
+        }
+
         .data-item {
-            background: #2c3e50;
-            border-color: #4a5568;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 8px 12px;
+          background: white;
+          border-radius: 6px;
+          border: 1px solid #e8f0fe;
+          transition: all 0.2s ease;
         }
-        
+
         .data-item:hover {
-            background: #34495e;
+          background: #f0f8ff;
+          border-color: #3498db;
+          transform: translateY(-1px);
         }
-    }
+
+        .data-label {
+          font-weight: 500;
+          color: #d3c3c3;
+          font-size: 14px;
+        }
+
+        .data-value {
+          font-weight: 600;
+          color: #74a4d3;
+          text-align: right;
+          max-width: 60%;
+          word-wrap: break-word;
+        }
+
+        /* Political Party Colors */
+        .party-dem {
+            color: #3498db !important;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .party-rep {
+            color: #e74c3c !important;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        /* Special Value Styling */
+        .electoral-votes {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white !important;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .money {
+            color: #27ae60 !important;
+            font-weight: 700;
+        }
+
+        .margin {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+        }
+
+        .turnout {
+            color: #8e44ad !important;
+            font-weight: 700;
+        }
+
+        /* Loading States */
+        .loading-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7f8c8d;
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #bdc3c7;
+            margin-top: 8px;
+        }
+
+        /* US Map Container - Responsive */
+        #us-map {
+            width: 100%;
+            max-width: 1300px;
+            height: auto;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: #f8f9fa;
+            overflow: visible;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* SVG Responsive Styling */
+        #us-map svg {
+            width: 100%;
+            height: auto;
+            max-width: 1372px;
+            display: block;
+        }
+
+        /* Responsive breakpoints for the map */
+        @media (max-width: 1400px) {
+            #us-map {
+                max-width: 95%;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            #us-map {
+                max-width: 100%;
+                border-radius: 8px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            #us-map {
+                border-radius: 6px;
+                border-width: 1px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #us-map {
+                margin: 10px;
+                border-radius: 4px;
+                background: #ffffff;
+            }
+        }
+
+        @media (max-width: 576px) {
+            #us-map {
+                margin: 5px;
+                border: 1px solid #ddd;
+            }
+        }
+            #tooltip {
+                max-width: 240px;
+                min-width: 180px;
+                font-size: 12px;
+            }
+            
+            .tooltip-header {
+                font-size: 13px;
+                padding: 6px 10px;
+            }
+            
+            .tooltip-content {
+                padding: 8px 10px;
+            }
+            
+            .state-info {
+                padding: 16px;
+                margin: 16px 0;
+            }
+            
+            .state-name {
+                font-size: 24px;
+            }
+            
+            .data-section {
+                padding: 12px;
+            }
+            
+            .data-item {
+                padding: 6px 10px;
+            }
+
+        /* Dark Mode Support */
+        @media (prefers-color-scheme: dark) {
+            .state-path {
+                fill: #1b4e81;
+                stroke: #0b253f;
+            }
+            
+            .state-path:hover,
+            .state-path.hovered {
+                fill: #d20f26;
+                stroke: #490c13;
+            }
+            
+            #tooltip {
+                background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+                border-color: #4a5568;
+                color: #ecf0f1;
+            }
+            
+            .tooltip-header {
+                background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            }
+            
+            .state-info {
+                background: #2c3e50;
+                border-color: #4a5568;
+                color: #ecf0f1;
+            }
+            
+            .data-section {
+                background: #34495e;
+            }
+            
+            .data-item {
+                background: #2c3e50;
+                border-color: #4a5568;
+            }
+            
+            .data-item:hover {
+                background: #34495e;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🗳️ Political Data Dashboard</h1>
+            <h1> Political Data Dashboard</h1>
             <p>Explore election results, politician data, and campaign finance by state</p>
         </div>
 
