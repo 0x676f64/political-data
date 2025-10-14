@@ -1,0 +1,1073 @@
+// Enhanced Interactive US Map Script
+const tooltip = document.getElementById('tooltip');
+const stateInfoPanel = document.getElementById('state-info');
+
+const stateNames = {
+  AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California',
+  CO: 'Colorado', CT: 'Connecticut', DE: 'Delaware', FL: 'Florida', GA: 'Georgia',
+  HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois', IN: 'Indiana', IA: 'Iowa',
+  KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine', MD: 'Maryland',
+  MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota', MS: 'Mississippi', MO: 'Missouri',
+  MT: 'Montana', NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire', NJ: 'New Jersey',
+  NM: 'New Mexico', NY: 'New York', NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio',
+  OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania', RI: 'Rhode Island', SC: 'South Carolina',
+  SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas', UT: 'Utah', VT: 'Vermont',
+  VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming',
+  DC: 'District of Columbia'
+};
+
+const stateData = {
+  AL: {
+    name: 'Alabama',
+    governor: 'Kay Ivey (R)',
+    senators: ['Tommy Tuberville (R)', 'Katie Britt (R)'],
+    electoralVotes: 9,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+25.4%',
+      turnout: '63.2%'
+    },
+    campaignFinance: {
+      total: '$125M',
+      topDonor: 'Energy Industry',
+      pacSpending: '$45M'
+    }
+  },
+  AK: {
+    name: 'Alaska',
+    governor: 'Mike Dunleavy (R)',
+    senators: ['Lisa Murkowski (R)', 'Dan Sullivan (R)'],
+    electoralVotes: 3,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+14.7%',
+      turnout: '58.9%'
+    },
+    campaignFinance: {
+      total: '$35M',
+      topDonor: 'Oil & Gas',
+      pacSpending: '$12M'
+    }
+  },
+  AZ: {
+    name: 'Arizona',
+    governor: 'Katie Hobbs (D)',
+    senators: ['Mark Kelly (D)', 'Kyrsten Sinema (I)'],
+    electoralVotes: 11,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+5.5%',
+      turnout: '72.6%'
+    },
+    campaignFinance: {
+      total: '$485M',
+      topDonor: 'Tech Industry',
+      pacSpending: '$165M'
+    }
+  },
+  AR: {
+    name: 'Arkansas',
+    governor: 'Sarah Huckabee Sanders (R)',
+    senators: ['John Boozman (R)', 'Tom Cotton (R)'],
+    electoralVotes: 6,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+28.0%',
+      turnout: '56.8%'
+    },
+    campaignFinance: {
+      total: '$75M',
+      topDonor: 'Agriculture',
+      pacSpending: '$25M'
+    }
+  },
+  CA: {
+    name: 'California',
+    governor: 'Gavin Newsom (D)',
+    senators: ['Alex Padilla (D)', 'Laphonza Butler (D)'], // Note: Feinstein passed away in 2023
+    electoralVotes: 54,
+    lastElection: {
+      winner: 'Harris (D)',
+      margin: '+20.1%',
+      turnout: '71.4%'
+    },
+    campaignFinance: {
+      total: '$1.2B',
+      topDonor: 'Tech Industry',
+      pacSpending: '$450M'
+    }
+  },
+  CO: {
+    name: 'Colorado',
+    governor: 'Jared Polis (D)',
+    senators: ['Michael Bennet (D)', 'John Hickenlooper (D)'],
+    electoralVotes: 10,
+    lastElection: {
+      winner: 'Harris (D)',
+      margin: '+13.7%',
+      turnout: '73.1%'
+    },
+    campaignFinance: {
+      total: '$285M',
+      topDonor: 'Tech Industry',
+      pacSpending: '$95M'
+    }
+  },
+  CT: {
+    name: 'Connecticut',
+    governor: 'Ned Lamont (D)',
+    senators: ['Richard Blumenthal (D)', 'Chris Murphy (D)'],
+    electoralVotes: 7,
+    lastElection: {
+      winner: 'Harris (D)',
+      margin: '+13.8%',
+      turnout: '65.4%'
+    },
+    campaignFinance: {
+      total: '$145M',
+      topDonor: 'Financial Services',
+      pacSpending: '$55M'
+    }
+  },
+  DE: {
+    name: 'Delaware',
+    governor: 'John Carney (D)',
+    senators: ['Tom Carper (D)', 'Chris Coons (D)'],
+    electoralVotes: 3,
+    lastElection: {
+      winner: 'Harris (D)',
+      margin: '+12.4%',
+      turnout: '66.8%'
+    },
+    campaignFinance: {
+      total: '$45M',
+      topDonor: 'Financial Services',
+      pacSpending: '$18M'
+    }
+  },
+  FL: {
+    name: 'Florida',
+    governor: 'Ron DeSantis (R)',
+    senators: ['Marco Rubio (R)', 'Rick Scott (R)'],
+    electoralVotes: 30,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+13.1%',
+      turnout: '77.3%'
+    },
+    campaignFinance: {
+      total: '$675M',
+      topDonor: 'Tourism Industry',
+      pacSpending: '$280M'
+    }
+  },
+  GA: {
+    name: 'Georgia',
+    governor: 'Brian Kemp (R)',
+    senators: ['Jon Ossoff (D)', 'Raphael Warnock (D)'],
+    electoralVotes: 16,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+2.2%',
+      turnout: '70.9%'
+    },
+    campaignFinance: {
+      total: '$545M',
+      topDonor: 'Real Estate',
+      pacSpending: '$195M'
+    }
+  },
+  HI: {
+    name: 'Hawaii',
+    governor: 'Josh Green (D)',
+    senators: ['Brian Schatz (D)', 'Mazie Hirono (D)'],
+    electoralVotes: 4,
+    lastElection: {
+      winner: 'Harris (D)',
+      margin: '+25.2%',
+      turnout: '54.6%'
+    },
+    campaignFinance: {
+      total: '$55M',
+      topDonor: 'Tourism Industry',
+      pacSpending: '$20M'
+    }
+  },
+  ID: {
+    name: 'Idaho',
+    governor: 'Brad Little (R)',
+    senators: ['Mike Crapo (R)', 'James Risch (R)'],
+    electoralVotes: 4,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+30.2%',
+      turnout: '59.8%'
+    },
+    campaignFinance: {
+      total: '$65M',
+      topDonor: 'Agriculture',
+      pacSpending: '$22M'
+    }
+  },
+  IL: {
+    name: 'Illinois',
+    governor: 'J.B. Pritzker (D)',
+    senators: ['Dick Durbin (D)', 'Tammy Duckworth (D)'],
+    electoralVotes: 19,
+    lastElection: {
+      winner: 'Harris (D)',
+      margin: '+12.1%',
+      turnout: '67.2%'
+    },
+    campaignFinance: {
+      total: '$425M',
+      topDonor: 'Financial Services',
+      pacSpending: '$155M'
+    }
+  },
+  IN: {
+    name: 'Indiana',
+    governor: 'Eric Holcomb (R)',
+    senators: ['Todd Young (R)', 'Mike Braun (R)'],
+    electoralVotes: 11,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+17.8%',
+      turnout: '61.5%'
+    },
+    campaignFinance: {
+      total: '$185M',
+      topDonor: 'Manufacturing',
+      pacSpending: '$65M'
+    }
+  },
+  IA: {
+    name: 'Iowa',
+    governor: 'Kim Reynolds (R)',
+    senators: ['Chuck Grassley (R)', 'Joni Ernst (R)'],
+    electoralVotes: 6,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+13.2%',
+      turnout: '71.8%'
+    },
+    campaignFinance: {
+      total: '$175M',
+      topDonor: 'Agriculture',
+      pacSpending: '$62M'
+    }
+  },
+  KS: {
+    name: 'Kansas',
+    governor: 'Laura Kelly (D)',
+    senators: ['Jerry Moran (R)', 'Roger Marshall (R)'],
+    electoralVotes: 6,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+14.7%',
+      turnout: '64.2%'
+    },
+    campaignFinance: {
+      total: '$125M',
+      topDonor: 'Agriculture',
+      pacSpending: '$45M'
+    }
+  },
+  KY: {
+    name: 'Kentucky',
+    governor: 'Andy Beshear (D)',
+    senators: ['Mitch McConnell (R)', 'Rand Paul (R)'],
+    electoralVotes: 8,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+25.9%',
+      turnout: '59.4%'
+    },
+    campaignFinance: {
+      total: '$165M',
+      topDonor: 'Coal Industry',
+      pacSpending: '$58M'
+    }
+  },
+  LA: {
+    name: 'Louisiana',
+    governor: 'Jeff Landry (R)',
+    senators: ['Bill Cassidy (R)', 'John Kennedy (R)'],
+    electoralVotes: 8,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+22.1%',
+      turnout: '67.9%'
+    },
+    campaignFinance: {
+      total: '$145M',
+      topDonor: 'Oil & Gas',
+      pacSpending: '$52M'
+    }
+  },
+  ME: {
+    name: 'Maine',
+    governor: 'Janet Mills (D)',
+    senators: ['Susan Collins (R)', 'Angus King (I)'],
+    electoralVotes: 4,
+    lastElection: {
+      winner: 'Harris (D)',
+      margin: '+8.9%',
+      turnout: '72.8%'
+    },
+    campaignFinance: {
+      total: '$85M',
+      topDonor: 'Healthcare',
+      pacSpending: '$32M'
+    }
+  },
+  MD: {
+    name: 'Maryland',
+    governor: 'Wes Moore (D)',
+    senators: ['Ben Cardin (D)', 'Chris Van Hollen (D)'],
+    electoralVotes: 10,
+    lastElection: {
+      winner: 'Harris (D)',
+      margin: '+25.4%',
+      turnout: '69.3%'
+    },
+    campaignFinance: {
+      total: '$225M',
+      topDonor: 'Federal Contractors',
+      pacSpending: '$85M'
+    }
+  },
+  MA: {
+    name: 'Massachusetts',
+    governor: 'Maura Healey (D)',
+    senators: ['Elizabeth Warren (D)', 'Ed Markey (D)'],
+    electoralVotes: 11,
+    lastElection: {
+      winner: 'Harris (D)',
+      margin: '+25.2%',
+      turnout: '69.8%'
+    },
+    campaignFinance: {
+      total: '$285M',
+      topDonor: 'Tech Industry',
+      pacSpending: '$105M'
+    }
+  },
+  MI: {
+    name: 'Michigan',
+    governor: 'Gretchen Whitmer (D)',
+    senators: ['Gary Peters (D)', 'Debbie Stabenow (D)'],
+    electoralVotes: 15,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+1.4%',
+      turnout: '74.7%'
+    },
+    campaignFinance: {
+      total: '$485M',
+      topDonor: 'Auto Industry',
+      pacSpending: '$175M'
+    }
+  },
+  MN: {
+    name: 'Minnesota',
+    governor: 'Tim Walz (D)',
+    senators: ['Amy Klobuchar (D)', 'Tina Smith (D)'],
+    electoralVotes: 10,
+    lastElection: {
+      winner: 'Harris (D)',
+      margin: '+4.2%',
+      turnout: '76.4%'
+    },
+    campaignFinance: {
+      total: '$325M',
+      topDonor: 'Healthcare',
+      pacSpending: '$115M'
+    }
+  },
+  MS: {
+    name: 'Mississippi',
+    governor: 'Tate Reeves (R)',
+    senators: ['Roger Wicker (R)', 'Cindy Hyde-Smith (R)'],
+    electoralVotes: 6,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+16.5%',
+      turnout: '59.7%'
+    },
+    campaignFinance: {
+      total: '$95M',
+      topDonor: 'Agriculture',
+      pacSpending: '$35M'
+    }
+  },
+  MO: {
+    name: 'Missouri',
+    governor: 'Mike Kehoe (R)',
+    senators: ['Josh Hawley (R)', 'Eric Schmitt (R)'],
+    electoralVotes: 10,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+18.4%',
+      turnout: '67.1%'
+    },
+    campaignFinance: {
+      total: '$245M',
+      topDonor: 'Agriculture',
+      pacSpending: '$88M'
+    }
+  },
+  MT: {
+    name: 'Montana',
+    governor: 'Greg Gianforte (R)',
+    senators: ['Steve Daines (R)', 'Tim Sheehy (R)'],
+    electoralVotes: 4,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+20.1%',
+      turnout: '71.2%'
+    },
+    campaignFinance: {
+      total: '$125M',
+      topDonor: 'Energy Industry',
+      pacSpending: '$45M'
+    }
+  },
+  NE: {
+    name: 'Nebraska',
+    governor: 'Pete Ricketts (R)',
+    senators: ['Deb Fischer (R)', 'Pete Ricketts (R)'],
+    electoralVotes: 5,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+19.8%',
+      turnout: '68.4%'
+    },
+    campaignFinance: {
+      total: '$95M',
+      topDonor: 'Agriculture',
+      pacSpending: '$35M'
+    }
+  },
+  NV: {
+    name: 'Nevada',
+    governor: 'Joe Lombardo (R)',
+    senators: ['Catherine Cortez Masto (D)', 'Jacky Rosen (D)'],
+    electoralVotes: 6,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+3.1%',
+      turnout: '73.2%'
+    },
+    campaignFinance: {
+      total: '$285M',
+      topDonor: 'Gaming Industry',
+      pacSpending: '$105M'
+    }
+  },
+  NH: {
+    name: 'New Hampshire',
+    governor: 'Chris Sununu (R)',
+    senators: ['Jeanne Shaheen (D)', 'Maggie Hassan (D)'],
+    electoralVotes: 4,
+    lastElection: {
+      winner: 'Harris (D)',
+      margin: '+2.8%',
+      turnout: '74.4%'
+    },
+    campaignFinance: {
+      total: '$125M',
+      topDonor: 'Manufacturing',
+      pacSpending: '$45M'
+    }
+  },
+  NJ: {
+    name: 'New Jersey',
+    governor: 'Phil Murphy (D)',
+    senators: ['Cory Booker (D)', 'Andy Kim (D)'],
+    electoralVotes: 14,
+    lastElection: {
+      winner: 'Harris (D)',
+      margin: '+5.7%',
+      turnout: '65.8%'
+    },
+    campaignFinance: {
+      total: '$385M',
+      topDonor: 'Financial Services',
+      pacSpending: '$145M'
+    }
+  },
+  NM: {
+    name: 'New Mexico',
+    governor: 'Michelle Lujan Grisham (D)',
+    senators: ['Martin Heinrich (D)', 'Ben Ray Luján (D)'],
+    electoralVotes: 5,
+    lastElection: {
+      winner: 'Harris (D)',
+      margin: '+6.1%',
+      turnout: '62.5%'
+    },
+    campaignFinance: {
+      total: '$125M',
+      topDonor: 'Energy Industry',
+      pacSpending: '$45M'
+    }
+  },
+  NY: {
+    name: 'New York',
+    governor: 'Kathy Hochul (D)',
+    senators: ['Chuck Schumer (D)', 'Kirsten Gillibrand (D)'],
+    electoralVotes: 28,
+    lastElection: {
+      winner: 'Harris (D)',
+      margin: '+11.8%',
+      turnout: '58.6%'
+    },
+    campaignFinance: {
+      total: '$785M',
+      topDonor: 'Financial Services',
+      pacSpending: '$295M'
+    }
+  },
+  NC: {
+    name: 'North Carolina',
+    governor: 'Josh Stein (D)',
+    senators: ['Thom Tillis (R)', 'Ted Budd (R)'],
+    electoralVotes: 16,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+3.4%',
+      turnout: '73.7%'
+    },
+    campaignFinance: {
+      total: '$485M',
+      topDonor: 'Banking',
+      pacSpending: '$175M'
+    }
+  },
+  ND: {
+    name: 'North Dakota',
+    governor: 'Doug Burgum (R)',
+    senators: ['John Hoeven (R)', 'Kevin Cramer (R)'],
+    electoralVotes: 3,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+33.1%',
+      turnout: '55.4%'
+    },
+    campaignFinance: {
+      total: '$45M',
+      topDonor: 'Oil & Gas',
+      pacSpending: '$18M'
+    }
+  },
+  OH: {
+    name: 'Ohio',
+    governor: 'Mike DeWine (R)',
+    senators: ['Sherrod Brown (D)', 'J.D. Vance (R)'],
+    electoralVotes: 17,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+11.5%',
+      turnout: '69.8%'
+    },
+    campaignFinance: {
+      total: '$485M',
+      topDonor: 'Manufacturing',
+      pacSpending: '$175M'
+    }
+  },
+  OK: {
+    name: 'Oklahoma',
+    governor: 'Kevin Stitt (R)',
+    senators: ['James Lankford (R)', 'Markwayne Mullin (R)'],
+    electoralVotes: 7,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+32.9%',
+      turnout: '56.3%'
+    },
+    campaignFinance: {
+      total: '$125M',
+      topDonor: 'Oil & Gas',
+      pacSpending: '$45M'
+    }
+  },
+  OR: {
+    name: 'Oregon',
+    governor: 'Tina Kotek (D)',
+    senators: ['Ron Wyden (D)', 'Jeff Merkley (D)'],
+    electoralVotes: 8,
+    lastElection: {
+      winner: 'Harris (D)',
+      margin: '+11.2%',
+      turnout: '69.4%'
+    },
+    campaignFinance: {
+      total: '$225M',
+      topDonor: 'Tech Industry',
+      pacSpending: '$85M'
+    }
+  },
+  PA: {
+    name: 'Pennsylvania',
+    governor: 'Josh Shapiro (D)',
+    senators: ['Bob Casey Jr. (D)', 'John Fetterman (D)'],
+    electoralVotes: 19,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+1.2%',
+      turnout: '70.9%'
+    },
+    campaignFinance: {
+      total: '$685M',
+      topDonor: 'Energy Industry',
+      pacSpending: '$245M'
+    }
+  },
+  RI: {
+    name: 'Rhode Island',
+    governor: 'Dan McKee (D)',
+    senators: ['Jack Reed (D)', 'Sheldon Whitehouse (D)'],
+    electoralVotes: 4,
+    lastElection: {
+      winner: 'Harris (D)',
+      margin: '+14.1%',
+      turnout: '64.7%'
+    },
+    campaignFinance: {
+      total: '$55M',
+      topDonor: 'Healthcare',
+      pacSpending: '$22M'
+    }
+  },
+  SC: {
+    name: 'South Carolina',
+    governor: 'Henry McMaster (R)',
+    senators: ['Lindsey Graham (R)', 'Tim Scott (R)'],
+    electoralVotes: 9,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+11.7%',
+      turnout: '68.5%'
+    },
+    campaignFinance: {
+      total: '$185M',
+      topDonor: 'Manufacturing',
+      pacSpending: '$68M'
+    }
+  },
+  SD: {
+    name: 'South Dakota',
+    governor: 'Kristi Noem (R)',
+    senators: ['John Thune (R)', 'Mike Rounds (R)'],
+    electoralVotes: 3,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+28.4%',
+      turnout: '69.1%'
+    },
+    campaignFinance: {
+      total: '$45M',
+      topDonor: 'Agriculture',
+      pacSpending: '$18M'
+    }
+  },
+  TN: {
+    name: 'Tennessee',
+    governor: 'Bill Lee (R)',
+    senators: ['Marsha Blackburn (R)', 'Bill Hagerty (R)'],
+    electoralVotes: 11,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+24.9%',
+      turnout: '59.2%'
+    },
+    campaignFinance: {
+      total: '$225M',
+      topDonor: 'Healthcare',
+      pacSpending: '$85M'
+    }
+  },
+  TX: {
+    name: 'Texas',
+    governor: 'Greg Abbott (R)',
+    senators: ['John Cornyn (R)', 'Ted Cruz (R)'],
+    electoralVotes: 40,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+13.8%',
+      turnout: '66.7%'
+    },
+    campaignFinance: {
+      total: '$890M',
+      topDonor: 'Oil & Gas',
+      pacSpending: '$320M'
+    }
+  },
+  UT: {
+    name: 'Utah',
+    governor: 'Spencer Cox (R)',
+    senators: ['Mike Lee (R)', 'Mitt Romney (R)'],
+    electoralVotes: 6,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+20.5%',
+      turnout: '62.8%'
+    },
+    campaignFinance: {
+      total: '$125M',
+      topDonor: 'Tech Industry',
+      pacSpending: '$45M'
+    }
+  },
+  VT: {
+    name: 'Vermont',
+    governor: 'Phil Scott (R)',
+    senators: ['Patrick Leahy (D)', 'Bernie Sanders (I)'],
+    electoralVotes: 3,
+    lastElection: {
+      winner: 'Harris (D)',
+      margin: '+32.6%',
+      turnout: '65.4%'
+    },
+    campaignFinance: {
+      total: '$35M',
+      topDonor: 'Tourism Industry',
+      pacSpending: '$15M'
+    }
+  },
+  VA: {
+    name: 'Virginia',
+    governor: 'Glenn Youngkin (R)',
+    senators: ['Mark Warner (D)', 'Tim Kaine (D)'],
+    electoralVotes: 13,
+    lastElection: {
+      winner: 'Harris (D)',
+      margin: '+5.2%',
+      turnout: '73.8%'
+    },
+    campaignFinance: {
+      total: '$385M',
+      topDonor: 'Federal Contractors',
+      pacSpending: '$145M'
+    }
+  },
+  WA: {
+    name: 'Washington',
+    governor: 'Bob Ferguson (D)',
+    senators: ['Patty Murray (D)', 'Maria Cantwell (D)'],
+    electoralVotes: 12,
+    lastElection: {
+      winner: 'Harris (D)',
+      margin: '+18.1%',
+      turnout: '67.9%'
+    },
+    campaignFinance: {
+      total: '$285M',
+      topDonor: 'Tech Industry',
+      pacSpending: '$105M'
+    }
+  },
+  WV: {
+    name: 'West Virginia',
+    governor: 'Patrick Morrisey (R)',
+    senators: ['Joe Manchin (I)', 'Shelley Moore Capito (R)'],
+    electoralVotes: 4,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+42.2%',
+      turnout: '54.2%'
+    },
+    campaignFinance: {
+      total: '$85M',
+      topDonor: 'Coal Industry',
+      pacSpending: '$32M'
+    }
+  },
+  WI: {
+    name: 'Wisconsin',
+    governor: 'Tony Evers (D)',
+    senators: ['Ron Johnson (R)', 'Tammy Baldwin (D)'],
+    electoralVotes: 10,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+0.9%',
+      turnout: '76.4%'
+    },
+    campaignFinance: {
+      total: '$485M',
+      topDonor: 'Manufacturing',
+      pacSpending: '$175M'
+    }
+  },
+  WY: {
+    name: 'Wyoming',
+    governor: 'Mark Gordon (R)',
+    senators: ['John Barrasso (R)', 'Cynthia Lummis (R)'],
+    electoralVotes: 3,
+    lastElection: {
+      winner: 'Trump (R)',
+      margin: '+43.8%',
+      turnout: '57.1%'
+    },
+    campaignFinance: {
+      total: '$35M',
+      topDonor: 'Energy Industry',
+      pacSpending: '$15M'
+    }
+  }
+};
+
+// Helper function to display all state data
+function displayAllStates() {
+  Object.keys(stateData).forEach(state => {
+    const data = stateData[state];
+    console.log(`\n${data.name} (${state}):`);
+    console.log(`  Governor: ${data.governor}`);
+    console.log(`  Senators: ${data.senators.join(', ')}`);
+    console.log(`  Electoral Votes: ${data.electoralVotes}`);
+    console.log(`  2024 Election Winner: ${data.lastElection.winner}`);
+    console.log(`  Margin: ${data.lastElection.margin}`);
+    console.log(`  Turnout: ${data.lastElection.turnout}`);
+    console.log(`  Total Campaign Finance: ${data.campaignFinance.total}`);
+    console.log(`  Top Donor: ${data.campaignFinance.topDonor}`);
+    console.log(`  PAC Spending: ${data.campaignFinance.pacSpending}`);
+  });
+}
+
+// Helper function to get data for a specific state
+function getStateData(stateCode) {
+  return stateData[stateCode.toUpperCase()];
+}
+
+// Helper function to get summary statistics
+function getSummaryStats() {
+  const totalStates = Object.keys(stateData).length;
+  const republicanGovernors = Object.values(stateData).filter(state => state.governor.includes('(R)')).length;
+  const democraticGovernors = Object.values(stateData).filter(state => state.governor.includes('(D)')).length;
+  const totalElectoralVotes = Object.values(stateData).reduce((sum, state) => sum + state.electoralVotes, 0);
+  const trumpStates = Object.values(stateData).filter(state => state.lastElection.winner.includes('Trump')).length;
+  const harrisStates = Object.values(stateData).filter(state => state.lastElection.winner.includes('Harris')).length;
+  
+  return {
+    totalStates,
+    republicanGovernors,
+    democraticGovernors,
+    totalElectoralVotes,
+    trumpStates,
+    harrisStates
+  };
+}
+
+// Example usage
+console.log
+
+// Improved tooltip positioning function
+function positionTooltip(e, tooltip) {
+  const margin = 8;
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  const tooltipRect = tooltip.getBoundingClientRect();
+
+  let left = e.clientX - tooltipRect.width - margin;
+  let top = e.clientY - tooltipRect.height / 2;
+
+  // DEBUG LOG
+  console.log("left before fallback:", left, "tooltip width:", tooltipRect.width, "cursor X:", e.clientX);
+
+  tooltip.style.left = `${left}px`;
+  tooltip.style.top = `${top}px`;
+}
+
+
+// Debounced tooltip update for better performance
+let tooltipTimeout;
+function updateTooltip(e, stateCode) {
+  clearTimeout(tooltipTimeout);
+  tooltipTimeout = setTimeout(() => {
+    const data = stateData[stateCode];
+    const stateName = stateNames[stateCode] || stateCode;
+    
+    let tooltipContent = `<div class="tooltip-header">${stateName}</div>`;
+    
+    if (data) {
+      const winnerParty = data.lastElection.winner.includes('(D)') ? 'dem' : 'rep';
+      tooltipContent += `
+        <div class="tooltip-content">
+          <div class="tooltip-row">
+            <span class="tooltip-label">Governor:</span>
+            <span class="tooltip-value">${data.governor}</span>
+          </div>
+          <div class="tooltip-row">
+            <span class="tooltip-label">2024 Winner:</span>
+            <span class="tooltip-value party-${winnerParty}">${data.lastElection.winner}</span>
+          </div>
+          <div class="tooltip-row">
+            <span class="tooltip-label">Margin:</span>
+            <span class="tooltip-value">${data.lastElection.margin}</span>
+          </div>
+          <div class="tooltip-row">
+            <span class="tooltip-label">Electoral Votes:</span>
+            <span class="tooltip-value">${data.electoralVotes}</span>
+          </div>
+        </div>
+      `;
+    } else {
+      tooltipContent += `<div class="tooltip-content"><em>Loading data...</em></div>`;
+    }
+    
+    tooltip.innerHTML = tooltipContent;
+    tooltip.style.display = 'block';
+    positionTooltip(e, tooltip);
+  }, 6); // ~60fps
+}
+
+// Enhanced state info display with better error handling
+function displayStateInfo(stateCode) {
+  const data = stateData[stateCode];
+  const stateName = stateNames[stateCode] || stateCode;
+  
+  if (!data) {
+    stateInfoPanel.innerHTML = `
+      <div class="state-info">
+        <h2 class="state-name">${stateName}</h2>
+        <div class="loading-message">
+          <p> Loading state data...</p>
+          <p class="help-text">Click on another state or try again later.</p>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const winnerClass = data.lastElection.winner.includes('(D)') ? 'party-dem' : 'party-rep';
+
+  stateInfoPanel.innerHTML = `
+    <div class="state-info">
+      <h2 class="state-name">${data.name}</h2>
+      
+      <div class="data-section">
+        <h3>Leadership</h3>
+        <div class="data-grid">
+          <div class="data-item">
+            <span class="data-label">Governor:</span>
+            <span class="data-value ${data.governor.includes('(D)') ? 'party-dem' : 'party-rep'}">${data.governor}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">Senior Senator:</span>
+            <span class="data-value ${data.senators[0].includes('(D)') ? 'party-dem' : 'party-rep'}">${data.senators[0]}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">Junior Senator:</span>
+            <span class="data-value ${data.senators[1].includes('(D)') ? 'party-dem' : 'party-rep'}">${data.senators[1]}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">Electoral Votes:</span>
+            <span class="data-value electoral-votes">${data.electoralVotes}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="data-section">
+        <h3>2024 Election Results</h3>
+        <div class="data-grid">
+          <div class="data-item">
+            <span class="data-label">Winner:</span>
+            <span class="data-value ${winnerClass}">${data.lastElection.winner}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">Margin:</span>
+            <span class="data-value margin">${data.lastElection.margin}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">Voter Turnout:</span>
+            <span class="data-value turnout">${data.lastElection.turnout}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="data-section">
+        <h3>Campaign Finance</h3>
+        <div class="data-grid">
+          <div class="data-item">
+            <span class="data-label">Total Raised:</span>
+            <span class="data-value money">${data.campaignFinance.total}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">Top Donor Industry:</span>
+            <span class="data-value">${data.campaignFinance.topDonor}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">PAC Spending:</span>
+            <span class="data-value money">${data.campaignFinance.pacSpending}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Enhanced event listeners with better performance
+document.addEventListener('DOMContentLoaded', () => {
+  const statePaths = document.querySelectorAll('.state-path');
+  
+  statePaths.forEach(path => {
+    const stateCode = path.id;
+    
+    // Optimized hover events
+    path.addEventListener('mouseenter', (e) => {
+      path.classList.add('hovered');
+      updateTooltip(e, stateCode);
+    });
+    
+    path.addEventListener('mousemove', (e) => {
+      if (tooltip.style.display === 'block') {
+        positionTooltip(e, tooltip);
+      }
+    });
+    
+    path.addEventListener('mouseleave', () => {
+      path.classList.remove('hovered');
+      tooltip.style.display = 'none';
+      clearTimeout(tooltipTimeout);
+    });
+    
+    // Enhanced click handling
+    path.addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      // Remove active class from all states
+      statePaths.forEach(s => s.classList.remove('active'));
+      path.classList.add('active');
+      
+      // Hide tooltip on click
+      tooltip.style.display = 'none';
+      
+      // Display state info
+      displayStateInfo(stateCode);
+      
+      // Smooth scroll to info panel if it exists
+      if (stateInfoPanel && stateInfoPanel.offsetTop) {
+        stateInfoPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+  });
+});
+
+// Handle window resize for tooltip positioning
+window.addEventListener('resize', () => {
+  if (tooltip.style.display === 'block') {
+    tooltip.style.display = 'none';
+  }
+});
+
+// Keyboard navigation support
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    tooltip.style.display = 'none';
+    document.querySelectorAll('.state-path.active').forEach(path => {
+      path.classList.remove('active');
+    });
+  }
+});
