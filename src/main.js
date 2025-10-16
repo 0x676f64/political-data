@@ -919,6 +919,7 @@ function updateTooltip(e, stateCode) {
     
     tooltip.innerHTML = tooltipContent;
     tooltip.style.display = 'block';
+    tooltip.style.fontSize = '0.80rem';
     positionTooltip(e, tooltip);
   }, 6); // ~60fps
 }
@@ -1011,46 +1012,54 @@ function displayStateInfo(stateCode) {
 // Enhanced event listeners with better performance
 document.addEventListener('DOMContentLoaded', () => {
   const statePaths = document.querySelectorAll('.state-path');
-  
+
   statePaths.forEach(path => {
     const stateCode = path.id;
-    
+
     // Optimized hover events
     path.addEventListener('mouseenter', (e) => {
       path.classList.add('hovered');
       updateTooltip(e, stateCode);
     });
-    
+
     path.addEventListener('mousemove', (e) => {
       if (tooltip.style.display === 'block') {
         positionTooltip(e, tooltip);
       }
     });
-    
+
     path.addEventListener('mouseleave', () => {
       path.classList.remove('hovered');
       tooltip.style.display = 'none';
       clearTimeout(tooltipTimeout);
     });
-    
-    // Enhanced click handling
+
+    // ✅ Fixed click handling — toggle active on/off
     path.addEventListener('click', (e) => {
       e.preventDefault();
-      
+
+      const isActive = path.classList.contains('active');
+
       // Remove active class from all states
       statePaths.forEach(s => s.classList.remove('active'));
-      path.classList.add('active');
-      
-      // Hide tooltip on click
-      tooltip.style.display = 'none';
-      
-      // Display state info
-      displayStateInfo(stateCode);
-      
-      // Smooth scroll to info panel if it exists
-      if (stateInfoPanel && stateInfoPanel.offsetTop) {
-        stateInfoPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      if (!isActive) {
+        // Activate the clicked state
+        path.classList.add('active');
+        displayStateInfo(stateCode);
+
+        // Smooth scroll to info panel if it exists
+        if (stateInfoPanel && stateInfoPanel.offsetTop) {
+          stateInfoPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      } else {
+        // Deactivate (second click)
+        tooltip.style.display = 'none';
+        if (stateInfoPanel) stateInfoPanel.innerHTML = '';
       }
+
+      // Hide tooltip after clicking
+      tooltip.style.display = 'none';
     });
   });
 });
