@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="640" height="320" version="1.1" id="svg359213" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs id="defs359217"/>
+  <symbol id="seat" viewBox="-12 -12 24 24">
+    <path d="m-12,0c0,6.629 5.372,12 12,12c6.627,0 12,-5.371 12,-12c0,-6.626 -5.373,-12 -12,-12c-6.628,0 -12,5.374 -12,12z" id="svg_1"/>
+  </symbol>
+  <g id="g9">
+    <title id="title359097">background</title>
+    <rect x="-1" y="-1" width="642" height="322" id="canvas_background" fill="none"/>
+  </g>
+  <g id="g119">
+    <title id="title359101">Layer 1</title>
+    <g id="totals">
+      <g transform="matrix(1,0,0,1,320,100) " id="svg_2" font-family="sans-serif" font-size="65px" font-weight="bold">
+        <path d="m-30.10665,192.19737l-31.54786,0l0,-8.25195l9.96582,0l0,-24.97803l-9.96582,0l0,-7.7124q2.28516,0 4.37989,-0.25391q2.09472,-0.28564 3.49121,-0.95215q1.65039,-0.79345 2.47558,-2.06299q0.8252,-1.26953 0.95215,-3.17382l10.50537,0l0,39.1333l9.74366,0l0,8.25195z" id="path934"/>
+      </g>
+      <g transform="matrix(1,0,0,1,320,100) " id="total" font-family="sans-serif" font-size="65px" font-weight="bold">
+        <path d="m13.77867,168.81847q0,5.9668 -1.07911,10.6958q-1.0791,4.69727 -3.36425,7.7124q-2.34864,3.07862 -6.03028,4.66553q-3.68164,1.55518 -9.07714,1.55518q-5.3003,0 -9.04541,-1.58692q-3.74512,-1.58691 -6.06202,-4.69726q-2.34863,-3.11035 -3.39599,-7.71241q-1.04737,-4.63378 -1.04737,-10.60058q0,-6.15723 1.07911,-10.6958q1.0791,-4.53858 3.42773,-7.68067q2.34863,-3.11035 6.09375,-4.66552q3.74512,-1.55518 8.9502,-1.55518q5.42724,0 9.10888,1.61865q3.68164,1.58692 6.03028,4.76075q2.31689,3.11035 3.36425,7.68066q1.04737,4.53857 1.04737,10.50537zm-12.28272,0q0,-8.56934 -1.68213,-12.1875q-1.68213,-3.6499 -5.58593,-3.6499q-3.90381,0 -5.58594,3.6499q-1.68213,3.61816 -1.68213,12.25098q0,8.41064 1.71387,12.12402q1.71386,3.71338 5.5542,3.71338q3.84033,0 5.55419,-3.71338q1.71387,-3.71338 1.71387,-12.1875z" id="path937"/>
+        <path d="m59.98961,168.81847q0,5.9668 -1.0791,10.6958q-1.07911,4.69727 -3.36426,7.7124q-2.34863,3.07862 -6.03028,4.66553q-3.68164,1.55518 -9.07715,1.55518q-5.30029,0 -9.04541,-1.58692q-3.74511,-1.58691 -6.06201,-4.69726q-2.34863,-3.11035 -3.39599,-7.71241q-1.04737,-4.63378 -1.04737,-10.60058q0,-6.15723 1.0791,-10.6958q1.07911,-4.53858 3.42774,-7.68067q2.34863,-3.11035 6.09375,-4.66552q3.74512,-1.55518 8.95019,-1.55518q5.42725,0 9.10889,1.61865q3.68164,1.58692 6.03028,4.76075q2.31689,3.11035 3.36425,7.68066q1.04737,4.53857 1.04737,10.50537zm-12.28272,0q0,-8.56934 -1.68213,-12.1875q-1.68213,-3.6499 -5.58594,-3.6499q-3.9038,0 -5.58593,3.6499q-1.68213,3.61816 -1.68213,12.25098q0,8.41064 1.71386,12.12402q1.71387,3.71338 5.5542,3.71338q3.84034,0 5.5542,-3.71338q1.71387,-3.71338 1.71387,-12.1875z" id="path939"/>
+      </g>
+    </g>
+    <g fill="#E81B23" transform="rotate(180 467.1311340332031,160.52110290527344) " id="L" class="rep">
+      <use fill="#3333FF" id="L1" width="24" height="24" transform="matrix(1, 0, 0, 1, 584.3679809570312, 277.81015396118164)" xlink:href="#seat"/>
+      <use fill="#BBBBBB" id="L2" width="24" height="24" transform="matrix(1, 0, 0, 1, 583.8098754882812, 248.70663833618164)" style="fill:#e81b23;fill-opacity:1" xlink:href="#seat"/>
+      <use id="L3" width="24" height="24" transform="matrix(1, 0, 0, 1, 583.8098754882812, 219.12753677368164)" xlink:href="#seat"/>
+      <use id="L4" width="24" height="24" transform="matrix(1, 0, 0, 1, 584.4148864746094, 190.07484817504883)" xlink:href="#seat"/>
+      <use id="L5" width="24" height="24" transform="matrix(1, 0, 0, 1, 584.3079833984375, 161.37514114379883)" xlink:href="#seat"/>
+      <use id="L6" width="24" height="24" transform="matrix(1, 0, 0, 1, 547.2005615234375, 273.02695083618164)" xlink:href="#seat"/>
+      <use id="L7" width="24" height="24" transform="matrix(1, 0, 0, 1, 547.9671630859375, 243.50644302368164)" xlink:href="#seat"/>
+      <use id="L8" width="24" height="24" transform="matrix(1, 0, 0, 1, 549.2171630859375, 213.5509376525879)" xlink:href="#seat"/>
+      <use id="L9" width="24" height="24" transform="matrix(1, 0, 0, 1, 551.3728637695312, 184.14323806762695)" xlink:href="#seat"/>
+      <use id="L10" width="24" height="24" transform="matrix(1, 0, 0, 1, 553.3782653808594, 154.86784744262695)" xlink:href="#seat"/>
+      <use id="L11" width="24" height="24" transform="matrix(1, 0, 0, 1, 511.75567626953125, 263.4879493713379)" xlink:href="#seat"/>
+      <use id="L12" width="24" height="24" transform="matrix(1, 0, 0, 1, 513.9954681396484, 233.33163833618164)" xlink:href="#seat"/>
+      <use id="L13" width="24" height="24" transform="matrix(1, 0, 0, 1, 516.6834716796875, 202.76424026489258)" xlink:href="#seat"/>
+      <use id="L14" width="24" height="24" transform="matrix(1, 0, 0, 1, 520.6043701171875, 172.73933792114258)" xlink:href="#seat"/>
+      <use id="L15" width="24" height="24" transform="matrix(1, 0, 0, 1, 524.9719696044922, 142.71643447875977)" xlink:href="#seat"/>
+      <use id="L16" width="24" height="24" transform="matrix(1, 0, 0, 1, 478.36997985839844, 249.53284072875977)" xlink:href="#seat"/>
+      <use id="L17" width="24" height="24" transform="matrix(1, 0, 0, 1, 447.38067626953125, 231.4967384338379)" xlink:href="#seat"/>
+      <use id="L18" width="24" height="24" transform="matrix(1, 0, 0, 1, 482.2815704345703, 218.5714454650879)" xlink:href="#seat"/>
+      <use id="L19" width="24" height="24" transform="matrix(1, 0, 0, 1, 486.65907287597656, 187.21884536743164)" xlink:href="#seat"/>
+      <use id="L20" width="24" height="24" transform="matrix(1, 0, 0, 1, 492.6419677734375, 156.39613723754883)" xlink:href="#seat"/>
+      <use id="L21" width="24" height="24" transform="matrix(1, 0, 0, 1, 499.7151794433594, 125.54744338989258)" xlink:href="#seat"/>
+      <use id="L22" width="24" height="24" transform="matrix(1, 0, 0, 1, 419.1238708496094, 209.71643447875977)" xlink:href="#seat"/>
+      <use id="L23" width="24" height="24" transform="matrix(1, 0, 0, 1, 453.21026611328125, 199.6114387512207)" xlink:href="#seat"/>
+      <use id="L24" width="24" height="24" transform="matrix(1, 0, 0, 1, 393.93787384033203, 184.52943801879883)" xlink:href="#seat"/>
+      <use id="L25" width="24" height="24" transform="matrix(1, 0, 0, 1, 427.1687774658203, 176.8404426574707)" xlink:href="#seat"/>
+      <use id="L26" width="24" height="24" transform="matrix(1, 0, 0, 1, 459.5960693359375, 167.36633682250977)" xlink:href="#seat"/>
+      <use id="L27" width="24" height="24" transform="matrix(1, 0, 0, 1, 468.0188751220703, 135.64714431762695)" xlink:href="#seat"/>
+      <use id="L28" width="24" height="24" transform="matrix(1, 0, 0, 1, 435.94517517089844, 143.65784072875977)" xlink:href="#seat"/>
+      <use id="L29" width="24" height="24" transform="matrix(1, 0, 0, 1, 404.5427703857422, 150.64613723754883)" xlink:href="#seat"/>
+      <use id="L30" width="24" height="24" transform="matrix(1, 0, 0, 1, 372.15807342529297, 156.27304458618164)" xlink:href="#seat"/>
+      <use id="L31" width="24" height="24" transform="matrix(1, 0, 0, 1, 478.23468017578125, 103.98843765258789)" xlink:href="#seat"/>
+      <use id="L32" width="24" height="24" transform="matrix(1, 0, 0, 1, 447.2688751220703, 111.02554702758789)" xlink:href="#seat"/>
+      <use id="L33" width="24" height="24" transform="matrix(1, 0, 0, 1, 416.15757751464844, 116.54404067993164)" xlink:href="#seat"/>
+      <use id="L34" width="24" height="24" transform="matrix(1, 0, 0, 1, 385.7180709838867, 121.4156379699707)" xlink:href="#seat"/>
+      <use id="L35" width="24" height="24" transform="matrix(1, 0, 0, 1, 354.12237548828125, 125.28334426879883)" xlink:href="#seat"/>
+      <use id="L36" width="24" height="24" transform="matrix(1, 0, 0, 1, 461.1570739746094, 78.66463851928711)" xlink:href="#seat"/>
+      <use id="L37" width="24" height="24" transform="matrix(1, 0, 0, 1, 430.92417907714844, 83.06454086303711)" xlink:href="#seat"/>
+      <use id="L38" width="24" height="24" transform="matrix(1, 0, 0, 1, 400.6843719482422, 86.47664260864258)" xlink:href="#seat"/>
+      <use id="L39" width="24" height="24" transform="matrix(1, 0, 0, 1, 371.08087158203125, 89.5362434387207)" xlink:href="#seat"/>
+      <use id="L40" width="24" height="24" transform="matrix(1, 0, 0, 1, 340.16777420043945, 91.89714431762695)" xlink:href="#seat"/>
+      <use id="L41" width="24" height="24" transform="matrix(1, 0, 0, 1, 449.1091766357422, 50.203739166259766)" xlink:href="#seat"/>
+      <use id="L42" width="24" height="24" transform="matrix(1, 0, 0, 1, 419.51837158203125, 52.29654312133789)" xlink:href="#seat"/>
+      <use id="L44" width="24" height="24" transform="matrix(1, 0, 0, 1, 361.01697540283203, 55.39664077758789)" xlink:href="#seat"/>
+      <use id="L43" width="24" height="24" transform="matrix(1, 0, 0, 1, 389.9768753051758, 53.90633773803711)" xlink:href="#seat"/>
+      <use id="L45" width="24" height="24" transform="matrix(1, 0, 0, 1, 330.6301727294922, 56.45224380493164)" xlink:href="#seat"/>
+      <use id="L46" width="24" height="24" transform="matrix(1, 0, 0, 1, 442.7166748046875, 19.232040405273438)" xlink:href="#seat"/>
+      <use id="L47" width="24" height="24" transform="matrix(1, 0, 0, 1, 413.5847702026367, 19.255538940429688)" xlink:href="#seat"/>
+      <use id="L48" width="24" height="24" transform="matrix(1, 0, 0, 1, 384.4861755371094, 19.284839630126953)" xlink:href="#seat"/>
+      <use id="L49" width="24" height="24" transform="matrix(1, 0, 0, 1, 355.91297149658203, 19.383441925048828)" xlink:href="#seat"/>
+      <use id="L50" width="24" height="24" transform="matrix(1, 0, 0, 1, 325.84747314453125, 19.284839630126953)" xlink:href="#seat"/>
+    </g>
+    <g fill="#3333FF" transform="rotate(180 174.28326416015625,160.52110290527344) " id="R" class="dem">
+      <use id="R50" width="24" height="24" transform="matrix(-1, 0, 0, 1, 57.046875, 277.81015396118164)" xlink:href="#seat"/>
+      <use id="R49" width="24" height="24" transform="matrix(-1, 0, 0, 1, 57.6044921875, 248.70663833618164)" style="fill: rgb(153, 153, 255);" xlink:href="#seat"/>
+      <use fill="#9999FF" id="R48" width="24" height="24" transform="matrix(-1, 0, 0, 1, 57.6044921875, 219.12753677368164)" xlink:href="#seat"/>
+      <use fill="#9999FF" id="R47" class="ind-dem" width="24" height="24" transform="matrix(-1, 0, 0, 1, 56.999969482421875, 190.07484817504883)" xlink:href="#seat"/>
+      <use fill="#9999FF" id="R46" class="ind-dem" width="24" height="24" transform="matrix(-1, 0, 0, 1, 57.106475830078125, 161.37514114379883)" xlink:href="#seat"/>
+      <use id="R45" width="24" height="24" transform="matrix(-1, 0, 0, 1, 94.21389770507812, 273.02695083618164)" xlink:href="#seat"/>
+      <use id="R44" width="24" height="24" transform="matrix(-1, 0, 0, 1, 93.44729614257812, 243.50644302368164)" xlink:href="#seat"/>
+      <use id="R43" width="24" height="24" transform="matrix(-1, 0, 0, 1, 92.19729614257812, 213.5509376525879)" xlink:href="#seat"/>
+      <use id="R42" width="24" height="24" transform="matrix(-1, 0, 0, 1, 90.0419921875, 184.14323806762695)" xlink:href="#seat"/>
+      <use id="R41" width="24" height="24" transform="matrix(-1, 0, 0, 1, 88.03619384765625, 154.86784744262695)" xlink:href="#seat"/>
+      <use id="R40" width="24" height="24" transform="matrix(-1, 0, 0, 1, 129.6591796875, 263.4879493713379)" xlink:href="#seat"/>
+      <use id="R39" width="24" height="24" transform="matrix(-1, 0, 0, 1, 127.41897583007812, 233.33163833618164)" xlink:href="#seat"/>
+      <use id="R38" width="24" height="24" transform="matrix(-1, 0, 0, 1, 124.73147583007812, 202.76424026489258)" xlink:href="#seat"/>
+      <use id="R37" width="24" height="24" transform="matrix(-1, 0, 0, 1, 120.81057739257812, 172.73933792114258)" xlink:href="#seat"/>
+      <use id="R36" width="24" height="24" transform="matrix(-1, 0, 0, 1, 116.4423828125, 142.71643447875977)" xlink:href="#seat"/>
+      <use id="R35" width="24" height="24" transform="matrix(-1, 0, 0, 1, 163.04498291015625, 249.53284072875977)" xlink:href="#seat"/>
+      <use id="R34" width="24" height="24" transform="matrix(-1, 0, 0, 1, 194.0341796875, 231.4967384338379)" xlink:href="#seat"/>
+      <use id="R33" width="24" height="24" transform="matrix(-1, 0, 0, 1, 159.13287353515625, 218.5714454650879)" xlink:href="#seat"/>
+      <use id="R32" width="24" height="24" transform="matrix(-1, 0, 0, 1, 154.7548828125, 187.21884536743164)" xlink:href="#seat"/>
+      <use id="R31" width="24" height="24" transform="matrix(-1, 0, 0, 1, 148.77249145507812, 156.39613723754883)" xlink:href="#seat"/>
+      <use id="R30" width="24" height="24" transform="matrix(-1, 0, 0, 1, 141.69927978515625, 125.54744338989258)" xlink:href="#seat"/>
+      <use id="R29" width="24" height="24" transform="matrix(-1, 0, 0, 1, 222.29006958007812, 209.71643447875977)" xlink:href="#seat"/>
+      <use id="R28" width="24" height="24" transform="matrix(-1, 0, 0, 1, 188.20407104492188, 199.6114387512207)" xlink:href="#seat"/>
+      <use id="R27" width="24" height="24" transform="matrix(-1, 0, 0, 1, 247.47659301757812, 184.52943801879883)" xlink:href="#seat"/>
+      <use id="R26" width="24" height="24" transform="matrix(-1, 0, 0, 1, 214.24517822265625, 176.8404426574707)" xlink:href="#seat"/>
+      <use id="R25" width="24" height="24" transform="matrix(-1, 0, 0, 1, 181.81838989257812, 167.36633682250977)" xlink:href="#seat"/>
+      <use id="R24" width="24" height="24" transform="matrix(-1, 0, 0, 1, 173.39556884765625, 135.64714431762695)" xlink:href="#seat"/>
+      <use id="R23" width="24" height="24" transform="matrix(-1, 0, 0, 1, 205.46978759765625, 143.65784072875977)" xlink:href="#seat"/>
+      <use id="R22" width="24" height="24" transform="matrix(-1, 0, 0, 1, 236.87106323242188, 150.64613723754883)" xlink:href="#seat"/>
+      <use id="R21" width="24" height="24" transform="matrix(-1, 0, 0, 1, 269.2558898925781, 156.27304458618164)" xlink:href="#seat"/>
+      <use id="R20" width="24" height="24" transform="matrix(-1, 0, 0, 1, 163.1796875, 103.98843765258789)" xlink:href="#seat"/>
+      <use id="R19" width="24" height="24" transform="matrix(-1, 0, 0, 1, 194.14556884765625, 111.02554702758789)" xlink:href="#seat"/>
+      <use id="R18" width="24" height="24" transform="matrix(-1, 0, 0, 1, 225.25689697265625, 116.54404067993164)" xlink:href="#seat"/>
+      <use id="R17" width="24" height="24" transform="matrix(-1, 0, 0, 1, 255.69625854492188, 121.4156379699707)" xlink:href="#seat"/>
+      <use id="R16" width="24" height="24" transform="matrix(-1, 0, 0, 1, 287.2911071777344, 125.28334426879883)" xlink:href="#seat"/>
+      <use id="R15" width="24" height="24" transform="matrix(-1, 0, 0, 1, 180.25689697265625, 78.66514205932617)" xlink:href="#seat"/>
+      <use id="R14" width="24" height="24" transform="matrix(-1, 0, 0, 1, 210.49029541015625, 83.06454086303711)" xlink:href="#seat"/>
+      <use id="R13" width="24" height="24" transform="matrix(-1, 0, 0, 1, 240.72946166992188, 86.47664260864258)" xlink:href="#seat"/>
+      <use id="R12" width="24" height="24" transform="matrix(-1, 0, 0, 1, 270.3339538574219, 89.5362434387207)" xlink:href="#seat"/>
+      <use id="R11" width="24" height="24" transform="matrix(-1, 0, 0, 1, 301.2460632324219, 91.89714431762695)" xlink:href="#seat"/>
+      <use id="R10" width="24" height="24" transform="matrix(-1, 0, 0, 1, 192.3046875, 50.203739166259766)" xlink:href="#seat"/>
+      <use id="R9" width="24" height="24" transform="matrix(-1, 0, 0, 1, 221.896484375, 52.29654312133789)" xlink:href="#seat"/>
+      <use id="R8" width="24" height="24" transform="matrix(-1, 0, 0, 1, 251.43746948242188, 53.90633773803711)" xlink:href="#seat"/>
+      <use id="R7" width="24" height="24" transform="matrix(-1, 0, 0, 1, 280.3974914550781, 55.39664077758789)" xlink:href="#seat"/>
+      <use id="R6" width="24" height="24" transform="matrix(-1, 0, 0, 1, 310.7832946777344, 56.45224380493164)" xlink:href="#seat"/>
+      <use id="R5" width="24" height="24" transform="matrix(-1, 0, 0, 1, 198.69729614257812, 19.232040405273438)" xlink:href="#seat"/>
+      <use id="R4" width="24" height="24" transform="matrix(-1, 0, 0, 1, 227.83010864257812, 19.255538940429688)" xlink:href="#seat"/>
+      <use id="R3" width="24" height="24" transform="matrix(-1, 0, 0, 1, 256.9277648925781, 19.284839630126953)" xlink:href="#seat"/>
+      <use id="R2" width="24" height="24" transform="matrix(-1, 0, 0, 1, 285.5019836425781, 19.383441925048828)" xlink:href="#seat"/>
+      <use id="R1" width="24" height="24" transform="matrix(-1, 0, 0, 1, 315.5664978027344, 19.284839630126953)" xlink:href="#seat"/>
+    </g>
+    <g id="svg_3"/>
+  </g>
+</svg>
