@@ -84,7 +84,7 @@ const stateData = {
   CA: {
     name: 'California',
     governor: 'Gavin Newsom (D)',
-    senators: ['Alex Padilla (D)', 'Laphonza Butler (D)'], // Note: Feinstein passed away in 2023
+    senators: ['Alex Padilla (D)', 'Laphonza Butler (D)'],
     electoralVotes: 54,
     lastElection: {
       winner: 'Harris (D)',
@@ -819,49 +819,338 @@ const stateData = {
   }
 };
 
-// Helper function to display all state data
-function displayAllStates() {
-  Object.keys(stateData).forEach(state => {
-    const data = stateData[state];
-    console.log(`\n${data.name} (${state}):`);
-    console.log(`  Governor: ${data.governor}`);
-    console.log(`  Senators: ${data.senators.join(', ')}`);
-    console.log(`  Electoral Votes: ${data.electoralVotes}`);
-    console.log(`  2024 Election Winner: ${data.lastElection.winner}`);
-    console.log(`  Margin: ${data.lastElection.margin}`);
-    console.log(`  Turnout: ${data.lastElection.turnout}`);
-    console.log(`  Total Campaign Finance: ${data.campaignFinance.total}`);
-    console.log(`  Top Donor: ${data.campaignFinance.topDonor}`);
-    console.log(`  PAC Spending: ${data.campaignFinance.pacSpending}`);
+// County map state management
+const countyMapState = {
+  isLoaded: false,
+  svgDoc: null,
+  currentState: null,
+  originalMapContainer: null
+};
+
+// Load the county SVG file once
+async function loadCountySVG() {
+  if (countyMapState.isLoaded) return countyMapState.svgDoc;
+  
+  try {
+    const response = await fetch('assets/svg-items/Usa_counties_large.svg');
+    const svgText = await response.text();
+    const parser = new DOMParser();
+    countyMapState.svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
+    countyMapState.isLoaded = true;
+    return countyMapState.svgDoc;
+  } catch (error) {
+    console.error('Failed to load county map:', error);
+    return null;
+  }
+}
+
+// Extract and display counties for a specific state
+async function showCountyMap(stateCode) {
+  const stateName = stateNames[stateCode];
+  if (!stateName) return;
+
+  // Load county SVG if not already loaded
+  const countyDoc = await loadCountySVG();
+  if (!countyDoc) {
+    console.error('County map not available');
+    return;
+  }
+
+  // Convert state name to SVG ID format (spaces to underscores)
+  const stateGroupId = stateName.replace(/ /g, '_');
+  
+  // Find the state group in the county SVG
+  const stateGroup = countyDoc.getElementById(stateGroupId);
+  if (!stateGroup) {
+    console.error(`No county data found for ${stateName} (looked for ID: ${stateGroupId})`);
+    return;
+  }
+
+  // Store reference to original map container
+  const mapContainer = document.querySelector('.map-container');
+  if (!countyMapState.originalMapContainer) {
+    countyMapState.originalMapContainer = mapContainer.innerHTML;
+  }
+
+  // Create county map display
+  createCountyMapDisplay(mapContainer, stateGroup, stateCode, stateName);
+}
+
+// Create the county map display
+function createCountyMapDisplay(container, stateGroup, stateCode, stateName) {
+  // Get bounding box of the state group
+  const bbox = stateGroup.getBBox();
+  const padding = 20;
+
+  // Create new SVG for county display
+  const countyMapHTML = `
+    <div class="county-map-wrapper">
+      <div class="county-map-header">
+        <button id="back-to-states" class="back-button">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M15 10H5M5 10L10 15M5 10L10 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Back
+        </button>
+      </div>
+      <svg id="county-map" class="county-svg" 
+           viewBox="${bbox.x - padding} ${bbox.y - padding} ${bbox.width + padding * 2} ${bbox.height + padding * 2}"
+           preserveAspectRatio="xMidYMid meet">
+        ${stateGroup.outerHTML}
+      </svg>
+      <div id="county-tooltip" class="county-tooltip"></div>
+    </div>
+  `;
+
+  // Replace map container content
+  container.innerHTML = countyMapHTML;
+
+  // Set up county interactivity
+  setupCountyInteractions(stateCode);
+
+  // Add back button handler
+  document.getElementById('back-to-states').addEventListener('click', returnToStatesMap);
+
+  // Update state info panel
+  updateStateInfoForCounties(stateCode, stateName);
+}
+
+// Set up hover and click interactions for counties
+function setupCountyInteractions(stateCode) {
+  const countyPaths = document.querySelectorAll('#county-map path');
+  const countyTooltip = document.getElementById('county-tooltip');
+
+  countyPaths.forEach(path => {
+    const countyId = path.id;
+    const countyTitle = path.querySelector('title')?.textContent || 'Unknown County';
+
+    // Hover effects
+    path.addEventListener('mouseenter', (e) => {
+      path.style.fill = '#4A90E2';
+      path.style.stroke = '#2171b5';
+      path.style.strokeWidth = '2';
+      
+      countyTooltip.innerHTML = `
+        <div class="tooltip-header">${countyTitle}</div>
+        <div class="tooltip-content">
+          <div class="tooltip-row">
+            <span class="tooltip-label">County ID:</span>
+            <span class="tooltip-value">${countyId}</span>
+          </div>
+        </div>
+      `;
+      countyTooltip.style.display = 'block';
+      positionTooltip(e, countyTooltip);
+    });
+
+    path.addEventListener('mousemove', (e) => {
+      positionTooltip(e, countyTooltip);
+    });
+
+    path.addEventListener('mouseleave', () => {
+      path.style.fill = '';
+      path.style.stroke = '';
+      path.style.strokeWidth = '';
+      countyTooltip.style.display = 'none';
+    });
+
+    // Click to show county details
+    path.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showCountyDetails(countyTitle, countyId, stateCode);
+    });
   });
 }
 
-// Helper function to get data for a specific state
-function getStateData(stateCode) {
-  return stateData[stateCode.toUpperCase()];
-}
-
-// Helper function to get summary statistics
-function getSummaryStats() {
-  const totalStates = Object.keys(stateData).length;
-  const republicanGovernors = Object.values(stateData).filter(state => state.governor.includes('(R)')).length;
-  const democraticGovernors = Object.values(stateData).filter(state => state.governor.includes('(D)')).length;
-  const totalElectoralVotes = Object.values(stateData).reduce((sum, state) => sum + state.electoralVotes, 0);
-  const trumpStates = Object.values(stateData).filter(state => state.lastElection.winner.includes('Trump')).length;
-  const harrisStates = Object.values(stateData).filter(state => state.lastElection.winner.includes('Harris')).length;
+// Show detailed county information
+function showCountyDetails(countyName, countyId, stateCode) {
+  const infoPanel = document.getElementById('state-info');
   
-  return {
-    totalStates,
-    republicanGovernors,
-    democraticGovernors,
-    totalElectoralVotes,
-    trumpStates,
-    harrisStates
-  };
+  infoPanel.innerHTML = `
+    <div class="county-info">
+      <h2 class="county-name">${countyName}</h2>
+      <div class="data-section">
+        <h3>County Information</h3>
+        <div class="data-grid">
+          <div class="data-item">
+            <span class="data-label">State:</span>
+            <span class="data-value">${stateNames[stateCode]}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">FIPS Code:</span>
+            <span class="data-value">${countyId}</span>
+          </div>
+        </div>
+      </div>
+      <div class="data-section">
+        <p class="info-message">
+          <em>Additional county data can be loaded here from your data source.</em>
+        </p>
+      </div>
+    </div>
+  `;
 }
 
-// Example usage
-console.log
+// Update state info panel for county view
+function updateStateInfoForCounties(stateCode, stateName) {
+  const infoPanel = document.getElementById('state-info');
+  const data = stateData[stateCode];
+
+  infoPanel.innerHTML = `
+    <div class="state-info county-view">
+      <h2 class="state-name">${stateName}</h2>
+      <div class="data-section">
+        <h3>State Information</h3>
+        <div class="data-grid">
+          <div class="data-item">
+            <span class="data-label">Governor:</span>
+            <span class="data-value">${data.governor}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">2024 Winner:</span>
+            <span class="data-value">${data.lastElection.winner}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">Electoral Votes:</span>
+            <span class="data-value">${data.electoralVotes}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Return to the original states map
+function returnToStatesMap() {
+  const mapContainer = document.querySelector('.map-container');
+  
+  if (countyMapState.originalMapContainer) {
+    // Add fade-out animation to county map
+    mapContainer.style.opacity = '0';
+    mapContainer.style.transition = 'opacity 0.3s ease-out';
+    
+    setTimeout(() => {
+      // Restore original map
+      mapContainer.innerHTML = countyMapState.originalMapContainer;
+      
+      // Fade in the states map
+      mapContainer.style.opacity = '0';
+      setTimeout(() => {
+        mapContainer.style.opacity = '1';
+        mapContainer.style.transition = 'opacity 0.4s ease-in';
+      }, 50);
+      
+      // Re-initialize state interactions by calling the setup function
+      initializeStateInteractions();
+    }, 300);
+  }
+  
+  // Clear state info panel with fade effect
+  const stateInfoPanel = document.getElementById('state-info');
+  stateInfoPanel.style.transition = 'opacity 0.3s ease-out';
+  stateInfoPanel.style.opacity = '0';
+  
+  setTimeout(() => {
+    stateInfoPanel.innerHTML = '<div class="no-selection"></div>';
+    stateInfoPanel.style.opacity = '1';
+  }, 300);
+  
+  countyMapState.currentState = null;
+}
+
+// Extract state interaction setup into a reusable function
+function initializeStateInteractions() {
+  const statePaths = document.querySelectorAll('.state-path');
+  const tooltipElement = document.getElementById('tooltip');
+  const stateInfoPanel = document.getElementById('state-info');
+
+  if (!tooltipElement) {
+    console.error('Tooltip element not found!');
+    return;
+  }
+
+  statePaths.forEach(path => {
+    const stateCode = path.id;
+
+    // Optimized hover events
+    path.addEventListener('mouseenter', (e) => {
+      path.classList.add('hovered');
+      updateTooltip(e, stateCode);
+    });
+
+    path.addEventListener('mousemove', (e) => {
+      if (tooltipElement.style.display === 'block') {
+        positionTooltip(e, tooltipElement);
+      }
+    });
+
+    path.addEventListener('mouseleave', () => {
+      path.classList.remove('hovered');
+      tooltipElement.style.display = 'none';
+      clearTimeout(tooltipTimeout);
+    });
+
+    // Click handling
+    path.addEventListener('click', (e) => {
+      e.preventDefault();
+
+      const isActive = path.classList.contains('active');
+
+      // Remove active class from all states
+      statePaths.forEach(s => s.classList.remove('active'));
+
+      if (!isActive) {
+        // Activate the clicked state
+        path.classList.add('active');
+        displayStateInfo(stateCode);
+
+        // Smooth scroll to info panel if it exists
+        if (stateInfoPanel && stateInfoPanel.offsetTop) {
+          stateInfoPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      } else {
+        // Deactivate (second click)
+        tooltipElement.style.display = 'none';
+        if (stateInfoPanel) stateInfoPanel.innerHTML = '';
+      }
+
+      // Hide tooltip after clicking
+      tooltipElement.style.display = 'none';
+    });
+  });
+}
+
+// Enhanced state click handler - automatically shows county map
+function enhancedDisplayStateInfo(stateCode) {
+  const data = stateData[stateCode];
+  const stateName = stateNames[stateCode] || stateCode;
+  const stateInfoPanel = document.getElementById('state-info');
+  
+  if (!data) {
+    stateInfoPanel.innerHTML = `
+      <div class="state-info">
+        <h2 class="state-name">${stateName}</h2>
+        <div class="loading-message">
+          <p>Loading state data...</p>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  // Automatically trigger county map display
+  showCountyMap(stateCode);
+}
+
+// Replace the original displayStateInfo with the enhanced version
+window.displayStateInfo = enhancedDisplayStateInfo;
+
+// Export functions for use in other modules if needed
+window.countyMapFunctions = {
+  showCountyMap,
+  returnToStatesMap,
+  loadCountySVG
+};
 
 // Improved tooltip positioning function
 function positionTooltip(e, tooltip) {
@@ -873,19 +1162,18 @@ function positionTooltip(e, tooltip) {
   let left = e.clientX - tooltipRect.width - margin;
   let top = e.clientY - tooltipRect.height / 2;
 
-  // DEBUG LOG
-  console.log("left before fallback:", left, "tooltip width:", tooltipRect.width, "cursor X:", e.clientX);
-
   tooltip.style.left = `${left}px`;
   tooltip.style.top = `${top}px`;
 }
-
 
 // Debounced tooltip update for better performance
 let tooltipTimeout;
 function updateTooltip(e, stateCode) {
   clearTimeout(tooltipTimeout);
   tooltipTimeout = setTimeout(() => {
+    const tooltipElement = document.getElementById('tooltip');
+    if (!tooltipElement) return;
+    
     const data = stateData[stateCode];
     const stateName = stateNames[stateCode] || stateCode;
     
@@ -917,11 +1205,11 @@ function updateTooltip(e, stateCode) {
       tooltipContent += `<div class="tooltip-content"><em>Loading data...</em></div>`;
     }
     
-    tooltip.innerHTML = tooltipContent;
-    tooltip.style.display = 'block';
-    tooltip.style.fontSize = '0.80rem';
-    positionTooltip(e, tooltip);
-  }, 6); // ~60fps
+    tooltipElement.innerHTML = tooltipContent;
+    tooltipElement.style.display = 'block';
+    tooltipElement.style.fontSize = '0.80rem';
+    positionTooltip(e, tooltipElement);
+  }, 6);
 }
 
 // Enhanced state info display with better error handling
@@ -934,7 +1222,7 @@ function displayStateInfo(stateCode) {
       <div class="state-info">
         <h2 class="state-name">${stateName}</h2>
         <div class="loading-message">
-          <p> Loading state data...</p>
+          <p>Loading state data...</p>
           <p class="help-text">Click on another state or try again later.</p>
         </div>
       </div>
@@ -1011,70 +1299,24 @@ function displayStateInfo(stateCode) {
 
 // Enhanced event listeners with better performance
 document.addEventListener('DOMContentLoaded', () => {
-  const statePaths = document.querySelectorAll('.state-path');
-
-  statePaths.forEach(path => {
-    const stateCode = path.id;
-
-    // Optimized hover events
-    path.addEventListener('mouseenter', (e) => {
-      path.classList.add('hovered');
-      updateTooltip(e, stateCode);
-    });
-
-    path.addEventListener('mousemove', (e) => {
-      if (tooltip.style.display === 'block') {
-        positionTooltip(e, tooltip);
-      }
-    });
-
-    path.addEventListener('mouseleave', () => {
-      path.classList.remove('hovered');
-      tooltip.style.display = 'none';
-      clearTimeout(tooltipTimeout);
-    });
-
-    // ✅ Fixed click handling — toggle active on/off
-    path.addEventListener('click', (e) => {
-      e.preventDefault();
-
-      const isActive = path.classList.contains('active');
-
-      // Remove active class from all states
-      statePaths.forEach(s => s.classList.remove('active'));
-
-      if (!isActive) {
-        // Activate the clicked state
-        path.classList.add('active');
-        displayStateInfo(stateCode);
-
-        // Smooth scroll to info panel if it exists
-        if (stateInfoPanel && stateInfoPanel.offsetTop) {
-          stateInfoPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-      } else {
-        // Deactivate (second click)
-        tooltip.style.display = 'none';
-        if (stateInfoPanel) stateInfoPanel.innerHTML = '';
-      }
-
-      // Hide tooltip after clicking
-      tooltip.style.display = 'none';
-    });
-  });
+  initializeStateInteractions();
 });
 
 // Handle window resize for tooltip positioning
 window.addEventListener('resize', () => {
-  if (tooltip.style.display === 'block') {
-    tooltip.style.display = 'none';
+  const tooltipElement = document.getElementById('tooltip');
+  if (tooltipElement && tooltipElement.style.display === 'block') {
+    tooltipElement.style.display = 'none';
   }
 });
 
 // Keyboard navigation support
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    tooltip.style.display = 'none';
+    const tooltipElement = document.getElementById('tooltip');
+    if (tooltipElement) {
+      tooltipElement.style.display = 'none';
+    }
     document.querySelectorAll('.state-path.active').forEach(path => {
       path.classList.remove('active');
     });
