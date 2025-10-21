@@ -304,112 +304,110 @@
             font-size: 1.2rem;
         }
 
-        /* County Map Styles - Add to your style.css */
+        /* County map wrapper */
+        .county-map-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
 
-/* County map wrapper */
-.county-map-wrapper {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
+        /* County map header */
+        .county-map-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 1rem;
+        }
 
-/* County map header */
-.county-map-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 1.5rem;
-  border-radius: 8px 8px 0 0;
-  margin-bottom: 1rem;
-}
+        .county-map-header h2 {
+            margin: 0;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
 
-.county-map-header h2 {
-  margin: 0;
-  color: white;
-  font-size: 1.5rem;
-  font-weight: 600;
-}
+        /* Back button */
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
 
-/* Back button */
-.back-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: rgba(255, 255, 255, 0.2);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  color: white;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateX(-3px);
+        }
 
-.back-button:hover {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: translateX(-3px);
-}
+        .back-button svg {
+            transition: transform 0.3s ease;
+        }
 
-.back-button svg {
-  transition: transform 0.3s ease;
-}
+        .back-button:hover svg {
+            transform: translateX(-3px);
+        }
 
-.back-button:hover svg {
-  transform: translateX(-3px);
-}
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+        .county-map-header {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-start;
+        }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .county-map-header {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: flex-start;
-  }
+        .county-map-header h2 {
+            font-size: 1.25rem;
+        }
 
-  .county-map-header h2 {
-    font-size: 1.25rem;
-  }
+        .back-button {
+            width: 100%;
+            justify-content: center;
+        }
 
-  .back-button {
-    width: 100%;
-    justify-content: center;
-  }
+        .view-counties-btn {
+            font-size: 0.9rem;
+            padding: 0.6rem 0.8rem;
+        }
+        }
 
-  .view-counties-btn {
-    font-size: 0.9rem;
-    padding: 0.6rem 0.8rem;
-  }
-}
+        /* Animation for transitioning to county view */
+        @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+        }
 
-/* Animation for transitioning to county view */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
+        .county-map-wrapper {
+        animation: fadeIn 0.3s ease-out;
+        }
 
-.county-map-wrapper {
-  animation: fadeIn 0.3s ease-out;
-}
-
-/* Loading state */
-.county-loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 400px;
-  font-size: 1.2rem;
-  color: #666;
-}
+        /* Loading state */
+        .county-loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 400px;
+            font-size: 1.2rem;
+            color: #666;
+        }
 
         /* Animations */
         @keyframes fadeInUp {
