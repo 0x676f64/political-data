@@ -832,14 +832,29 @@ async function loadCountySVG() {
   if (countyMapState.isLoaded) return countyMapState.svgDoc;
   
   try {
+    // Adjust this path to match your actual file location
     const response = await fetch('assets/svg-items/Usa_counties_large.svg');
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
     const svgText = await response.text();
     const parser = new DOMParser();
-    countyMapState.svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
+    const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
+    
+    // Check for parsing errors
+    const parserError = svgDoc.querySelector('parsererror');
+    if (parserError) {
+      throw new Error('SVG parsing error: ' + parserError.textContent);
+    }
+    
+    countyMapState.svgDoc = svgDoc;
     countyMapState.isLoaded = true;
     return countyMapState.svgDoc;
   } catch (error) {
     console.error('Failed to load county map:', error);
+    alert('County map file not found. Please ensure Usa_counties_large.svg exists in assets/svg-items/ folder.');
     return null;
   }
 }
@@ -880,7 +895,7 @@ async function showCountyMap(stateCode) {
 function createCountyMapDisplay(container, stateGroup, stateCode, stateName) {
   // Get bounding box of the state group
   const bbox = stateGroup.getBBox();
-  const padding = 20;
+  const padding = 10;
 
   // Create new SVG for county display
   const countyMapHTML = `
@@ -894,7 +909,7 @@ function createCountyMapDisplay(container, stateGroup, stateCode, stateName) {
         </button>
       </div>
       <svg id="county-map" class="county-svg" 
-           viewBox="${bbox.x - padding} ${bbox.y - padding} ${bbox.width + padding * 2} ${bbox.height + padding * 2}"
+           viewBox="0 0 1000 600"
            preserveAspectRatio="xMidYMid meet">
         ${stateGroup.outerHTML}
       </svg>
