@@ -891,25 +891,67 @@ async function showCountyMap(stateCode) {
   createCountyMapDisplay(mapContainer, stateGroup, stateCode, stateName);
 }
 
-// Create the county map display
 function createCountyMapDisplay(container, stateGroup, stateCode, stateName) {
-  // Get bounding box of the state group
-  const bbox = stateGroup.getBBox();
-  const padding = 10;
+  // Clone the state group to avoid modifying the original
+  const stateClone = stateGroup.cloneNode(true);
+  
+  // Create a temporary SVG to get proper bounding box
+  const tempSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  tempSvg.style.position = 'absolute';
+  tempSvg.style.visibility = 'visible';
+  tempSvg.style.width = '10rem';
+  tempSvg.style.height = '10rem';
+  document.body.appendChild(tempSvg);
+  tempSvg.appendChild(stateClone);
+  
+  // Get the bounding box with the element in the DOM
+  const bbox = stateClone.getBBox();
+  
+  // Remove temporary SVG
+  document.body.removeChild(tempSvg);
 
+  // Get container size (used to normalize state size)
+  const containerRect = container.getBoundingClientRect();
+
+  // Target fill ratio (percentage of container that the state should occupy)
+  const fillPercentage = 0.50;
+
+  // Calculate how much to scale this state relative to the container size
+  const scaleX = (containerRect.width * fillPercentage) / bbox.width;
+  const scaleY = (containerRect.height * fillPercentage) / bbox.height;
+
+  // Choose the smaller of the two so it fits fully in both directions
+  const scaleFactor = Math.min(scaleX, scaleY);
+
+  // Calculate new viewBox dimensions based on scaled size
+  const viewBoxWidth = bbox.width / scaleFactor;
+  const viewBoxHeight = bbox.height / scaleFactor;
+
+  // Center the state in the viewBox
+  const viewBoxX = bbox.x - (viewBoxWidth - bbox.width) / 2;
+  const viewBoxY = bbox.y - (viewBoxHeight - bbox.height) / 2;
+
+  console.log('BBox:', bbox);
+  console.log('Scale factor:', scaleFactor);
+  console.log('ViewBox:', viewBoxX, viewBoxY, viewBoxWidth, viewBoxHeight);
+  
   // Create new SVG for county display
   const countyMapHTML = `
     <div class="county-map-wrapper">
       <div class="county-map-header">
         <button id="back-to-states" class="back-button">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M15 10H5M5 10L10 15M5 10L10 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M15 10H5M5 10L10 15M5 10L10 5"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"/>
           </svg>
           Back
         </button>
       </div>
-      <svg id="county-map" class="county-svg" 
-           viewBox="0 0 1000 600"
+      <svg id="county-map" class="county-svg"
+           viewBox="${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}"
            preserveAspectRatio="xMidYMid meet">
         ${stateGroup.outerHTML}
       </svg>
@@ -917,18 +959,13 @@ function createCountyMapDisplay(container, stateGroup, stateCode, stateName) {
     </div>
   `;
 
-  // Replace map container content
+  // Rest of function stays the same...
   container.innerHTML = countyMapHTML;
-
-  // Set up county interactivity
   setupCountyInteractions(stateCode);
-
-  // Add back button handler
   document.getElementById('back-to-states').addEventListener('click', returnToStatesMap);
-
-  // Update state info panel
   updateStateInfoForCounties(stateCode, stateName);
 }
+
 
 // Set up hover and click interactions for counties
 function setupCountyInteractions(stateCode) {
