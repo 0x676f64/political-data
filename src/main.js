@@ -894,59 +894,59 @@ async function showCountyMap(stateCode) {
 // State-specific sizing configuration
 const STATE_SIZE_CONFIG = {
   // Large states that need to be bigger
-  'TX': { scale: 1.8, padding: 0.05 },  // Texas
-  'CA': { scale: 1.6, padding: 0.05 },  // California
-  'MT': { scale: 1.6, padding: 0.05 },  // Montana
-  'AK': { scale: 2.0, padding: 0.05 },  // Alaska
-  'NM': { scale: 1.5, padding: 0.05 },  // New Mexico
-  'AZ': { scale: 1.5, padding: 0.05 },  // Arizona
-  'NV': { scale: 1.5, padding: 0.05 },  // Nevada
-  'CO': { scale: 1.4, padding: 0.05 },  // Colorado
-  'OR': { scale: 1.5, padding: 0.05 },  // Oregon
-  'WY': { scale: 1.4, padding: 0.05 },  // Wyoming
-  'MI': { scale: 1.4, padding: 0.05 },  // Michigan
-  'MN': { scale: 1.4, padding: 0.05 },  // Minnesota
-  'UT': { scale: 1.4, padding: 0.05 },  // Utah
-  'ID': { scale: 1.4, padding: 0.05 },  // Idaho
-  'KS': { scale: 1.3, padding: 0.05 },  // Kansas
-  'NE': { scale: 1.3, padding: 0.05 },  // Nebraska
-  'SD': { scale: 1.3, padding: 0.05 },  // South Dakota
-  'ND': { scale: 1.3, padding: 0.05 },  // North Dakota
-  'OK': { scale: 1.3, padding: 0.05 },  // Oklahoma
-  'MO': { scale: 1.3, padding: 0.05 },  // Missouri
-  'FL': { scale: 1.4, padding: 0.05 },  // Florida
-  'WI': { scale: 1.3, padding: 0.05 },  // Wisconsin
-  'GA': { scale: 1.3, padding: 0.05 },  // Georgia
-  'IL': { scale: 1.3, padding: 0.05 },  // Illinois
-  'IA': { scale: 1.2, padding: 0.05 },  // Iowa
-  'NY': { scale: 1.2, padding: 0.05 },  // New York
-  'NC': { scale: 1.2, padding: 0.05 },  // North Carolina
-  'AR': { scale: 1.2, padding: 0.05 },  // Arkansas
-  'AL': { scale: 1.2, padding: 0.05 },  // Alabama
-  'LA': { scale: 1.2, padding: 0.05 },  // Louisiana
-  'MS': { scale: 1.2, padding: 0.05 },  // Mississippi
-  'PA': { scale: 1.2, padding: 0.05 },  // Pennsylvania
-  'OH': { scale: 1.2, padding: 0.05 },  // Ohio
-  'VA': { scale: 1.1, padding: 0.08 },  // Virginia
-  'TN': { scale: 1.1, padding: 0.08 },  // Tennessee
-  'KY': { scale: 1.1, padding: 0.08 },  // Kentucky
-  'IN': { scale: 1.0, padding: 0.08 },  // Indiana
-  'ME': { scale: 1.0, padding: 0.08 },  // Maine
-  'SC': { scale: 1.0, padding: 0.08 },  // South Carolina
-  'WV': { scale: 1.0, padding: 0.08 },  // West Virginia
-  'MD': { scale: 0.9, padding: 0.10 },  // Maryland
-  'HI': { scale: 0.9, padding: 0.10 },  // Hawaii
-  'VT': { scale: 0.8, padding: 0.12 },  // Vermont
-  'NH': { scale: 0.8, padding: 0.12 },  // New Hampshire
-  'MA': { scale: 0.7, padding: 0.12 },  // Massachusetts
-  'NJ': { scale: 0.6, padding: 0.15 },  // New Jersey
-  'CT': { scale: 0.6, padding: 0.15 },  // Connecticut
-  'DE': { scale: 0.5, padding: 0.15 },  // Delaware
-  'RI': { scale: 0.4, padding: 0.18 },  // Rhode Island
-  'DC': { scale: 0.3, padding: 0.20 },  // DC (if included)
+  'TX': { scale: 1.0, padding: 0.00, rotation: -3, offsetX: -1, offsetY: 0 },  // Texas
+  'CA': { scale: 1.2, padding: 0.05, rotation: -15, offsetX: 0, offsetY: 50 },  // California
+  'MT': { scale: 1.5, padding: 0.00, rotation: -8, offsetX: 0, offsetY: 20 },  // Montana
+  'AK': { scale: 1.0, padding: 0.00, rotation: 15 },  // Alaska
+  'NM': { scale: 1.2, padding: 0.05, rotation: -6, offsetX: 0, offsetY: 20 },  // New Mexico
+  'AZ': { scale: 1.2, padding: 0.05, rotation: -9, offsetX: 0, offsetY: 20 },  // Arizona
+  'NV': { scale: 1.1, padding: 0.05, rotation: -12, offsetX: 0, offsetY: 20 },  // Nevada - slight tilt
+  'CO': { scale: 1.0, padding: 0.05, rotation: -6, offsetX:0, offsetY: 10 },  // Colorado
+  'OR': { scale: 1.0, padding: 0.05, rotation: -15, offsetX: 0, offsetY: 15},  // Oregon
+  'WY': { scale: 1.0, padding: 0.05, rotation: -7, offsetX: 0, offsetY: 15 },  // Wyoming
+  'MI': { scale: 1.1, padding: 0.00, rotation: 5, offsetX: 0, offsetY: 5 },  // Michigan
+  'MN': { scale: 1.0, padding: 0.05, rotation: 0 },  // Minnesota
+  'UT': { scale: 1.0, padding: 0.05, rotation: -9, offsetX: 0, offsetY: 10 },  // Utah
+  'ID': { scale: 0.9, padding: 0.05, rotation: -11 },  // Idaho
+  'KS': { scale: 1.3, padding: 0.05, rotation: -2, offsetX: 0, offsetY: 15 },  // Kansas
+  'NE': { scale: 1.3, padding: 0.05, rotation: -2, offsetX: 0, offsetY: 15 },  // Nebraska
+  'SD': { scale: 1.2, padding: 0.05, rotation: -3, offsetX: 0, offsetY: 15 },  // South Dakota
+  'ND': { scale: 1.2, padding: 0.05, rotation: -2, offsetX: 0, offsetY: 15 },  // North Dakota
+  'OK': { scale: 1.3, padding: 0.05, rotation: -2, offsetX: 0, offsetY: 10 },  // Oklahoma
+  'MO': { scale: 1.1, padding: 0.05, rotation: 2, offsetX: 0, offsetY: 10 },  // Missouri
+  'FL': { scale: 1.0, padding: 0.05, rotation: 5, offsetX: 0, offsetY: 5 },  // Florida
+  'WI': { scale: 1.1, padding: 0.05, rotation: 3, offsetX: 0, offsetY: 10 },  // Wisconsin
+  'GA': { scale: 1.1, padding: 0.05, rotation: 6, offsetX: 0, offsetY: 10 },  // Georgia
+  'IL': { scale: 1.0, padding: 0.05, rotation: 3, offsetX: 0, offsetY: 5 },  // Illinois
+  'IA': { scale: 1.2, padding: 0.05, rotation: 1, offsetX: 0, offsetY: 10 },  // Iowa
+  'NY': { scale: 1.1, padding: 0.05, rotation: 11, offsetX: 0, offsetY: 10 },  // New York
+  'NC': { scale: 1.4, padding: 0.00, rotation: 9, offsetX: 0, offsetY: 10 },  // North Carolina
+  'AR': { scale: 1.0, padding: 0.05, rotation: 0 },  // Arkansas
+  'AL': { scale: 1.0, padding: 0.05, rotation: 5 },  // Alabama
+  'LA': { scale: 1.2, padding: 0.05, rotation: 1, offsetX: 0, offsetY: 7 },  // Louisiana
+  'MS': { scale: 1.0, padding: 0.05, rotation: 3 },  // Mississippi
+  'PA': { scale: 1.2, padding: 0.05, rotation: 10, offsetX: 0, offsetY: 5 },  // Pennsylvania
+  'OH': { scale: 1.0, padding: 0.05, rotation: 8, offsetX: 0, offsetY: 8 },  // Ohio
+  'VA': { scale: 1.1, padding: 0.08, rotation: 10, offsetX: 0, offsetY: 10 },  // Virginia
+  'TN': { scale: 1.8, padding: 0.00, rotation: 5, offsetX: 10, offsetY: 15 },  // Tennessee
+  'KY': { scale: 1.1, padding: 0.08, rotation: 8, offsetX: 0, offsetY: 10 },  // Kentucky
+  'IN': { scale: 0.9, padding: 0.05, rotation: 6 },  // Indiana
+  'ME': { scale: 0.9, padding: 0.05, rotation: 14 },  // Maine
+  'SC': { scale: 1.0, padding: 0.08, rotation: 0 },  // South Carolina
+  'WV': { scale: 1.0, padding: 0.05, rotation: 5 },  // West Virginia
+  'MD': { scale: 1.3, padding: 0.08, rotation: 11, offsetX: 0, offsetY: 10 },  // Maryland
+  'HI': { scale: 1.2, padding: 0.08, rotation: 0 },  // Hawaii
+  'VT': { scale: 0.8, padding: 0.12, rotation: 11 },  // Vermont
+  'NH': { scale: 0.8, padding: 0.12, rotation: 12 },  // New Hampshire
+  'MA': { scale: 1.1, padding: 0.08, rotation: 13, offsetX: 0, offsetY: 5 },  // Massachusetts
+  'NJ': { scale: 1.0, padding: 0.08, rotation: 10 },  // New Jersey
+  'CT': { scale: 1.1, padding: 0.05, rotation: 12.5 },  // Connecticut
+  'DE': { scale: 0.9, padding: 0.15, rotation: 13 },  // Delaware
+  'RI': { scale: 0.8, padding: 0.15, rotation: 14 },  // Rhode Island
+  'DC': { scale: 0.3, padding: 0.20, rotation: 0 },  // DC 
   
   // Default for any unspecified states
-  'DEFAULT': { scale: 1.0, padding: 0.10 }
+  'DEFAULT': { scale: 1.0, padding: 0.10, rotation: 0, offsetX: 0, offsetY: 0 }
 };
 
 function createCountyMapDisplay(container, stateGroup, stateCode, stateName) {
@@ -972,8 +972,6 @@ function createCountyMapDisplay(container, stateGroup, stateCode, stateName) {
   const config = STATE_SIZE_CONFIG[stateCode] || STATE_SIZE_CONFIG['DEFAULT'];
   
   // Apply state-specific scaling and padding
-  // Higher scale = smaller viewBox = state appears larger (zoomed in)
-  // Lower scale = larger viewBox = state appears smaller (zoomed out)
   const scaledWidth = bbox.width * config.scale;
   const scaledHeight = bbox.height * config.scale;
   
@@ -981,16 +979,27 @@ function createCountyMapDisplay(container, stateGroup, stateCode, stateName) {
   const paddedWidth = scaledWidth * (1 + config.padding * 2);
   const paddedHeight = scaledHeight * (1 + config.padding * 2);
   
-  // Calculate centered position with padding and scaling
-  const viewBoxX = bbox.x - (paddedWidth - bbox.width) / 2;
-  const viewBoxY = bbox.y - (paddedHeight - bbox.height) / 2;
+  // Calculate centered position with padding, scaling, and offsets
+  const viewBoxX = bbox.x - (paddedWidth - bbox.width) / 2 + (config.offsetX || 0);
+  const viewBoxY = bbox.y - (paddedHeight - bbox.height) / 2 + (config.offsetY || 0);
+
+  // Calculate the center of the bounding box for rotation
+  const centerX = bbox.x + bbox.width / 2;
+  const centerY = bbox.y + bbox.height / 2;
+  
+  // Build transform string with rotation if specified
+  const rotationTransform = config.rotation !== 0 
+    ? `transform="rotate(${config.rotation} ${centerX} ${centerY})"` 
+    : '';
 
   console.log('State:', stateCode);
   console.log('BBox:', bbox);
   console.log('Config:', config);
   console.log('ViewBox:', viewBoxX, viewBoxY, paddedWidth, paddedHeight);
+  console.log('Rotation:', config.rotation);
+  console.log('Offsets:', config.offsetX, config.offsetY);
   
-  // Create new SVG for county display
+  // Create new SVG for county display with rotation applied
   const countyMapHTML = `
     <div class="county-map-wrapper">
       <div class="county-map-header">
@@ -1009,7 +1018,9 @@ function createCountyMapDisplay(container, stateGroup, stateCode, stateName) {
            viewBox="${viewBoxX} ${viewBoxY} ${paddedWidth} ${paddedHeight}"
            preserveAspectRatio="xMidYMid meet"
            style="flex: 1; width: 100%; min-height: 0;">
-        ${stateGroup.outerHTML}
+        <g ${rotationTransform}>
+          ${stateGroup.innerHTML}
+        </g>
       </svg>
       <div id="county-tooltip" class="county-tooltip"></div>
     </div>
@@ -1032,9 +1043,9 @@ function setupCountyInteractions(stateCode) {
 
     // Hover effects
     path.addEventListener('mouseenter', (e) => {
-      path.style.fill = '#4A90E2';
-      path.style.stroke = '#2171b5';
-      path.style.strokeWidth = '2';
+      path.style.fill = '#ff1356ff';
+      path.style.stroke = '#000000';
+      path.style.strokeWidth = '0.50';
       
       countyTooltip.innerHTML = `
         <div class="tooltip-header">${countyTitle}</div>

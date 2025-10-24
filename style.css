@@ -320,7 +320,7 @@
             align-items: center;
             padding: 0.55rem 0.5rem;
             border-radius: 8px 8px 0 0;
-            margin: auto;
+            margin-bottom: 1rem;
         }
 
         .county-map-header h2 {
@@ -328,6 +328,14 @@
             color: white;
             font-size: 1.5rem;
             font-weight: 600;
+        }
+
+        #county-map {
+            width: 100%;
+            height: 500px;
+            fill: #23547e;
+            stroke: #000000;
+            stroke-width: 0.25;
         }
 
         /* Back button */
@@ -371,11 +379,6 @@
         .county-map-header h2 {
             font-size: 1.25rem;
         }
-
-         #county-map {
-            width: 100%;
-            height: 500px;
-         }
 
         .back-button {
             width: 100%;
@@ -461,5 +464,4 @@
                 gap: 1rem;
                 box-shadow: 0 10px 27px rgba(0, 0, 0, 0.5);
             }
-
         }
