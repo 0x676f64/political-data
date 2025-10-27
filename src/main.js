@@ -2,6 +2,24 @@
 const tooltip = document.getElementById('tooltip');
 const stateInfoPanel = document.getElementById('state-info');
 
+// State-specific stroke widths
+const STATE_STROKE_WIDTHS = {
+  // Small states that need thinner strokes when zoomed
+  'DE': 0.3,  'RI': 0.3,  'DC': 0.2,  'CT': 0.4,  'NH': 0.4,  'VT': 0.4,
+  'MA': 0.4,  'NJ': 0.45, 'MD': 0.4,  'HI': 0.4,
+  // Medium states
+  'WV': 0.5,  'SC': 0.55, 'ME': 0.5,  'IN': 0.5,
+  // Large states
+  'TX': 0.65, 'CA': 0.6,  'MT': 0.6,  'AK': 0.65, 'NM': 0.6,  'AZ': 0.6,
+  'NV': 0.55, 'CO': 0.55, 'OR': 0.55, 'WY': 0.55, 'MI': 0.55, 'MN': 0.55,
+  'UT': 0.55, 'ID': 0.5,  'KS': 0.6,  'NE': 0.6,  'WA': 0.6,  'SD': 0.6,
+  'ND': 0.6,  'OK': 0.6,  'MO': 0.55, 'FL': 0.55, 'WI': 0.55, 'GA': 0.55,
+  'IL': 0.55, 'IA': 0.55, 'NY': 0.55, 'NC': 0.6,  'AR': 0.55, 'AL': 0.55,
+  'LA': 0.55, 'MS': 0.55, 'PA': 0.55, 'OH': 0.55, 'VA': 0.55, 'TN': 0.6,
+  'KY': 0.55,
+  'DEFAULT': 0.55
+};
+
 const stateNames = {
   AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California',
   CO: 'Colorado', CT: 'Connecticut', DE: 'Delaware', FL: 'Florida', GA: 'Georgia',
@@ -22,800 +40,400 @@ const stateData = {
     governor: 'Kay Ivey (R)',
     senators: ['Tommy Tuberville (R)', 'Katie Britt (R)'],
     electoralVotes: 9,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+25.4%',
-      turnout: '63.2%'
-    },
-    campaignFinance: {
-      total: '$125M',
-      topDonor: 'Energy Industry',
-      pacSpending: '$45M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+25.4%', turnout: '63.2%' },
+    campaignFinance: { total: '$125M', topDonor: 'Energy Industry', pacSpending: '$45M' }
   },
   AK: {
     name: 'Alaska',
     governor: 'Mike Dunleavy (R)',
     senators: ['Lisa Murkowski (R)', 'Dan Sullivan (R)'],
     electoralVotes: 3,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+14.7%',
-      turnout: '58.9%'
-    },
-    campaignFinance: {
-      total: '$35M',
-      topDonor: 'Oil & Gas',
-      pacSpending: '$12M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+14.7%', turnout: '58.9%' },
+    campaignFinance: { total: '$35M', topDonor: 'Oil & Gas', pacSpending: '$12M' }
   },
   AZ: {
     name: 'Arizona',
     governor: 'Katie Hobbs (D)',
     senators: ['Mark Kelly (D)', 'Kyrsten Sinema (I)'],
     electoralVotes: 11,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+5.5%',
-      turnout: '72.6%'
-    },
-    campaignFinance: {
-      total: '$485M',
-      topDonor: 'Tech Industry',
-      pacSpending: '$165M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+5.5%', turnout: '72.6%' },
+    campaignFinance: { total: '$485M', topDonor: 'Tech Industry', pacSpending: '$165M' }
   },
   AR: {
     name: 'Arkansas',
     governor: 'Sarah Huckabee Sanders (R)',
     senators: ['John Boozman (R)', 'Tom Cotton (R)'],
     electoralVotes: 6,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+28.0%',
-      turnout: '56.8%'
-    },
-    campaignFinance: {
-      total: '$75M',
-      topDonor: 'Agriculture',
-      pacSpending: '$25M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+28.0%', turnout: '56.8%' },
+    campaignFinance: { total: '$75M', topDonor: 'Agriculture', pacSpending: '$25M' }
   },
   CA: {
     name: 'California',
     governor: 'Gavin Newsom (D)',
     senators: ['Alex Padilla (D)', 'Laphonza Butler (D)'],
     electoralVotes: 54,
-    lastElection: {
-      winner: 'Harris (D)',
-      margin: '+20.1%',
-      turnout: '71.4%'
-    },
-    campaignFinance: {
-      total: '$1.2B',
-      topDonor: 'Tech Industry',
-      pacSpending: '$450M'
-    }
+    lastElection: { winner: 'Harris (D)', margin: '+20.1%', turnout: '71.4%' },
+    campaignFinance: { total: '$1.2B', topDonor: 'Tech Industry', pacSpending: '$450M' }
   },
   CO: {
     name: 'Colorado',
     governor: 'Jared Polis (D)',
     senators: ['Michael Bennet (D)', 'John Hickenlooper (D)'],
     electoralVotes: 10,
-    lastElection: {
-      winner: 'Harris (D)',
-      margin: '+13.7%',
-      turnout: '73.1%'
-    },
-    campaignFinance: {
-      total: '$285M',
-      topDonor: 'Tech Industry',
-      pacSpending: '$95M'
-    }
+    lastElection: { winner: 'Harris (D)', margin: '+13.7%', turnout: '73.1%' },
+    campaignFinance: { total: '$285M', topDonor: 'Tech Industry', pacSpending: '$95M' }
   },
   CT: {
     name: 'Connecticut',
     governor: 'Ned Lamont (D)',
     senators: ['Richard Blumenthal (D)', 'Chris Murphy (D)'],
     electoralVotes: 7,
-    lastElection: {
-      winner: 'Harris (D)',
-      margin: '+13.8%',
-      turnout: '65.4%'
-    },
-    campaignFinance: {
-      total: '$145M',
-      topDonor: 'Financial Services',
-      pacSpending: '$55M'
-    }
+    lastElection: { winner: 'Harris (D)', margin: '+13.8%', turnout: '65.4%' },
+    campaignFinance: { total: '$145M', topDonor: 'Financial Services', pacSpending: '$55M' }
   },
   DE: {
     name: 'Delaware',
     governor: 'John Carney (D)',
     senators: ['Tom Carper (D)', 'Chris Coons (D)'],
     electoralVotes: 3,
-    lastElection: {
-      winner: 'Harris (D)',
-      margin: '+12.4%',
-      turnout: '66.8%'
-    },
-    campaignFinance: {
-      total: '$45M',
-      topDonor: 'Financial Services',
-      pacSpending: '$18M'
-    }
+    lastElection: { winner: 'Harris (D)', margin: '+12.4%', turnout: '66.8%' },
+    campaignFinance: { total: '$45M', topDonor: 'Financial Services', pacSpending: '$18M' }
   },
   FL: {
     name: 'Florida',
     governor: 'Ron DeSantis (R)',
     senators: ['Marco Rubio (R)', 'Rick Scott (R)'],
     electoralVotes: 30,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+13.1%',
-      turnout: '77.3%'
-    },
-    campaignFinance: {
-      total: '$675M',
-      topDonor: 'Tourism Industry',
-      pacSpending: '$280M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+13.1%', turnout: '77.3%' },
+    campaignFinance: { total: '$675M', topDonor: 'Tourism Industry', pacSpending: '$280M' }
   },
   GA: {
     name: 'Georgia',
     governor: 'Brian Kemp (R)',
     senators: ['Jon Ossoff (D)', 'Raphael Warnock (D)'],
     electoralVotes: 16,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+2.2%',
-      turnout: '70.9%'
-    },
-    campaignFinance: {
-      total: '$545M',
-      topDonor: 'Real Estate',
-      pacSpending: '$195M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+2.2%', turnout: '70.9%' },
+    campaignFinance: { total: '$545M', topDonor: 'Real Estate', pacSpending: '$195M' }
   },
   HI: {
     name: 'Hawaii',
     governor: 'Josh Green (D)',
     senators: ['Brian Schatz (D)', 'Mazie Hirono (D)'],
     electoralVotes: 4,
-    lastElection: {
-      winner: 'Harris (D)',
-      margin: '+25.2%',
-      turnout: '54.6%'
-    },
-    campaignFinance: {
-      total: '$55M',
-      topDonor: 'Tourism Industry',
-      pacSpending: '$20M'
-    }
+    lastElection: { winner: 'Harris (D)', margin: '+25.2%', turnout: '54.6%' },
+    campaignFinance: { total: '$55M', topDonor: 'Tourism Industry', pacSpending: '$20M' }
   },
   ID: {
     name: 'Idaho',
     governor: 'Brad Little (R)',
     senators: ['Mike Crapo (R)', 'James Risch (R)'],
     electoralVotes: 4,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+30.2%',
-      turnout: '59.8%'
-    },
-    campaignFinance: {
-      total: '$65M',
-      topDonor: 'Agriculture',
-      pacSpending: '$22M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+30.2%', turnout: '59.8%' },
+    campaignFinance: { total: '$65M', topDonor: 'Agriculture', pacSpending: '$22M' }
   },
   IL: {
     name: 'Illinois',
     governor: 'J.B. Pritzker (D)',
     senators: ['Dick Durbin (D)', 'Tammy Duckworth (D)'],
     electoralVotes: 19,
-    lastElection: {
-      winner: 'Harris (D)',
-      margin: '+12.1%',
-      turnout: '67.2%'
-    },
-    campaignFinance: {
-      total: '$425M',
-      topDonor: 'Financial Services',
-      pacSpending: '$155M'
-    }
+    lastElection: { winner: 'Harris (D)', margin: '+12.1%', turnout: '67.2%' },
+    campaignFinance: { total: '$425M', topDonor: 'Financial Services', pacSpending: '$155M' }
   },
   IN: {
     name: 'Indiana',
     governor: 'Eric Holcomb (R)',
     senators: ['Todd Young (R)', 'Mike Braun (R)'],
     electoralVotes: 11,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+17.8%',
-      turnout: '61.5%'
-    },
-    campaignFinance: {
-      total: '$185M',
-      topDonor: 'Manufacturing',
-      pacSpending: '$65M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+17.8%', turnout: '61.5%' },
+    campaignFinance: { total: '$185M', topDonor: 'Manufacturing', pacSpending: '$65M' }
   },
   IA: {
     name: 'Iowa',
     governor: 'Kim Reynolds (R)',
     senators: ['Chuck Grassley (R)', 'Joni Ernst (R)'],
     electoralVotes: 6,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+13.2%',
-      turnout: '71.8%'
-    },
-    campaignFinance: {
-      total: '$175M',
-      topDonor: 'Agriculture',
-      pacSpending: '$62M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+13.2%', turnout: '71.8%' },
+    campaignFinance: { total: '$175M', topDonor: 'Agriculture', pacSpending: '$62M' }
   },
   KS: {
     name: 'Kansas',
     governor: 'Laura Kelly (D)',
     senators: ['Jerry Moran (R)', 'Roger Marshall (R)'],
     electoralVotes: 6,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+14.7%',
-      turnout: '64.2%'
-    },
-    campaignFinance: {
-      total: '$125M',
-      topDonor: 'Agriculture',
-      pacSpending: '$45M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+14.7%', turnout: '64.2%' },
+    campaignFinance: { total: '$125M', topDonor: 'Agriculture', pacSpending: '$45M' }
   },
   KY: {
     name: 'Kentucky',
     governor: 'Andy Beshear (D)',
     senators: ['Mitch McConnell (R)', 'Rand Paul (R)'],
     electoralVotes: 8,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+25.9%',
-      turnout: '59.4%'
-    },
-    campaignFinance: {
-      total: '$165M',
-      topDonor: 'Coal Industry',
-      pacSpending: '$58M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+25.9%', turnout: '59.4%' },
+    campaignFinance: { total: '$165M', topDonor: 'Coal Industry', pacSpending: '$58M' }
   },
   LA: {
     name: 'Louisiana',
     governor: 'Jeff Landry (R)',
     senators: ['Bill Cassidy (R)', 'John Kennedy (R)'],
     electoralVotes: 8,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+22.1%',
-      turnout: '67.9%'
-    },
-    campaignFinance: {
-      total: '$145M',
-      topDonor: 'Oil & Gas',
-      pacSpending: '$52M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+22.1%', turnout: '67.9%' },
+    campaignFinance: { total: '$145M', topDonor: 'Oil & Gas', pacSpending: '$52M' }
   },
   ME: {
     name: 'Maine',
     governor: 'Janet Mills (D)',
     senators: ['Susan Collins (R)', 'Angus King (I)'],
     electoralVotes: 4,
-    lastElection: {
-      winner: 'Harris (D)',
-      margin: '+8.9%',
-      turnout: '72.8%'
-    },
-    campaignFinance: {
-      total: '$85M',
-      topDonor: 'Healthcare',
-      pacSpending: '$32M'
-    }
+    lastElection: { winner: 'Harris (D)', margin: '+8.9%', turnout: '72.8%' },
+    campaignFinance: { total: '$85M', topDonor: 'Healthcare', pacSpending: '$32M' }
   },
   MD: {
     name: 'Maryland',
     governor: 'Wes Moore (D)',
     senators: ['Ben Cardin (D)', 'Chris Van Hollen (D)'],
     electoralVotes: 10,
-    lastElection: {
-      winner: 'Harris (D)',
-      margin: '+25.4%',
-      turnout: '69.3%'
-    },
-    campaignFinance: {
-      total: '$225M',
-      topDonor: 'Federal Contractors',
-      pacSpending: '$85M'
-    }
+    lastElection: { winner: 'Harris (D)', margin: '+25.4%', turnout: '69.3%' },
+    campaignFinance: { total: '$225M', topDonor: 'Federal Contractors', pacSpending: '$85M' }
   },
   MA: {
     name: 'Massachusetts',
     governor: 'Maura Healey (D)',
     senators: ['Elizabeth Warren (D)', 'Ed Markey (D)'],
     electoralVotes: 11,
-    lastElection: {
-      winner: 'Harris (D)',
-      margin: '+25.2%',
-      turnout: '69.8%'
-    },
-    campaignFinance: {
-      total: '$285M',
-      topDonor: 'Tech Industry',
-      pacSpending: '$105M'
-    }
+    lastElection: { winner: 'Harris (D)', margin: '+25.2%', turnout: '69.8%' },
+    campaignFinance: { total: '$285M', topDonor: 'Tech Industry', pacSpending: '$105M' }
   },
   MI: {
     name: 'Michigan',
     governor: 'Gretchen Whitmer (D)',
     senators: ['Gary Peters (D)', 'Debbie Stabenow (D)'],
     electoralVotes: 15,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+1.4%',
-      turnout: '74.7%'
-    },
-    campaignFinance: {
-      total: '$485M',
-      topDonor: 'Auto Industry',
-      pacSpending: '$175M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+1.4%', turnout: '74.7%' },
+    campaignFinance: { total: '$485M', topDonor: 'Auto Industry', pacSpending: '$175M' }
   },
   MN: {
     name: 'Minnesota',
     governor: 'Tim Walz (D)',
     senators: ['Amy Klobuchar (D)', 'Tina Smith (D)'],
     electoralVotes: 10,
-    lastElection: {
-      winner: 'Harris (D)',
-      margin: '+4.2%',
-      turnout: '76.4%'
-    },
-    campaignFinance: {
-      total: '$325M',
-      topDonor: 'Healthcare',
-      pacSpending: '$115M'
-    }
+    lastElection: { winner: 'Harris (D)', margin: '+4.2%', turnout: '76.4%' },
+    campaignFinance: { total: '$325M', topDonor: 'Healthcare', pacSpending: '$115M' }
   },
   MS: {
     name: 'Mississippi',
     governor: 'Tate Reeves (R)',
     senators: ['Roger Wicker (R)', 'Cindy Hyde-Smith (R)'],
     electoralVotes: 6,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+16.5%',
-      turnout: '59.7%'
-    },
-    campaignFinance: {
-      total: '$95M',
-      topDonor: 'Agriculture',
-      pacSpending: '$35M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+16.5%', turnout: '59.7%' },
+    campaignFinance: { total: '$95M', topDonor: 'Agriculture', pacSpending: '$35M' }
   },
   MO: {
     name: 'Missouri',
     governor: 'Mike Kehoe (R)',
     senators: ['Josh Hawley (R)', 'Eric Schmitt (R)'],
     electoralVotes: 10,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+18.4%',
-      turnout: '67.1%'
-    },
-    campaignFinance: {
-      total: '$245M',
-      topDonor: 'Agriculture',
-      pacSpending: '$88M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+18.4%', turnout: '67.1%' },
+    campaignFinance: { total: '$245M', topDonor: 'Agriculture', pacSpending: '$88M' }
   },
   MT: {
     name: 'Montana',
     governor: 'Greg Gianforte (R)',
     senators: ['Steve Daines (R)', 'Tim Sheehy (R)'],
     electoralVotes: 4,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+20.1%',
-      turnout: '71.2%'
-    },
-    campaignFinance: {
-      total: '$125M',
-      topDonor: 'Energy Industry',
-      pacSpending: '$45M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+20.1%', turnout: '71.2%' },
+    campaignFinance: { total: '$125M', topDonor: 'Energy Industry', pacSpending: '$45M' }
   },
   NE: {
     name: 'Nebraska',
     governor: 'Pete Ricketts (R)',
     senators: ['Deb Fischer (R)', 'Pete Ricketts (R)'],
     electoralVotes: 5,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+19.8%',
-      turnout: '68.4%'
-    },
-    campaignFinance: {
-      total: '$95M',
-      topDonor: 'Agriculture',
-      pacSpending: '$35M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+19.8%', turnout: '68.4%' },
+    campaignFinance: { total: '$95M', topDonor: 'Agriculture', pacSpending: '$35M' }
   },
   NV: {
     name: 'Nevada',
     governor: 'Joe Lombardo (R)',
     senators: ['Catherine Cortez Masto (D)', 'Jacky Rosen (D)'],
     electoralVotes: 6,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+3.1%',
-      turnout: '73.2%'
-    },
-    campaignFinance: {
-      total: '$285M',
-      topDonor: 'Gaming Industry',
-      pacSpending: '$105M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+3.1%', turnout: '73.2%' },
+    campaignFinance: { total: '$285M', topDonor: 'Gaming Industry', pacSpending: '$105M' }
   },
   NH: {
     name: 'New Hampshire',
     governor: 'Chris Sununu (R)',
     senators: ['Jeanne Shaheen (D)', 'Maggie Hassan (D)'],
     electoralVotes: 4,
-    lastElection: {
-      winner: 'Harris (D)',
-      margin: '+2.8%',
-      turnout: '74.4%'
-    },
-    campaignFinance: {
-      total: '$125M',
-      topDonor: 'Manufacturing',
-      pacSpending: '$45M'
-    }
+    lastElection: { winner: 'Harris (D)', margin: '+2.8%', turnout: '74.4%' },
+    campaignFinance: { total: '$125M', topDonor: 'Manufacturing', pacSpending: '$45M' }
   },
   NJ: {
     name: 'New Jersey',
     governor: 'Phil Murphy (D)',
     senators: ['Cory Booker (D)', 'Andy Kim (D)'],
     electoralVotes: 14,
-    lastElection: {
-      winner: 'Harris (D)',
-      margin: '+5.7%',
-      turnout: '65.8%'
-    },
-    campaignFinance: {
-      total: '$385M',
-      topDonor: 'Financial Services',
-      pacSpending: '$145M'
-    }
+    lastElection: { winner: 'Harris (D)', margin: '+5.7%', turnout: '65.8%' },
+    campaignFinance: { total: '$385M', topDonor: 'Financial Services', pacSpending: '$145M' }
   },
   NM: {
     name: 'New Mexico',
     governor: 'Michelle Lujan Grisham (D)',
     senators: ['Martin Heinrich (D)', 'Ben Ray Luján (D)'],
     electoralVotes: 5,
-    lastElection: {
-      winner: 'Harris (D)',
-      margin: '+6.1%',
-      turnout: '62.5%'
-    },
-    campaignFinance: {
-      total: '$125M',
-      topDonor: 'Energy Industry',
-      pacSpending: '$45M'
-    }
+    lastElection: { winner: 'Harris (D)', margin: '+6.1%', turnout: '62.5%' },
+    campaignFinance: { total: '$125M', topDonor: 'Energy Industry', pacSpending: '$45M' }
   },
   NY: {
     name: 'New York',
     governor: 'Kathy Hochul (D)',
     senators: ['Chuck Schumer (D)', 'Kirsten Gillibrand (D)'],
     electoralVotes: 28,
-    lastElection: {
-      winner: 'Harris (D)',
-      margin: '+11.8%',
-      turnout: '58.6%'
-    },
-    campaignFinance: {
-      total: '$785M',
-      topDonor: 'Financial Services',
-      pacSpending: '$295M'
-    }
+    lastElection: { winner: 'Harris (D)', margin: '+11.8%', turnout: '58.6%' },
+    campaignFinance: { total: '$785M', topDonor: 'Financial Services', pacSpending: '$295M' }
   },
   NC: {
     name: 'North Carolina',
     governor: 'Josh Stein (D)',
     senators: ['Thom Tillis (R)', 'Ted Budd (R)'],
     electoralVotes: 16,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+3.4%',
-      turnout: '73.7%'
-    },
-    campaignFinance: {
-      total: '$485M',
-      topDonor: 'Banking',
-      pacSpending: '$175M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+3.4%', turnout: '73.7%' },
+    campaignFinance: { total: '$485M', topDonor: 'Banking', pacSpending: '$175M' }
   },
   ND: {
     name: 'North Dakota',
     governor: 'Doug Burgum (R)',
     senators: ['John Hoeven (R)', 'Kevin Cramer (R)'],
     electoralVotes: 3,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+33.1%',
-      turnout: '55.4%'
-    },
-    campaignFinance: {
-      total: '$45M',
-      topDonor: 'Oil & Gas',
-      pacSpending: '$18M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+33.1%', turnout: '55.4%' },
+    campaignFinance: { total: '$45M', topDonor: 'Oil & Gas', pacSpending: '$18M' }
   },
   OH: {
     name: 'Ohio',
     governor: 'Mike DeWine (R)',
     senators: ['Sherrod Brown (D)', 'J.D. Vance (R)'],
     electoralVotes: 17,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+11.5%',
-      turnout: '69.8%'
-    },
-    campaignFinance: {
-      total: '$485M',
-      topDonor: 'Manufacturing',
-      pacSpending: '$175M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+11.5%', turnout: '69.8%' },
+    campaignFinance: { total: '$485M', topDonor: 'Manufacturing', pacSpending: '$175M' }
   },
   OK: {
     name: 'Oklahoma',
     governor: 'Kevin Stitt (R)',
     senators: ['James Lankford (R)', 'Markwayne Mullin (R)'],
     electoralVotes: 7,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+32.9%',
-      turnout: '56.3%'
-    },
-    campaignFinance: {
-      total: '$125M',
-      topDonor: 'Oil & Gas',
-      pacSpending: '$45M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+32.9%', turnout: '56.3%' },
+    campaignFinance: { total: '$125M', topDonor: 'Oil & Gas', pacSpending: '$45M' }
   },
   OR: {
     name: 'Oregon',
     governor: 'Tina Kotek (D)',
     senators: ['Ron Wyden (D)', 'Jeff Merkley (D)'],
     electoralVotes: 8,
-    lastElection: {
-      winner: 'Harris (D)',
-      margin: '+11.2%',
-      turnout: '69.4%'
-    },
-    campaignFinance: {
-      total: '$225M',
-      topDonor: 'Tech Industry',
-      pacSpending: '$85M'
-    }
+    lastElection: { winner: 'Harris (D)', margin: '+11.2%', turnout: '69.4%' },
+    campaignFinance: { total: '$225M', topDonor: 'Tech Industry', pacSpending: '$85M' }
   },
   PA: {
     name: 'Pennsylvania',
     governor: 'Josh Shapiro (D)',
     senators: ['Bob Casey Jr. (D)', 'John Fetterman (D)'],
     electoralVotes: 19,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+1.2%',
-      turnout: '70.9%'
-    },
-    campaignFinance: {
-      total: '$685M',
-      topDonor: 'Energy Industry',
-      pacSpending: '$245M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+1.2%', turnout: '70.9%' },
+    campaignFinance: { total: '$685M', topDonor: 'Energy Industry', pacSpending: '$245M' }
   },
   RI: {
     name: 'Rhode Island',
     governor: 'Dan McKee (D)',
     senators: ['Jack Reed (D)', 'Sheldon Whitehouse (D)'],
     electoralVotes: 4,
-    lastElection: {
-      winner: 'Harris (D)',
-      margin: '+14.1%',
-      turnout: '64.7%'
-    },
-    campaignFinance: {
-      total: '$55M',
-      topDonor: 'Healthcare',
-      pacSpending: '$22M'
-    }
+    lastElection: { winner: 'Harris (D)', margin: '+14.1%', turnout: '64.7%' },
+    campaignFinance: { total: '$55M', topDonor: 'Healthcare', pacSpending: '$22M' }
   },
   SC: {
     name: 'South Carolina',
     governor: 'Henry McMaster (R)',
     senators: ['Lindsey Graham (R)', 'Tim Scott (R)'],
     electoralVotes: 9,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+11.7%',
-      turnout: '68.5%'
-    },
-    campaignFinance: {
-      total: '$185M',
-      topDonor: 'Manufacturing',
-      pacSpending: '$68M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+11.7%', turnout: '68.5%' },
+    campaignFinance: { total: '$185M', topDonor: 'Manufacturing', pacSpending: '$68M' }
   },
   SD: {
     name: 'South Dakota',
     governor: 'Kristi Noem (R)',
     senators: ['John Thune (R)', 'Mike Rounds (R)'],
     electoralVotes: 3,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+28.4%',
-      turnout: '69.1%'
-    },
-    campaignFinance: {
-      total: '$45M',
-      topDonor: 'Agriculture',
-      pacSpending: '$18M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+28.4%', turnout: '69.1%' },
+    campaignFinance: { total: '$45M', topDonor: 'Agriculture', pacSpending: '$18M' }
   },
   TN: {
     name: 'Tennessee',
     governor: 'Bill Lee (R)',
     senators: ['Marsha Blackburn (R)', 'Bill Hagerty (R)'],
     electoralVotes: 11,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+24.9%',
-      turnout: '59.2%'
-    },
-    campaignFinance: {
-      total: '$225M',
-      topDonor: 'Healthcare',
-      pacSpending: '$85M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+24.9%', turnout: '59.2%' },
+    campaignFinance: { total: '$225M', topDonor: 'Healthcare', pacSpending: '$85M' }
   },
   TX: {
     name: 'Texas',
     governor: 'Greg Abbott (R)',
     senators: ['John Cornyn (R)', 'Ted Cruz (R)'],
     electoralVotes: 40,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+13.8%',
-      turnout: '66.7%'
-    },
-    campaignFinance: {
-      total: '$890M',
-      topDonor: 'Oil & Gas',
-      pacSpending: '$320M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+13.8%', turnout: '66.7%' },
+    campaignFinance: { total: '$890M', topDonor: 'Oil & Gas', pacSpending: '$320M' }
   },
   UT: {
     name: 'Utah',
     governor: 'Spencer Cox (R)',
     senators: ['Mike Lee (R)', 'Mitt Romney (R)'],
     electoralVotes: 6,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+20.5%',
-      turnout: '62.8%'
-    },
-    campaignFinance: {
-      total: '$125M',
-      topDonor: 'Tech Industry',
-      pacSpending: '$45M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+20.5%', turnout: '62.8%' },
+    campaignFinance: { total: '$125M', topDonor: 'Tech Industry', pacSpending: '$45M' }
   },
   VT: {
     name: 'Vermont',
     governor: 'Phil Scott (R)',
     senators: ['Patrick Leahy (D)', 'Bernie Sanders (I)'],
     electoralVotes: 3,
-    lastElection: {
-      winner: 'Harris (D)',
-      margin: '+32.6%',
-      turnout: '65.4%'
-    },
-    campaignFinance: {
-      total: '$35M',
-      topDonor: 'Tourism Industry',
-      pacSpending: '$15M'
-    }
+    lastElection: { winner: 'Harris (D)', margin: '+32.6%', turnout: '65.4%' },
+    campaignFinance: { total: '$35M', topDonor: 'Tourism Industry', pacSpending: '$15M' }
   },
   VA: {
     name: 'Virginia',
     governor: 'Glenn Youngkin (R)',
     senators: ['Mark Warner (D)', 'Tim Kaine (D)'],
     electoralVotes: 13,
-    lastElection: {
-      winner: 'Harris (D)',
-      margin: '+5.2%',
-      turnout: '73.8%'
-    },
-    campaignFinance: {
-      total: '$385M',
-      topDonor: 'Federal Contractors',
-      pacSpending: '$145M'
-    }
+    lastElection: { winner: 'Harris (D)', margin: '+5.2%', turnout: '73.8%' },
+    campaignFinance: { total: '$385M', topDonor: 'Federal Contractors', pacSpending: '$145M' }
   },
   WA: {
     name: 'Washington',
     governor: 'Bob Ferguson (D)',
     senators: ['Patty Murray (D)', 'Maria Cantwell (D)'],
     electoralVotes: 12,
-    lastElection: {
-      winner: 'Harris (D)',
-      margin: '+18.1%',
-      turnout: '67.9%'
-    },
-    campaignFinance: {
-      total: '$285M',
-      topDonor: 'Tech Industry',
-      pacSpending: '$105M'
-    }
+    lastElection: { winner: 'Harris (D)', margin: '+18.1%', turnout: '67.9%' },
+    campaignFinance: { total: '$285M', topDonor: 'Tech Industry', pacSpending: '$105M' }
   },
   WV: {
     name: 'West Virginia',
     governor: 'Patrick Morrisey (R)',
     senators: ['Joe Manchin (I)', 'Shelley Moore Capito (R)'],
     electoralVotes: 4,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+42.2%',
-      turnout: '54.2%'
-    },
-    campaignFinance: {
-      total: '$85M',
-      topDonor: 'Coal Industry',
-      pacSpending: '$32M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+42.2%', turnout: '54.2%' },
+    campaignFinance: { total: '$85M', topDonor: 'Coal Industry', pacSpending: '$32M' }
   },
   WI: {
     name: 'Wisconsin',
     governor: 'Tony Evers (D)',
     senators: ['Ron Johnson (R)', 'Tammy Baldwin (D)'],
     electoralVotes: 10,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+0.9%',
-      turnout: '76.4%'
-    },
-    campaignFinance: {
-      total: '$485M',
-      topDonor: 'Manufacturing',
-      pacSpending: '$175M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+0.9%', turnout: '76.4%' },
+    campaignFinance: { total: '$485M', topDonor: 'Manufacturing', pacSpending: '$175M' }
   },
   WY: {
     name: 'Wyoming',
     governor: 'Mark Gordon (R)',
     senators: ['John Barrasso (R)', 'Cynthia Lummis (R)'],
     electoralVotes: 3,
-    lastElection: {
-      winner: 'Trump (R)',
-      margin: '+43.8%',
-      turnout: '57.1%'
-    },
-    campaignFinance: {
-      total: '$35M',
-      topDonor: 'Energy Industry',
-      pacSpending: '$15M'
-    }
+    lastElection: { winner: 'Trump (R)', margin: '+43.8%', turnout: '57.1%' },
+    campaignFinance: { total: '$35M', topDonor: 'Energy Industry', pacSpending: '$15M' }
   }
 };
 
@@ -827,12 +445,123 @@ const countyMapState = {
   originalMapContainer: null
 };
 
+// State-specific sizing configuration
+const STATE_SIZE_CONFIG = {
+  'TX': { scale: 1.0, padding: 0.00, rotation: -3, offsetX: -1, offsetY: 0 },
+  'CA': { scale: 1.2, padding: 0.05, rotation: -15, offsetX: 0, offsetY: 50 },
+  'MT': { scale: 1.5, padding: 0.00, rotation: -8, offsetX: 0, offsetY: 20 },
+  'AK': { scale: 1.0, padding: 0.00, rotation: 15 },
+  'NM': { scale: 1.2, padding: 0.05, rotation: -6, offsetX: 0, offsetY: 20 },
+  'AZ': { scale: 1.2, padding: 0.05, rotation: -9, offsetX: 0, offsetY: 20 },
+  'NV': { scale: 1.1, padding: 0.05, rotation: -12, offsetX: 0, offsetY: 20 },
+  'CO': { scale: 1.0, padding: 0.05, rotation: -6, offsetX:0, offsetY: 10 },
+  'OR': { scale: 1.0, padding: 0.05, rotation: -15, offsetX: 0, offsetY: 15},
+  'WY': { scale: 1.0, padding: 0.05, rotation: -7, offsetX: 0, offsetY: 15 },
+  'MI': { scale: 1.1, padding: 0.00, rotation: 5, offsetX: 0, offsetY: 5 },
+  'MN': { scale: 1.0, padding: 0.05, rotation: 0 },
+  'UT': { scale: 1.0, padding: 0.05, rotation: -9, offsetX: 0, offsetY: 10 },
+  'ID': { scale: 0.9, padding: 0.05, rotation: -11 },
+  'KS': { scale: 1.3, padding: 0.05, rotation: -2, offsetX: 0, offsetY: 15 },
+  'NE': { scale: 1.3, padding: 0.05, rotation: -2, offsetX: 0, offsetY: 15 },
+  'WA': { scale: 1.5, padding: 0.08, rotation: -14, offsetX: 0, offsetY: 15 },
+  'SD': { scale: 1.2, padding: 0.05, rotation: -3, offsetX: 0, offsetY: 15 },
+  'ND': { scale: 1.2, padding: 0.05, rotation: -2, offsetX: 0, offsetY: 15 },
+  'OK': { scale: 1.3, padding: 0.05, rotation: -2, offsetX: 0, offsetY: 10 },
+  'MO': { scale: 1.1, padding: 0.05, rotation: 2, offsetX: 0, offsetY: 10 },
+  'FL': { scale: 1.0, padding: 0.05, rotation: 5, offsetX: 0, offsetY: 5 },
+  'WI': { scale: 1.1, padding: 0.05, rotation: 3, offsetX: 0, offsetY: 10 },
+  'GA': { scale: 1.1, padding: 0.05, rotation: 6, offsetX: 0, offsetY: 10 },
+  'IL': { scale: 1.0, padding: 0.05, rotation: 3, offsetX: 0, offsetY: 5 },
+  'IA': { scale: 1.2, padding: 0.05, rotation: 1, offsetX: 0, offsetY: 10 },
+  'NY': { scale: 1.1, padding: 0.05, rotation: 11, offsetX: 0, offsetY: 10 },
+  'NC': { scale: 1.4, padding: 0.00, rotation: 9, offsetX: 0, offsetY: 10 },
+  'AR': { scale: 1.0, padding: 0.05, rotation: 0 },
+  'AL': { scale: 1.0, padding: 0.05, rotation: 5 },
+  'LA': { scale: 1.2, padding: 0.05, rotation: 1, offsetX: 0, offsetY: 7 },
+  'MS': { scale: 1.0, padding: 0.05, rotation: 3 },
+  'PA': { scale: 1.2, padding: 0.05, rotation: 10, offsetX: 0, offsetY: 5 },
+  'OH': { scale: 1.0, padding: 0.05, rotation: 8, offsetX: 0, offsetY: 8 },
+  'VA': { scale: 1.1, padding: 0.08, rotation: 10, offsetX: 0, offsetY: 10 },
+  'TN': { scale: 1.8, padding: 0.00, rotation: 5, offsetX: 10, offsetY: 15 },
+  'KY': { scale: 1.1, padding: 0.08, rotation: 8, offsetX: 0, offsetY: 10 },
+  'IN': { scale: 0.9, padding: 0.05, rotation: 6 },
+  'ME': { scale: 0.9, padding: 0.05, rotation: 14 },
+  'SC': { scale: 1.0, padding: 0.08, rotation: 0 },
+  'WV': { scale: 1.0, padding: 0.05, rotation: 5 },
+  'MD': { scale: 1.3, padding: 0.08, rotation: 11, offsetX: 0, offsetY: 10 },
+  'HI': { scale: 1.2, padding: 0.08, rotation: 0 },
+  'VT': { scale: 0.8, padding: 0.12, rotation: 11 },
+  'NH': { scale: 0.8, padding: 0.12, rotation: 12 },
+  'MA': { scale: 1.1, padding: 0.08, rotation: 13, offsetX: 0, offsetY: 5 },
+  'NJ': { scale: 1.0, padding: 0.08, rotation: 10 },
+  'CT': { scale: 1.1, padding: 0.05, rotation: 12.5 },
+  'DE': { scale: 0.9, padding: 0.15, rotation: 13 },
+  'RI': { scale: 0.8, padding: 0.15, rotation: 14 },
+  'DC': { scale: 0.3, padding: 0.20, rotation: 0 },
+  'DEFAULT': { scale: 1.0, padding: 0.10, rotation: 0, offsetX: 0, offsetY: 0, strokeScale: 1.0 }
+};
+
+// Map toggle functionality
+document.addEventListener('DOMContentLoaded', () => {
+  const toggleButtons = document.querySelectorAll('.toggle-btn');
+  const statesMapContainer = document.getElementById('states-map-container');
+  const countiesMapContainer = document.getElementById('counties-map-container');
+  
+  toggleButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const view = button.dataset.view;
+      
+      // Update active states
+      toggleButtons.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+      
+      // Toggle map views with animation
+      if (view === 'states') {
+        countiesMapContainer.classList.remove('active');
+        setTimeout(() => {
+          statesMapContainer.classList.add('active');
+          initializeStateInteractions();
+        }, 100);
+      } else {
+        statesMapContainer.classList.remove('active');
+        setTimeout(() => {
+          countiesMapContainer.classList.add('active');
+        }, 100);
+      }
+      
+      // Clear state info when switching
+      if (stateInfoPanel) {
+        stateInfoPanel.innerHTML = '<div class="no-selection"></div>';
+      }
+    });
+  });
+  
+  // Initialize state interactions on load
+  initializeStateInteractions();
+  
+  // Apply custom stroke widths to state paths
+  applyCustomStrokeWidths();
+});
+
+// Apply custom stroke widths based on state
+function applyCustomStrokeWidths() {
+  const statePaths = document.querySelectorAll('.state-path');
+  
+  statePaths.forEach(path => {
+    const stateCode = path.id;
+    const strokeWidth = STATE_STROKE_WIDTHS[stateCode] || STATE_STROKE_WIDTHS['DEFAULT'];
+    path.style.strokeWidth = strokeWidth;
+    
+    // Store original stroke width for hover effects
+    path.dataset.originalStroke = strokeWidth;
+  });
+}
+
 // Load the county SVG file once
 async function loadCountySVG() {
   if (countyMapState.isLoaded) return countyMapState.svgDoc;
   
   try {
-    // Adjust this path to match your actual file location
     const response = await fetch('assets/svg-items/Usa_counties_large.svg');
     
     if (!response.ok) {
@@ -843,7 +572,6 @@ async function loadCountySVG() {
     const parser = new DOMParser();
     const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
     
-    // Check for parsing errors
     const parserError = svgDoc.querySelector('parsererror');
     if (parserError) {
       throw new Error('SVG parsing error: ' + parserError.textContent);
@@ -891,64 +619,6 @@ async function showCountyMap(stateCode) {
   createCountyMapDisplay(mapContainer, stateGroup, stateCode, stateName);
 }
 
-// State-specific sizing configuration
-const STATE_SIZE_CONFIG = {
-  // Large states that need to be bigger
-  'TX': { scale: 1.0, padding: 0.00, rotation: -3, offsetX: -1, offsetY: 0 },  // Texas
-  'CA': { scale: 1.2, padding: 0.05, rotation: -15, offsetX: 0, offsetY: 50 },  // California
-  'MT': { scale: 1.5, padding: 0.00, rotation: -8, offsetX: 0, offsetY: 20 },  // Montana
-  'AK': { scale: 1.0, padding: 0.00, rotation: 15 },  // Alaska
-  'NM': { scale: 1.2, padding: 0.05, rotation: -6, offsetX: 0, offsetY: 20 },  // New Mexico
-  'AZ': { scale: 1.2, padding: 0.05, rotation: -9, offsetX: 0, offsetY: 20 },  // Arizona
-  'NV': { scale: 1.1, padding: 0.05, rotation: -12, offsetX: 0, offsetY: 20 },  // Nevada - slight tilt
-  'CO': { scale: 1.0, padding: 0.05, rotation: -6, offsetX:0, offsetY: 10 },  // Colorado
-  'OR': { scale: 1.0, padding: 0.05, rotation: -15, offsetX: 0, offsetY: 15},  // Oregon
-  'WY': { scale: 1.0, padding: 0.05, rotation: -7, offsetX: 0, offsetY: 15 },  // Wyoming
-  'MI': { scale: 1.1, padding: 0.00, rotation: 5, offsetX: 0, offsetY: 5 },  // Michigan
-  'MN': { scale: 1.0, padding: 0.05, rotation: 0 },  // Minnesota
-  'UT': { scale: 1.0, padding: 0.05, rotation: -9, offsetX: 0, offsetY: 10 },  // Utah
-  'ID': { scale: 0.9, padding: 0.05, rotation: -11 },  // Idaho
-  'KS': { scale: 1.3, padding: 0.05, rotation: -2, offsetX: 0, offsetY: 15 },  // Kansas
-  'NE': { scale: 1.3, padding: 0.05, rotation: -2, offsetX: 0, offsetY: 15 },  // Nebraska
-  'SD': { scale: 1.2, padding: 0.05, rotation: -3, offsetX: 0, offsetY: 15 },  // South Dakota
-  'ND': { scale: 1.2, padding: 0.05, rotation: -2, offsetX: 0, offsetY: 15 },  // North Dakota
-  'OK': { scale: 1.3, padding: 0.05, rotation: -2, offsetX: 0, offsetY: 10 },  // Oklahoma
-  'MO': { scale: 1.1, padding: 0.05, rotation: 2, offsetX: 0, offsetY: 10 },  // Missouri
-  'FL': { scale: 1.0, padding: 0.05, rotation: 5, offsetX: 0, offsetY: 5 },  // Florida
-  'WI': { scale: 1.1, padding: 0.05, rotation: 3, offsetX: 0, offsetY: 10 },  // Wisconsin
-  'GA': { scale: 1.1, padding: 0.05, rotation: 6, offsetX: 0, offsetY: 10 },  // Georgia
-  'IL': { scale: 1.0, padding: 0.05, rotation: 3, offsetX: 0, offsetY: 5 },  // Illinois
-  'IA': { scale: 1.2, padding: 0.05, rotation: 1, offsetX: 0, offsetY: 10 },  // Iowa
-  'NY': { scale: 1.1, padding: 0.05, rotation: 11, offsetX: 0, offsetY: 10 },  // New York
-  'NC': { scale: 1.4, padding: 0.00, rotation: 9, offsetX: 0, offsetY: 10 },  // North Carolina
-  'AR': { scale: 1.0, padding: 0.05, rotation: 0 },  // Arkansas
-  'AL': { scale: 1.0, padding: 0.05, rotation: 5 },  // Alabama
-  'LA': { scale: 1.2, padding: 0.05, rotation: 1, offsetX: 0, offsetY: 7 },  // Louisiana
-  'MS': { scale: 1.0, padding: 0.05, rotation: 3 },  // Mississippi
-  'PA': { scale: 1.2, padding: 0.05, rotation: 10, offsetX: 0, offsetY: 5 },  // Pennsylvania
-  'OH': { scale: 1.0, padding: 0.05, rotation: 8, offsetX: 0, offsetY: 8 },  // Ohio
-  'VA': { scale: 1.1, padding: 0.08, rotation: 10, offsetX: 0, offsetY: 10 },  // Virginia
-  'TN': { scale: 1.8, padding: 0.00, rotation: 5, offsetX: 10, offsetY: 15 },  // Tennessee
-  'KY': { scale: 1.1, padding: 0.08, rotation: 8, offsetX: 0, offsetY: 10 },  // Kentucky
-  'IN': { scale: 0.9, padding: 0.05, rotation: 6 },  // Indiana
-  'ME': { scale: 0.9, padding: 0.05, rotation: 14 },  // Maine
-  'SC': { scale: 1.0, padding: 0.08, rotation: 0 },  // South Carolina
-  'WV': { scale: 1.0, padding: 0.05, rotation: 5 },  // West Virginia
-  'MD': { scale: 1.3, padding: 0.08, rotation: 11, offsetX: 0, offsetY: 10 },  // Maryland
-  'HI': { scale: 1.2, padding: 0.08, rotation: 0 },  // Hawaii
-  'VT': { scale: 0.8, padding: 0.12, rotation: 11 },  // Vermont
-  'NH': { scale: 0.8, padding: 0.12, rotation: 12 },  // New Hampshire
-  'MA': { scale: 1.1, padding: 0.08, rotation: 13, offsetX: 0, offsetY: 5 },  // Massachusetts
-  'NJ': { scale: 1.0, padding: 0.08, rotation: 10 },  // New Jersey
-  'CT': { scale: 1.1, padding: 0.05, rotation: 12.5 },  // Connecticut
-  'DE': { scale: 0.9, padding: 0.15, rotation: 13 },  // Delaware
-  'RI': { scale: 0.8, padding: 0.15, rotation: 14 },  // Rhode Island
-  'DC': { scale: 0.3, padding: 0.20, rotation: 0 },  // DC 
-  
-  // Default for any unspecified states
-  'DEFAULT': { scale: 1.0, padding: 0.10, rotation: 0, offsetX: 0, offsetY: 0 }
-};
-
 function createCountyMapDisplay(container, stateGroup, stateCode, stateName) {
   // Clone the state group to avoid modifying the original
   const stateClone = stateGroup.cloneNode(true);
@@ -992,12 +662,11 @@ function createCountyMapDisplay(container, stateGroup, stateCode, stateName) {
     ? `transform="rotate(${config.rotation} ${centerX} ${centerY})"` 
     : '';
 
-  console.log('State:', stateCode);
-  console.log('BBox:', bbox);
-  console.log('Config:', config);
-  console.log('ViewBox:', viewBoxX, viewBoxY, paddedWidth, paddedHeight);
-  console.log('Rotation:', config.rotation);
-  console.log('Offsets:', config.offsetX, config.offsetY);
+  const strokeScale = config.strokeScale || 1.0;
+  stateClone.querySelectorAll('path, polygon, line').forEach(el => {
+    const baseWidth = parseFloat(el.getAttribute('stroke-width')) || 1;
+    el.setAttribute('stroke-width', baseWidth * strokeScale);
+  });
   
   // Create new SVG for county display with rotation applied
   const countyMapHTML = `
@@ -1043,9 +712,9 @@ function setupCountyInteractions(stateCode) {
 
     // Hover effects
     path.addEventListener('mouseenter', (e) => {
-      path.style.fill = '#ff1356ff';
-      path.style.stroke = '#000000';
-      path.style.strokeWidth = '0.50';
+      path.style.fill = '#be1423';
+      path.style.stroke = '#e9d8df';
+      path.style.strokeWidth = '0.8';
       
       countyTooltip.innerHTML = `
         <div class="tooltip-header">${countyTitle}</div>
@@ -1157,7 +826,7 @@ function returnToStatesMap() {
         mapContainer.style.transition = 'opacity 0.4s ease-in';
       }, 50);
       
-      // Re-initialize state interactions by calling the setup function
+      // Re-initialize state interactions
       initializeStateInteractions();
     }, 300);
   }
@@ -1179,7 +848,6 @@ function returnToStatesMap() {
 function initializeStateInteractions() {
   const statePaths = document.querySelectorAll('.state-path');
   const tooltipElement = document.getElementById('tooltip');
-  const stateInfoPanel = document.getElementById('state-info');
 
   if (!tooltipElement) {
     console.error('Tooltip element not found!');
@@ -1188,10 +856,13 @@ function initializeStateInteractions() {
 
   statePaths.forEach(path => {
     const stateCode = path.id;
+    const baseStroke = path.dataset.originalStroke || STATE_STROKE_WIDTHS[stateCode] || STATE_STROKE_WIDTHS['DEFAULT'];
 
-    // Optimized hover events
+    // Optimized hover events with custom stroke widths
     path.addEventListener('mouseenter', (e) => {
       path.classList.add('hovered');
+      // Increase stroke width on hover (3x the base)
+      path.style.strokeWidth = parseFloat(baseStroke) * 3;
       updateTooltip(e, stateCode);
     });
 
@@ -1203,11 +874,13 @@ function initializeStateInteractions() {
 
     path.addEventListener('mouseleave', () => {
       path.classList.remove('hovered');
+      // Reset to original stroke width
+      path.style.strokeWidth = baseStroke;
       tooltipElement.style.display = 'none';
       clearTimeout(tooltipTimeout);
     });
 
-    // Click handling
+    // Click handling - shows county map
     path.addEventListener('click', (e) => {
       e.preventDefault();
 
@@ -1219,7 +892,8 @@ function initializeStateInteractions() {
       if (!isActive) {
         // Activate the clicked state
         path.classList.add('active');
-        displayStateInfo(stateCode);
+        // Show county map for this state
+        showCountyMap(stateCode);
 
         // Smooth scroll to info panel if it exists
         if (stateInfoPanel && stateInfoPanel.offsetTop) {
@@ -1228,7 +902,7 @@ function initializeStateInteractions() {
       } else {
         // Deactivate (second click)
         tooltipElement.style.display = 'none';
-        if (stateInfoPanel) stateInfoPanel.innerHTML = '';
+        if (stateInfoPanel) stateInfoPanel.innerHTML = '<div class="no-selection"></div>';
       }
 
       // Hide tooltip after clicking
@@ -1236,38 +910,6 @@ function initializeStateInteractions() {
     });
   });
 }
-
-// Enhanced state click handler - automatically shows county map
-function enhancedDisplayStateInfo(stateCode) {
-  const data = stateData[stateCode];
-  const stateName = stateNames[stateCode] || stateCode;
-  const stateInfoPanel = document.getElementById('state-info');
-  
-  if (!data) {
-    stateInfoPanel.innerHTML = `
-      <div class="state-info">
-        <h2 class="state-name">${stateName}</h2>
-        <div class="loading-message">
-          <p>Loading state data...</p>
-        </div>
-      </div>
-    `;
-    return;
-  }
-
-  // Automatically trigger county map display
-  showCountyMap(stateCode);
-}
-
-// Replace the original displayStateInfo with the enhanced version
-window.displayStateInfo = enhancedDisplayStateInfo;
-
-// Export functions for use in other modules if needed
-window.countyMapFunctions = {
-  showCountyMap,
-  returnToStatesMap,
-  loadCountySVG
-};
 
 // Improved tooltip positioning function
 function positionTooltip(e, tooltip) {
@@ -1278,6 +920,17 @@ function positionTooltip(e, tooltip) {
 
   let left = e.clientX - tooltipRect.width - margin;
   let top = e.clientY - tooltipRect.height / 2;
+
+  // Keep tooltip within viewport bounds
+  if (left < margin) {
+    left = e.clientX + margin;
+  }
+  if (top < margin) {
+    top = margin;
+  }
+  if (top + tooltipRect.height > viewportHeight - margin) {
+    top = viewportHeight - tooltipRect.height - margin;
+  }
 
   tooltip.style.left = `${left}px`;
   tooltip.style.top = `${top}px`;
@@ -1329,96 +982,6 @@ function updateTooltip(e, stateCode) {
   }, 6);
 }
 
-// Enhanced state info display with better error handling
-function displayStateInfo(stateCode) {
-  const data = stateData[stateCode];
-  const stateName = stateNames[stateCode] || stateCode;
-  
-  if (!data) {
-    stateInfoPanel.innerHTML = `
-      <div class="state-info">
-        <h2 class="state-name">${stateName}</h2>
-        <div class="loading-message">
-          <p>Loading state data...</p>
-          <p class="help-text">Click on another state or try again later.</p>
-        </div>
-      </div>
-    `;
-    return;
-  }
-
-  const winnerClass = data.lastElection.winner.includes('(D)') ? 'party-dem' : 'party-rep';
-
-  stateInfoPanel.innerHTML = `
-    <div class="state-info">
-      <h2 class="state-name">${data.name}</h2>
-      
-      <div class="data-section">
-        <h3>Leadership</h3>
-        <div class="data-grid">
-          <div class="data-item">
-            <span class="data-label">Governor:</span>
-            <span class="data-value ${data.governor.includes('(D)') ? 'party-dem' : 'party-rep'}">${data.governor}</span>
-          </div>
-          <div class="data-item">
-            <span class="data-label">Senior Senator:</span>
-            <span class="data-value ${data.senators[0].includes('(D)') ? 'party-dem' : 'party-rep'}">${data.senators[0]}</span>
-          </div>
-          <div class="data-item">
-            <span class="data-label">Junior Senator:</span>
-            <span class="data-value ${data.senators[1].includes('(D)') ? 'party-dem' : 'party-rep'}">${data.senators[1]}</span>
-          </div>
-          <div class="data-item">
-            <span class="data-label">Electoral Votes:</span>
-            <span class="data-value electoral-votes">${data.electoralVotes}</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="data-section">
-        <h3>2024 Election Results</h3>
-        <div class="data-grid">
-          <div class="data-item">
-            <span class="data-label">Winner:</span>
-            <span class="data-value ${winnerClass}">${data.lastElection.winner}</span>
-          </div>
-          <div class="data-item">
-            <span class="data-label">Margin:</span>
-            <span class="data-value margin">${data.lastElection.margin}</span>
-          </div>
-          <div class="data-item">
-            <span class="data-label">Voter Turnout:</span>
-            <span class="data-value turnout">${data.lastElection.turnout}</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="data-section">
-        <h3>Campaign Finance</h3>
-        <div class="data-grid">
-          <div class="data-item">
-            <span class="data-label">Total Raised:</span>
-            <span class="data-value money">${data.campaignFinance.total}</span>
-          </div>
-          <div class="data-item">
-            <span class="data-label">Top Donor Industry:</span>
-            <span class="data-value">${data.campaignFinance.topDonor}</span>
-          </div>
-          <div class="data-item">
-            <span class="data-label">PAC Spending:</span>
-            <span class="data-value money">${data.campaignFinance.pacSpending}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-// Enhanced event listeners with better performance
-document.addEventListener('DOMContentLoaded', () => {
-  initializeStateInteractions();
-});
-
 // Handle window resize for tooltip positioning
 window.addEventListener('resize', () => {
   const tooltipElement = document.getElementById('tooltip');
@@ -1437,5 +1000,8 @@ document.addEventListener('keydown', (e) => {
     document.querySelectorAll('.state-path.active').forEach(path => {
       path.classList.remove('active');
     });
+    if (stateInfoPanel) {
+      stateInfoPanel.innerHTML = '<div class="no-selection"></div>';
+    }
   }
 });
