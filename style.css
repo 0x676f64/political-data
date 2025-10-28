@@ -88,7 +88,7 @@ body {
 .container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 1rem;
+    padding: 5rem;
     position: relative;
 }
 
@@ -114,16 +114,16 @@ body {
 .toggle-btn {
     position: relative;
     z-index: 2;
-    padding: 0.55rem 1.5rem;
+    padding: 0.75rem 1rem;
     border: none;
     background: transparent;
     color: rgba(255, 255, 255, 0.6);
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     font-weight: 600;
     cursor: pointer;
     border-radius: 50px;
     transition: color 0.3s ease;
-    min-width: 50px;
+    min-width: 80px;
 }
 
 .toggle-btn.active {
@@ -212,28 +212,6 @@ body {
     z-index: 11;
 }
 
-#counties {
-    fill: #264b82;
-    stroke: #e9d8df;
-    stroke-width: 0.25;
-}
-
-#counties borders {
-    stroke-width: 1;
-}
-
-#counties path:hover {
-    fill: #be1423;
-    stroke: #e9d8df;
-    stroke-width: 1;
-    transition: all 0.5s ease;
-    z-index: 11;
-}
-
-#borders, #separatorAK-HI {
-    fill: transparent;
-}
-
 .state-path:active, .state-path:focus {
     fill: #be1423;
     stroke: #dddb23;
@@ -256,14 +234,14 @@ body {
 }
 
 .tooltip-header {
-    font-size: 0.75rem;
+    font-size: 1rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
     color: #ffffff;
 }
 
 .tooltip-content {
-    font-size: 0.55rem;
+    font-size: 0.85rem;
 }
 
 .tooltip-row {
@@ -355,36 +333,31 @@ body {
     position: absolute;
     margin-top: 15rem;
     animation: fadeInRight 0.6s ease-out;
-    border-top: 1px solid #e9d8df;
-    border-right: 1px solid #e9d8df;
+    border-top: 1px solid #041e42a6;
+    border-right: 1px solid #041e42a6;
     padding: 10px 10px 0 10px;
 }
 
 .state-name {
-    font-size: 1rem;
-    font-weight: 400;
+    font-size: 1.2rem;
+    font-weight: 500;
     margin-bottom: 1rem;
     animation: slideInDown 0.6s ease-out;
-    color: #e9d8df;
+    color: #041e42;
 }
 
 .data-section h3 {
-    font-size: 0.70rem;
-    color: #9c8f94;
-    margin-bottom: 1rem;
+    font-size: 0.80rem;
+    color: #041e42;
 }
 
 .data-section {
     margin-bottom: 0.55rem;
 }
 
-.data-item {
-    gap: 1rem;
-}
-
 .data-grid {
     font-size: 0.65rem;
-    color: #e9d8df;
+    color: #041e42;
 }
 
 .info-grid {
@@ -434,7 +407,7 @@ body {
     font-size: 1.2rem;
 }
 
-/* County map wrapper */
+/* District map wrapper */
 .county-map-wrapper {
     width: 100%;
     height: 100%;
@@ -443,7 +416,7 @@ body {
     position: relative;
 }
 
-/* County map header */
+/* District map header */
 .county-map-header {
     display: flex;
     justify-content: space-between;

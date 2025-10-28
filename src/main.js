@@ -5,8 +5,8 @@ const stateInfoPanel = document.getElementById('state-info');
 // State-specific stroke widths
 const STATE_STROKE_WIDTHS = {
   // Small states that need thinner strokes when zoomed
-  'DE': 0.3,  'RI': 0.3,  'DC': 0.2,  'CT': 0.4,  'NH': 0.4,  'VT': 0.4,
-  'MA': 0.4,  'NJ': 0.45, 'MD': 0.4,  'HI': 0.4,
+  'DE': 0.45,  'RI': 0.45,  'DC': 0.45,  'CT': 0.4,  'NH': 0.4,  'VT': 0.4,
+  'MA': 0.4,  'NJ': 0.55, 'MD': 0.4,  'HI': 0.4,
   // Medium states
   'WV': 0.5,  'SC': 0.55, 'ME': 0.5,  'IN': 0.5,
   // Large states
@@ -437,7 +437,7 @@ const stateData = {
   }
 };
 
-// County map state management
+// County/District map state management
 const countyMapState = {
   isLoaded: false,
   svgDoc: null,
@@ -449,55 +449,55 @@ const countyMapState = {
 const STATE_SIZE_CONFIG = {
   'TX': { scale: 1.0, padding: 0.00, rotation: -3, offsetX: -1, offsetY: 0 },
   'CA': { scale: 1.2, padding: 0.05, rotation: -15, offsetX: 0, offsetY: 50 },
-  'MT': { scale: 1.5, padding: 0.00, rotation: -8, offsetX: 0, offsetY: 20 },
-  'AK': { scale: 1.0, padding: 0.00, rotation: 15 },
-  'NM': { scale: 1.2, padding: 0.05, rotation: -6, offsetX: 0, offsetY: 20 },
-  'AZ': { scale: 1.2, padding: 0.05, rotation: -9, offsetX: 0, offsetY: 20 },
+  'MT': { scale: 1.5, padding: 0.00, rotation: -8, offsetX: 0, offsetY: 30 },
+  'AK': { scale: 1.2, padding: 0.00, rotation: 15, offsetX: 0, offsetY: 20 },
+  'NM': { scale: 1.4, padding: 0.05, rotation: -6, offsetX: 0, offsetY: 30 },
+  'AZ': { scale: 1.4, padding: 0.05, rotation: -9, offsetX: 0, offsetY: 30 },
   'NV': { scale: 1.1, padding: 0.05, rotation: -12, offsetX: 0, offsetY: 20 },
-  'CO': { scale: 1.0, padding: 0.05, rotation: -6, offsetX:0, offsetY: 10 },
-  'OR': { scale: 1.0, padding: 0.05, rotation: -15, offsetX: 0, offsetY: 15},
-  'WY': { scale: 1.0, padding: 0.05, rotation: -7, offsetX: 0, offsetY: 15 },
-  'MI': { scale: 1.1, padding: 0.00, rotation: 5, offsetX: 0, offsetY: 5 },
-  'MN': { scale: 1.0, padding: 0.05, rotation: 0 },
-  'UT': { scale: 1.0, padding: 0.05, rotation: -9, offsetX: 0, offsetY: 10 },
-  'ID': { scale: 0.9, padding: 0.05, rotation: -11 },
-  'KS': { scale: 1.3, padding: 0.05, rotation: -2, offsetX: 0, offsetY: 15 },
-  'NE': { scale: 1.3, padding: 0.05, rotation: -2, offsetX: 0, offsetY: 15 },
-  'WA': { scale: 1.5, padding: 0.08, rotation: -14, offsetX: 0, offsetY: 15 },
-  'SD': { scale: 1.2, padding: 0.05, rotation: -3, offsetX: 0, offsetY: 15 },
-  'ND': { scale: 1.2, padding: 0.05, rotation: -2, offsetX: 0, offsetY: 15 },
-  'OK': { scale: 1.3, padding: 0.05, rotation: -2, offsetX: 0, offsetY: 10 },
-  'MO': { scale: 1.1, padding: 0.05, rotation: 2, offsetX: 0, offsetY: 10 },
+  'CO': { scale: 1.4, padding: 0.05, rotation: -6, offsetX:0, offsetY: 30 },
+  'OR': { scale: 1.3, padding: 0.05, rotation: -15, offsetX: 0, offsetY: 35},
+  'WY': { scale: 1.2, padding: 0.05, rotation: -7, offsetX: 0, offsetY: 35 },
+  'MI': { scale: 1.3, padding: 0.00, rotation: 5, offsetX: 0, offsetY: 15 },
+  'MN': { scale: 1.3, padding: 0.05, rotation: 1, offsetX: 0, offsetY: 20 },
+  'UT': { scale: 1.2, padding: 0.05, rotation: -9, offsetX: 0, offsetY: 20 },
+  'ID': { scale: 1.1, padding: 0.05, rotation: -11, offsetX: 0, offsetY: 20 },
+  'KS': { scale: 1.7, padding: 0.05, rotation: -2, offsetX: 0, offsetY: 25 },
+  'NE': { scale: 1.6, padding: 0.05, rotation: -3, offsetX: 0, offsetY: 25 },
+  'WA': { scale: 1.5, padding: 0.08, rotation: -14, offsetX: 0, offsetY: 25 },
+  'SD': { scale: 1.5, padding: 0.05, rotation: -3, offsetX: 0, offsetY: 15 },
+  'ND': { scale: 1.5, padding: 0.05, rotation: -2, offsetX: 0, offsetY: 15 },
+  'OK': { scale: 1.6, padding: 0.05, rotation: -2, offsetX: 0, offsetY: 10 },
+  'MO': { scale: 1.3, padding: 0.05, rotation: 2, offsetX: 0, offsetY: 10 },
   'FL': { scale: 1.0, padding: 0.05, rotation: 5, offsetX: 0, offsetY: 5 },
-  'WI': { scale: 1.1, padding: 0.05, rotation: 3, offsetX: 0, offsetY: 10 },
-  'GA': { scale: 1.1, padding: 0.05, rotation: 6, offsetX: 0, offsetY: 10 },
-  'IL': { scale: 1.0, padding: 0.05, rotation: 3, offsetX: 0, offsetY: 5 },
-  'IA': { scale: 1.2, padding: 0.05, rotation: 1, offsetX: 0, offsetY: 10 },
-  'NY': { scale: 1.1, padding: 0.05, rotation: 11, offsetX: 0, offsetY: 10 },
-  'NC': { scale: 1.4, padding: 0.00, rotation: 9, offsetX: 0, offsetY: 10 },
-  'AR': { scale: 1.0, padding: 0.05, rotation: 0 },
+  'WI': { scale: 1.3, padding: 0.05, rotation: 3, offsetX: 0, offsetY: 20 },
+  'GA': { scale: 1.3, padding: 0.05, rotation: 6, offsetX: 0, offsetY: 20 },
+  'IL': { scale: 1.2, padding: 0.05, rotation: 3, offsetX: 0, offsetY: 15 },
+  'IA': { scale: 1.5, padding: 0.05, rotation: 1, offsetX: 0, offsetY: 20 },
+  'NY': { scale: 1.5, padding: 0.05, rotation: 11, offsetX: 0, offsetY: 25 },
+  'NC': { scale: 1.6, padding: 0.00, rotation: 9, offsetX: 0, offsetY: 10 },
+  'AR': { scale: 1.3, padding: 0.05, rotation: 2, offsetX: 0, offsetY: 10 },
   'AL': { scale: 1.0, padding: 0.05, rotation: 5 },
   'LA': { scale: 1.2, padding: 0.05, rotation: 1, offsetX: 0, offsetY: 7 },
   'MS': { scale: 1.0, padding: 0.05, rotation: 3 },
-  'PA': { scale: 1.2, padding: 0.05, rotation: 10, offsetX: 0, offsetY: 5 },
-  'OH': { scale: 1.0, padding: 0.05, rotation: 8, offsetX: 0, offsetY: 8 },
-  'VA': { scale: 1.1, padding: 0.08, rotation: 10, offsetX: 0, offsetY: 10 },
-  'TN': { scale: 1.8, padding: 0.00, rotation: 5, offsetX: 10, offsetY: 15 },
-  'KY': { scale: 1.1, padding: 0.08, rotation: 8, offsetX: 0, offsetY: 10 },
-  'IN': { scale: 0.9, padding: 0.05, rotation: 6 },
-  'ME': { scale: 0.9, padding: 0.05, rotation: 14 },
-  'SC': { scale: 1.0, padding: 0.08, rotation: 0 },
-  'WV': { scale: 1.0, padding: 0.05, rotation: 5 },
-  'MD': { scale: 1.3, padding: 0.08, rotation: 11, offsetX: 0, offsetY: 10 },
-  'HI': { scale: 1.2, padding: 0.08, rotation: 0 },
-  'VT': { scale: 0.8, padding: 0.12, rotation: 11 },
-  'NH': { scale: 0.8, padding: 0.12, rotation: 12 },
-  'MA': { scale: 1.1, padding: 0.08, rotation: 13, offsetX: 0, offsetY: 5 },
+  'PA': { scale: 1.4, padding: 0.05, rotation: 11, offsetX: 0, offsetY: 15 },
+  'OH': { scale: 1.2, padding: 0.05, rotation: 8, offsetX: 0, offsetY: 8 },
+  'VA': { scale: 1.4, padding: 0.08, rotation: 10, offsetX: 0, offsetY: 15 },
+  'TN': { scale: 2.0, padding: 0.00, rotation: 5, offsetX: 10, offsetY: 15 },
+  'KY': { scale: 1.5, padding: 0.08, rotation: 8, offsetX: 0, offsetY: 10 },
+  'IN': { scale: 1.2, padding: 0.05, rotation: 6, offsetX: 0, offsetY: 15 },
+  'ME': { scale: 1.1, padding: 0.05, rotation: 14 },
+  'SC': { scale: 1.3, padding: 0.08, rotation: 0 },
+  'WV': { scale: 1.2, padding: 0.05, rotation: 5, offsetX: 0, offsetY: 10 },
+  'MD': { scale: 1.7, padding: 0.08, rotation: 11, offsetX: 0, offsetY: 10 },
+  'HI': { scale: 1.5, padding: 0.08, rotation: 0, offsetX: 0, offsetY: 20 },
+  'VT': { scale: 1.1, padding: 0.12, rotation: 11, offsetX: 0, offsetY: 10 },
+  'NH': { scale: 1.1, padding: 0.12, rotation: 12, offsetX: 0, offsetY: 10 },
+  'MA': { scale: 1.5, padding: 0.08, rotation: 13, offsetX: 0, offsetY: 15 },
   'NJ': { scale: 1.0, padding: 0.08, rotation: 10 },
-  'CT': { scale: 1.1, padding: 0.05, rotation: 12.5 },
-  'DE': { scale: 0.9, padding: 0.15, rotation: 13 },
-  'RI': { scale: 0.8, padding: 0.15, rotation: 14 },
-  'DC': { scale: 0.3, padding: 0.20, rotation: 0 },
+  'CT': { scale: 1.4, padding: 0.05, rotation: 12.5, offsetX: 0, offsetY: 10 },
+  'DE': { scale: 1.2, padding: 0.15, rotation: 13, offsetX: 0, offsetY: 5 },
+  'RI': { scale: 1.2, padding: 0.15, rotation: 14, offsetX: 0, offsetY: 5 },
+  'DC': { scale: 1.3, padding: 0.20, rotation: 0, offsetX: 0, offsetY: 1 },
   'DEFAULT': { scale: 1.0, padding: 0.10, rotation: 0, offsetX: 0, offsetY: 0, strokeScale: 1.0 }
 };
 
@@ -505,7 +505,7 @@ const STATE_SIZE_CONFIG = {
 document.addEventListener('DOMContentLoaded', () => {
   const toggleButtons = document.querySelectorAll('.toggle-btn');
   const statesMapContainer = document.getElementById('states-map-container');
-  const countiesMapContainer = document.getElementById('counties-map-container');
+  const districtMapContainer = document.getElementById('district-map-container');
   
   toggleButtons.forEach(button => {
     button.addEventListener('click', () => {
@@ -517,15 +517,18 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // Toggle map views with animation
       if (view === 'states') {
-        countiesMapContainer.classList.remove('active');
+        if (districtMapContainer) districtMapContainer.classList.remove('active');
         setTimeout(() => {
           statesMapContainer.classList.add('active');
           initializeStateInteractions();
         }, 100);
-      } else {
+      } else if (view === 'districts') {
         statesMapContainer.classList.remove('active');
         setTimeout(() => {
-          countiesMapContainer.classList.add('active');
+          if (districtMapContainer) {
+            districtMapContainer.classList.add('active');
+            initializeDistrictInteractions();
+          }
         }, 100);
       }
       
@@ -557,11 +560,124 @@ function applyCustomStrokeWidths() {
   });
 }
 
-// Load the county SVG file once
+// Initialize district map interactions
+function initializeDistrictInteractions() {
+  const districtPaths = document.querySelectorAll('#district-map-container path, #district-map-container polygon');
+  const tooltipElement = document.getElementById('tooltip');
+
+  if (!tooltipElement) {
+    console.error('Tooltip element not found!');
+    return;
+  }
+
+  districtPaths.forEach(path => {
+    const districtId = path.id;
+    const districtTitle = path.querySelector('title')?.textContent || districtId || 'Unknown District';
+
+    // Hover effects
+    path.addEventListener('mouseenter', (e) => {
+      path.style.fill = '#be1423';
+      path.style.stroke = '#e9d8df';
+      path.style.strokeWidth = '1.5';
+      
+      updateDistrictTooltip(e, districtTitle, districtId);
+    });
+
+    path.addEventListener('mousemove', (e) => {
+      if (tooltipElement.style.display === 'block') {
+        positionTooltip(e, tooltipElement);
+      }
+    });
+
+    path.addEventListener('mouseleave', () => {
+      path.style.fill = '';
+      path.style.stroke = '';
+      path.style.strokeWidth = '';
+      tooltipElement.style.display = 'none';
+      clearTimeout(tooltipTimeout);
+    });
+
+    // Click to show district details
+    path.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showDistrictDetails(districtTitle, districtId);
+    });
+  });
+}
+
+// Update tooltip for districts
+function updateDistrictTooltip(e, districtName, districtId) {
+  const tooltipElement = document.getElementById('tooltip');
+  if (!tooltipElement) return;
+  
+  let tooltipContent = `<div class="tooltip-header">${districtName}</div>`;
+  
+  tooltipContent += `
+    <div class="tooltip-content">
+      <div class="tooltip-row">
+        <span class="tooltip-label">District ID:</span>
+        <span class="tooltip-value">${districtId}</span>
+      </div>
+      <div class="tooltip-row">
+        <span class="tooltip-label">Representative:</span>
+        <span class="tooltip-value">Loading...</span>
+      </div>
+      <div class="tooltip-row">
+        <span class="tooltip-label">Party:</span>
+        <span class="tooltip-value">TBD</span>
+      </div>
+    </div>
+  `;
+  
+  tooltipElement.innerHTML = tooltipContent;
+  tooltipElement.style.display = 'block';
+  tooltipElement.style.fontSize = '0.80rem';
+  positionTooltip(e, tooltipElement);
+}
+
+// Show detailed district information
+function showDistrictDetails(districtName, districtId) {
+  const infoPanel = document.getElementById('state-info');
+  
+  infoPanel.innerHTML = `
+    <div class="district-info">
+      <h2 class="district-name">${districtName}</h2>
+      <div class="data-section">
+        <h3>Congressional District Information</h3>
+        <div class="data-grid">
+          <div class="data-item">
+            <span class="data-label">District ID:</span>
+            <span class="data-value">${districtId}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">Representative:</span>
+            <span class="data-value">Placeholder Name (Party)</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">Party:</span>
+            <span class="data-value">Republican/Democrat</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">Last Election:</span>
+            <span class="data-value">2024 Results</span>
+          </div>
+        </div>
+      </div>
+      <div class="data-section">
+        <p class="info-message">
+          <em>Additional district data can be loaded here from your data source.</em>
+        </p>
+      </div>
+    </div>
+  `;
+}
+
+// Load the County SVG file for state zoom view
 async function loadCountySVG() {
   if (countyMapState.isLoaded) return countyMapState.svgDoc;
   
   try {
+    // This loads the COUNTY map for when users click individual states
     const response = await fetch('assets/svg-items/Usa_counties_large.svg');
     
     if (!response.ok) {
@@ -587,12 +703,12 @@ async function loadCountySVG() {
   }
 }
 
-// Extract and display counties for a specific state
+// Extract and display counties for a specific state (when clicking on States tab)
 async function showCountyMap(stateCode) {
   const stateName = stateNames[stateCode];
   if (!stateName) return;
 
-  // Load county SVG if not already loaded
+  // Load COUNTY SVG (not district) for state zoom view
   const countyDoc = await loadCountySVG();
   if (!countyDoc) {
     console.error('County map not available');
@@ -615,7 +731,7 @@ async function showCountyMap(stateCode) {
     countyMapState.originalMapContainer = mapContainer.innerHTML;
   }
 
-  // Create county map display
+  // Create county map display (counties for the clicked state)
   createCountyMapDisplay(mapContainer, stateGroup, stateCode, stateName);
 }
 
@@ -668,19 +784,12 @@ function createCountyMapDisplay(container, stateGroup, stateCode, stateName) {
     el.setAttribute('stroke-width', baseWidth * strokeScale);
   });
   
-  // Create new SVG for county display with rotation applied
+  // Create new SVG for county display (showing counties within the state)
   const countyMapHTML = `
     <div class="county-map-wrapper">
       <div class="county-map-header">
         <button id="back-to-states" class="back-button">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M15 10H5M5 10L10 15M5 10L10 5"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"/>
-          </svg>
-          Back
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M120-120v-240h80v104l124-124 56 56-124 124h104v80H120Zm480 0v-80h104L580-324l56-56 124 124v-104h80v240H600ZM324-580 200-704v104h-80v-240h240v80H256l124 124-56 56Zm312 0-56-56 124-124H600v-80h240v240h-80v-104L636-580ZM480-400q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Z"/></svg>
         </button>
       </div>
       <svg id="county-map"
@@ -701,9 +810,9 @@ function createCountyMapDisplay(container, stateGroup, stateCode, stateName) {
   updateStateInfoForCounties(stateCode, stateName);
 }
 
-// Set up hover and click interactions for counties
+// Set up hover and click interactions for counties within state zoom view
 function setupCountyInteractions(stateCode) {
-  const countyPaths = document.querySelectorAll('#county-map path');
+  const countyPaths = document.querySelectorAll('#county-map path, #county-map polygon');
   const countyTooltip = document.getElementById('county-tooltip');
 
   countyPaths.forEach(path => {
@@ -748,7 +857,7 @@ function setupCountyInteractions(stateCode) {
   });
 }
 
-// Show detailed county information
+// Show detailed county information in state zoom view
 function showCountyDetails(countyName, countyId, stateCode) {
   const infoPanel = document.getElementById('state-info');
   
@@ -777,14 +886,14 @@ function showCountyDetails(countyName, countyId, stateCode) {
   `;
 }
 
-// Update state info panel for county view
+// Update state info panel for county zoom view
 function updateStateInfoForCounties(stateCode, stateName) {
   const infoPanel = document.getElementById('state-info');
   const data = stateData[stateCode];
 
   infoPanel.innerHTML = `
     <div class="state-info county-view">
-      <h2 class="state-name">${stateName}</h2>
+      <h2 class="state-name">${stateName} - County View</h2>
       <div class="data-section">
         <h3>State Information</h3>
         <div class="data-grid">
@@ -802,6 +911,11 @@ function updateStateInfoForCounties(stateCode, stateName) {
           </div>
         </div>
       </div>
+      <div class="data-section">
+        <p class="info-message">
+          <em>Click on a county to see detailed information.</em>
+        </p>
+      </div>
     </div>
   `;
 }
@@ -811,7 +925,7 @@ function returnToStatesMap() {
   const mapContainer = document.querySelector('.map-container');
   
   if (countyMapState.originalMapContainer) {
-    // Add fade-out animation to county map
+    // Add fade-out animation to district map
     mapContainer.style.opacity = '0';
     mapContainer.style.transition = 'opacity 0.3s ease-out';
     
@@ -828,6 +942,7 @@ function returnToStatesMap() {
       
       // Re-initialize state interactions
       initializeStateInteractions();
+      applyCustomStrokeWidths();
     }, 300);
   }
   
@@ -880,7 +995,7 @@ function initializeStateInteractions() {
       clearTimeout(tooltipTimeout);
     });
 
-    // Click handling - shows county map
+    // Click handling - shows district map for that state
     path.addEventListener('click', (e) => {
       e.preventDefault();
 
@@ -892,7 +1007,7 @@ function initializeStateInteractions() {
       if (!isActive) {
         // Activate the clicked state
         path.classList.add('active');
-        // Show county map for this state
+        // Show district map for this state
         showCountyMap(stateCode);
 
         // Smooth scroll to info panel if it exists
