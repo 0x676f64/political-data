@@ -873,7 +873,6 @@ function showCountyDetails(countyName, countyId, stateCode) {
           </div>
           <div class="data-item">
             <span class="data-label">FIPS Code:</span>
-            <span class="data-value">${countyId}</span>
           </div>
         </div>
       </div>
@@ -891,19 +890,55 @@ function updateStateInfoForCounties(stateCode, stateName) {
   const infoPanel = document.getElementById('state-info');
   const data = stateData[stateCode];
 
+  if (!data) {
+    infoPanel.innerHTML = `<p>No data available for ${stateName}</p>`;
+    return;
+  }
+
+  // ✅ Determine party class helper
+  const getPartyClass = (text) => {
+    if (text.includes('(D)')) return 'party-dem';
+    if (text.includes('(R)')) return 'party-rep';
+    if (text.includes('(I)')) return 'party-ind';
+    return '';
+  };
+
+  // ✅ Format senators with party coloring
+  const senatorList = data.senators
+    ? data.senators
+        .map((sen) => {
+          const partyClass = getPartyClass(sen);
+          return `<div class="senator-name ${partyClass}">${sen}</div>`;
+        })
+        .join('')
+    : '<div class="senator-name">N/A</div>';
+
+  // ✅ Color governor name by party
+  const governorPartyClass = getPartyClass(data.governor);
+
+  // ✅ Color winner by party (like tooltip)
+  const winnerParty = data.lastElection.winner.includes('(D)')
+    ? 'dem'
+    : data.lastElection.winner.includes('(R)')
+    ? 'rep'
+    : 'ind';
+
   infoPanel.innerHTML = `
     <div class="state-info county-view">
-      <h2 class="state-name">${stateName} - County View</h2>
+      <h2 class="state-name">${stateName}</h2>
       <div class="data-section">
-        <h3>State Information</h3>
         <div class="data-grid">
           <div class="data-item">
             <span class="data-label">Governor:</span>
-            <span class="data-value">${data.governor}</span>
+            <span class="data-value ${governorPartyClass}">${data.governor}</span>
+          </div>
+          <div class="data-item senators-row">
+            <span class="data-label">Senators:</span>
+            <span class="data-value">${senatorList}</span>
           </div>
           <div class="data-item">
             <span class="data-label">2024 Winner:</span>
-            <span class="data-value">${data.lastElection.winner}</span>
+            <span class="data-value party-${winnerParty}">${data.lastElection.winner}</span>
           </div>
           <div class="data-item">
             <span class="data-label">Electoral Votes:</span>
@@ -911,14 +946,10 @@ function updateStateInfoForCounties(stateCode, stateName) {
           </div>
         </div>
       </div>
-      <div class="data-section">
-        <p class="info-message">
-          <em>Click on a county to see detailed information.</em>
-        </p>
-      </div>
     </div>
   `;
 }
+
 
 // Return to the original states map
 function returnToStatesMap() {
@@ -1058,19 +1089,51 @@ function updateTooltip(e, stateCode) {
   tooltipTimeout = setTimeout(() => {
     const tooltipElement = document.getElementById('tooltip');
     if (!tooltipElement) return;
-    
+
     const data = stateData[stateCode];
     const stateName = stateNames[stateCode] || stateCode;
-    
+
     let tooltipContent = `<div class="tooltip-header">${stateName}</div>`;
-    
+
     if (data) {
-      const winnerParty = data.lastElection.winner.includes('(D)') ? 'dem' : 'rep';
+      // ✅ Party detection helper
+      const getPartyClass = (text) => {
+        if (text.includes('(D)')) return 'party-dem';
+        if (text.includes('(R)')) return 'party-rep';
+        if (text.includes('(I)')) return 'party-ind';
+        return '';
+      };
+
+      // ✅ Format senators with correct color classes
+      const senatorList = data.senators
+        ? data.senators
+            .map((sen) => {
+              const partyClass = getPartyClass(sen);
+              return `<div class="senator-name ${partyClass}">${sen}</div>`;
+            })
+            .join('')
+        : '<div class="senator-name">N/A</div>';
+
+      // ✅ Governor coloring
+      const governorPartyClass = getPartyClass(data.governor);
+
+      // ✅ Winner coloring
+      const winnerParty = data.lastElection.winner.includes('(D)')
+        ? 'dem'
+        : data.lastElection.winner.includes('(R)')
+        ? 'rep'
+        : 'ind';
+
+      // ✅ Construct tooltip
       tooltipContent += `
         <div class="tooltip-content">
           <div class="tooltip-row">
             <span class="tooltip-label">Governor:</span>
-            <span class="tooltip-value">${data.governor}</span>
+            <span class="tooltip-value ${governorPartyClass}">${data.governor}</span>
+          </div>
+          <div class="tooltip-row senators-row">
+            <span class="tooltip-label">Senators:</span>
+            <span class="tooltip-value">${senatorList}</span>
           </div>
           <div class="tooltip-row">
             <span class="tooltip-label">2024 Winner:</span>
@@ -1089,7 +1152,7 @@ function updateTooltip(e, stateCode) {
     } else {
       tooltipContent += `<div class="tooltip-content"><em>Loading data...</em></div>`;
     }
-    
+
     tooltipElement.innerHTML = tooltipContent;
     tooltipElement.style.display = 'block';
     tooltipElement.style.fontSize = '0.80rem';
