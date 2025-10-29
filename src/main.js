@@ -571,8 +571,18 @@ function initializeDistrictInteractions() {
   }
 
   districtPaths.forEach(path => {
-    const districtId = path.id;
-    const districtTitle = path.querySelector('title')?.textContent || districtId || 'Unknown District';
+    const svgDistrictId = path.id; // e.g., "LA02"
+    const districtId = formatDistrictId(svgDistrictId); // e.g., "LA-2"
+    const memberData = houseMembers[districtId];
+    
+    // Get state name from district ID
+    const stateCode = districtId.substring(0, 2);
+    const stateName = getStateName(stateCode);
+    const districtNumber = districtId.substring(3);
+    const districtTitle = `${stateName} ${districtNumber}`;
+
+     // 🚫 Skip state borders (non-district shapes)
+    if (!districtId || districtId.toLowerCase().includes('border')) return;
 
     // Hover effects
     path.addEventListener('mouseenter', (e) => {
@@ -580,7 +590,7 @@ function initializeDistrictInteractions() {
       path.style.stroke = '#e9d8df';
       path.style.strokeWidth = '1.5';
       
-      updateDistrictTooltip(e, districtTitle, districtId);
+      updateDistrictTooltip(e, districtTitle, districtId, memberData);
     });
 
     path.addEventListener('mousemove', (e) => {
@@ -600,34 +610,52 @@ function initializeDistrictInteractions() {
     // Click to show district details
     path.addEventListener('click', (e) => {
       e.stopPropagation();
-      showDistrictDetails(districtTitle, districtId);
+      showDistrictDetails(districtTitle, districtId, memberData);
     });
   });
 }
 
 // Update tooltip for districts
-function updateDistrictTooltip(e, districtName, districtId) {
+function updateDistrictTooltip(e, districtName, districtId, memberData) {
   const tooltipElement = document.getElementById('tooltip');
   if (!tooltipElement) return;
   
   let tooltipContent = `<div class="tooltip-header">${districtName}</div>`;
   
-  tooltipContent += `
-    <div class="tooltip-content">
-      <div class="tooltip-row">
-        <span class="tooltip-label">District ID:</span>
-        <span class="tooltip-value">${districtId}</span>
+  if (memberData) {
+    const partyClass = getPartyClass(memberData.party);
+    const partyName = getPartyFullName(memberData.party);
+    
+    tooltipContent += `
+      <div class="tooltip-content">
+        <div class="tooltip-row">
+          <span class="tooltip-label">District:</span>
+          <span class="tooltip-value">${districtId}</span>
+        </div>
+        <div class="tooltip-row">
+          <span class="tooltip-label">Rep:</span>
+          <span class="tooltip-value ${partyClass}">${memberData.name}</span>
+        </div>
+        <div class="tooltip-row">
+          <span class="tooltip-label">Party:</span>
+          <span class="tooltip-value ${partyClass}">${partyName}</span>
+        </div>
       </div>
-      <div class="tooltip-row">
-        <span class="tooltip-label">Representative:</span>
-        <span class="tooltip-value">Loading...</span>
+    `;
+  } else {
+    tooltipContent += `
+      <div class="tooltip-content">
+        <div class="tooltip-row">
+          <span class="tooltip-label">District:</span>
+          <span class="tooltip-value">${districtId}</span>
+        </div>
+        <div class="tooltip-row">
+          <span class="tooltip-label">Rep:</span>
+          <span class="tooltip-value">Data not available</span>
+        </div>
       </div>
-      <div class="tooltip-row">
-        <span class="tooltip-label">Party:</span>
-        <span class="tooltip-value">TBD</span>
-      </div>
-    </div>
-  `;
+    `;
+  }
   
   tooltipElement.innerHTML = tooltipContent;
   tooltipElement.style.display = 'block';
@@ -636,37 +664,57 @@ function updateDistrictTooltip(e, districtName, districtId) {
 }
 
 // Show detailed district information
-function showDistrictDetails(districtName, districtId) {
+function showDistrictDetails(districtName, districtId, memberData) {
   const infoPanel = document.getElementById('state-info');
+  
+  if (!memberData) {
+    infoPanel.innerHTML = `
+      <div class="district-info">
+        <h2 class="district-name">${districtName}</h2>
+        <div class="data-section">
+          <h3>Congressional District ${districtId}</h3>
+          <div class="data-grid">
+            <div class="data-item">
+              <span class="data-label">District ID:</span>
+              <span class="data-value">${districtId}</span>
+            </div>
+            <div class="data-item">
+              <span class="data-label">Status:</span>
+              <span class="data-value">Data not available</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const partyClass = getPartyClass(memberData.party);
+  const partyName = getPartyFullName(memberData.party);
   
   infoPanel.innerHTML = `
     <div class="district-info">
       <h2 class="district-name">${districtName}</h2>
       <div class="data-section">
-        <h3>Congressional District Information</h3>
+        <h3>Congressional District ${districtId}</h3>
         <div class="data-grid">
           <div class="data-item">
-            <span class="data-label">District ID:</span>
-            <span class="data-value">${districtId}</span>
-          </div>
-          <div class="data-item">
-            <span class="data-label">Representative:</span>
-            <span class="data-value">Placeholder Name (Party)</span>
+            <span class="data-label">Rep:</span>
+            <span class="data-value ${partyClass}">${memberData.name}</span>
           </div>
           <div class="data-item">
             <span class="data-label">Party:</span>
-            <span class="data-value">Republican/Democrat</span>
+            <span class="data-value ${partyClass}">${partyName}</span>
           </div>
           <div class="data-item">
-            <span class="data-label">Last Election:</span>
-            <span class="data-value">2024 Results</span>
+            <span class="data-label">Election Year:</span>
+            <span class="data-value">${memberData.electionYear}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">Margin:</span>
+            <span class="data-value">${memberData.margin}</span>
           </div>
         </div>
-      </div>
-      <div class="data-section">
-        <p class="info-message">
-          <em>Additional district data can be loaded here from your data source.</em>
-        </p>
       </div>
     </div>
   `;
@@ -950,44 +998,10 @@ function updateStateInfoForCounties(stateCode, stateName) {
   `;
 }
 
-
 // Return to the original states map
 function returnToStatesMap() {
-  const mapContainer = document.querySelector('.map-container');
-  
-  if (countyMapState.originalMapContainer) {
-    // Add fade-out animation to district map
-    mapContainer.style.opacity = '0';
-    mapContainer.style.transition = 'opacity 0.3s ease-out';
-    
-    setTimeout(() => {
-      // Restore original map
-      mapContainer.innerHTML = countyMapState.originalMapContainer;
-      
-      // Fade in the states map
-      mapContainer.style.opacity = '0';
-      setTimeout(() => {
-        mapContainer.style.opacity = '1';
-        mapContainer.style.transition = 'opacity 0.4s ease-in';
-      }, 50);
-      
-      // Re-initialize state interactions
-      initializeStateInteractions();
-      applyCustomStrokeWidths();
-    }, 300);
-  }
-  
-  // Clear state info panel with fade effect
-  const stateInfoPanel = document.getElementById('state-info');
-  stateInfoPanel.style.transition = 'opacity 0.3s ease-out';
-  stateInfoPanel.style.opacity = '0';
-  
-  setTimeout(() => {
-    stateInfoPanel.innerHTML = '<div class="no-selection"></div>';
-    stateInfoPanel.style.opacity = '1';
-  }, 300);
-  
-  countyMapState.currentState = null;
+  // Simple solution: just refresh the page to reset everything
+  location.reload();
 }
 
 // Extract state interaction setup into a reusable function
