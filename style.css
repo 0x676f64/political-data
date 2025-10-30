@@ -39,23 +39,34 @@ body {
 }
 
 .nav-menu {
-    display: flex;
-    list-style: none;
-    gap: 3rem;
-    transition: all 0.3s ease;
-    margin-top: 2rem;
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+  margin-top: 2rem;
+  background-color: #161e38;
+  padding: 1.25rem 2rem;
+  border-radius: 50px;
 }
 
-.nav-menu a {
-    color: #e9d8df;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s ease;
+.nav-link {
+  text-decoration: none;
+  color: #ccd6f6;
+  font-weight: 500;
+  transition: color 0.2s ease, border-bottom 0.2s ease;
+  padding-bottom: 4px;
 }
 
-.nav-menu a:hover {
-    text-decoration: underline;
+.nav-link:hover {
+  color: #ffffff;
+  border-bottom: 2px solid #8892b0;
 }
+
+.nav-link.active {
+  color: #ffffff;
+  border-bottom: 2px solid #be1423; /* highlight color */
+  font-weight: 600;
+}
+
 
 .hamburger {
     display: none;
@@ -114,7 +125,7 @@ body {
 .toggle-btn {
     position: relative;
     z-index: 2;
-    padding: 0.75rem 1rem;
+    padding: 0.45rem 1rem;
     border: none;
     background: transparent;
     color: rgba(255, 255, 255, 0.6);
@@ -360,24 +371,16 @@ body {
 
 /* State Info */
 .state-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    margin-top: 15rem;
-    animation: fadeInRight 0.6s ease-out;
-    border-top: 1px solid #e9d8df;
-    border-right: 1px solid #e9d8df;
-    padding: 10px 10px 0 10px;
+    padding: 1.5rem;
 }
 
 .state-name {
-    font-size: 1.4rem;
-    font-weight: 300;
-    margin-bottom: 1rem;
-    animation: slideInDown 0.6s ease-out;
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
     color: #e9d8df;
-    text-align: center;
+    border-bottom: 2px solid #e9d8df;
+    padding-bottom: 0.75rem;
 }
 
 .data-item {
@@ -482,7 +485,7 @@ body {
 
 .party-dem { color: #4a9eff; }
 .party-rep { color: #ff4a4a; }
-.party-ind { color: #9d00FF}
+.party-ind { color: #c76eff}
 .party-vacant { color: #e9d8df}
 
 .electoral-badge {
@@ -569,6 +572,187 @@ body {
     z-index: 1000;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* County Election Results in Tooltip */
+.county-election-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(233, 216, 223, 0.3);
+}
+
+.candidate-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+}
+
+.party-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.candidate-column .candidate-name {
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.candidate-column.party-dem .candidate-name {
+  color: #4a9eff;
+}
+
+.candidate-column.party-rep .candidate-name {
+  color: #ff4a4a;
+}
+
+.candidate-votes {
+  font-size: 0.75rem;
+  color: #e9d8df;
+  opacity: 0.8;
+}
+
+.candidate-percent {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #e9d8df;
+}
+
+.county-winner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem 0 0.25rem 0;
+}
+
+.winner-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.winner-margin {
+  font-size: 0.75rem;
+  color: #e9d8df;
+  opacity: 0.9;
+}
+
+/* County Details Panel Styles */
+.election-results-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.candidate-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border: 1px solid rgba(233, 216, 223, 0.2);
+}
+
+.party-icon-large {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.candidate-name-large {
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.candidate-result.party-dem .candidate-name-large {
+  color: #4a9eff;
+}
+
+.candidate-result.party-rep .candidate-name-large {
+  color: #ff4a4a;
+}
+
+.candidate-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: #e9d8df;
+  opacity: 0.7;
+}
+
+.stat-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #e9d8df;
+}
+
+.winner-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 2px solid rgba(233, 216, 223, 0.3);
+}
+
+.winner-label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #e9d8df;
+  opacity: 0.6;
+}
+
+.winner-name-large {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.winner-margin-large {
+  font-size: 1rem;
+  color: #e9d8df;
+  opacity: 0.9;
+}
+
+/* Ensure party colors are applied */
+.party-dem {
+  color: #4a9eff;
+}
+
+.party-rep {
+  color: #ff4a4a;
+}
+
+.party-ind {
+  color: #c76eff;
+}
+
+.party-vacant {
+  color: #e9d8df;
 }
 
 /* Animations */
