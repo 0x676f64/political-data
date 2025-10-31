@@ -67,6 +67,37 @@ body {
   font-weight: 600;
 }
 
+.nav-menu {
+  display: flex;
+  gap: 1.5rem;
+  position: relative;
+}
+
+.nav-link {
+  position: relative;
+  text-decoration: none;
+  color: #ccd6f6;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  padding-bottom: 4px;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0%;
+  height: 2px;
+  background: #007bff;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
 
 .hamburger {
     display: none;
@@ -212,22 +243,22 @@ body {
 .state-path {
     fill: #264b82;
     stroke: #e9d8df;
+    stroke-width: 1;
     cursor: pointer;
-    transition: all 0.3s ease;      
+    transition: all 0.3s ease;     
 }
 
 .state-path:hover {
     fill: #be1423;
     stroke: #e9d8df;
+    stroke-width: 3;
     transition: all 0.5s ease;
-    z-index: 11;
 }
 
 .state-path:active, .state-path:focus {
     fill: #be1423;
     stroke: #dddb23;
     filter: drop-shadow(0 4px 8px rgba(191, 13, 62, 0.5));
-    z-index: 12;
 }
 
 /* Tooltip */
@@ -351,7 +382,7 @@ body {
     right: -40px;
     width: 40px;
     height: 40px;
-    background: #ff1557;
+    background: #ff1557; 
     border: none;
     border-radius: 50%;
     color: rgb(139, 1, 1);
@@ -528,7 +559,9 @@ body {
     height: 500px;
     fill: #264b82;
     stroke: #e9d8df;
-    stroke-width: 0.35;
+    stroke-width: 0.55;
+    paint-order: stroke fill;
+    filter: drop-shadow(10px 10px 10px black) drop-shadow(10px 10px 13px black);
 }
 
 /* Back button */

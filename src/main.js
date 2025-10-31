@@ -8,8 +8,8 @@ let countyElectionData = {};
 // Load county election data on page load
 async function loadCountyElectionData() {
   try {
-    console.log('Attempting to load CSV from: data/past-president-county.csv');
-    const response = await fetch('data/past-president-county.csv');
+    console.log('Attempting to load CSV from: data/us-county-numbers.csv');
+    const response = await fetch('data/us-county-numbers.csv');
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -63,10 +63,11 @@ async function loadCountyElectionData() {
     console.log('Sample keys:', Object.keys(countyElectionData).slice(0, 5));
   } catch (error) {
     console.error('❌ Failed to load county election data:', error);
-    console.error('Make sure the CSV file exists at: data/past-president-county.csv');
-    alert('Could not load election data. Please ensure data/past-president-county.csv exists in the correct location.');
+    console.error('Make sure the CSV file exists at: data/us-county-numbers.csv');
+    alert('Could not load election data. Please ensure data/us-county-numbers.csv exists in the correct location.');
   }
 }
+
 
 // Calculate election results for a county
 function calculateCountyResults(countyData) {
@@ -126,19 +127,8 @@ function getCountyElectionData(stateCode, countyName) {
 // State-specific stroke widths
 const STATE_STROKE_WIDTHS = {
   // Small states that need thinner strokes when zoomed
-  'DE': 0.45,  'RI': 0.45,  'DC': 0.45,  'CT': 0.4,  'NH': 0.4,  'VT': 0.4,
-  'MA': 0.4,  'NJ': 0.55, 'MD': 0.4,  'HI': 0.4,
-  // Medium states
-  'WV': 0.5,  'SC': 0.55, 'ME': 0.5,  'IN': 0.5,
-  // Large states
-  'TX': 0.65, 'CA': 0.6,  'MT': 0.6,  'AK': 0.65, 'NM': 0.6,  'AZ': 0.6,
-  'NV': 0.55, 'CO': 0.55, 'OR': 0.55, 'WY': 0.55, 'MI': 0.55, 'MN': 0.55,
-  'UT': 0.55, 'ID': 0.5,  'KS': 0.6,  'NE': 0.6,  'WA': 0.6,  'SD': 0.6,
-  'ND': 0.6,  'OK': 0.6,  'MO': 0.55, 'FL': 0.55, 'WI': 0.55, 'GA': 0.55,
-  'IL': 0.55, 'IA': 0.55, 'NY': 0.55, 'NC': 0.6,  'AR': 0.55, 'AL': 0.55,
-  'LA': 0.55, 'MS': 0.55, 'PA': 0.55, 'OH': 0.55, 'VA': 0.55, 'TN': 0.6,
-  'KY': 0.55,
-  'DEFAULT': 0.55
+  
+  'DEFAULT': 2
 };
 
 const stateNames = {
@@ -154,6 +144,11 @@ const stateNames = {
   VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming',
   DC: 'District of Columbia'
 };
+
+// Normalize county names for consistent matching
+function normalizeCountyName(name) {
+  return name.replace(/\s+/g, '_'); // convert spaces to underscores
+}
 
 const stateData = {
   AL: {
@@ -614,7 +609,7 @@ const STATE_SIZE_CONFIG = {
   'VT': { scale: 1.1, padding: 0.12, rotation: 11, offsetX: 0, offsetY: 10 },
   'NH': { scale: 1.1, padding: 0.12, rotation: 12, offsetX: 0, offsetY: 10 },
   'MA': { scale: 1.5, padding: 0.08, rotation: 13, offsetX: 0, offsetY: 15 },
-  'NJ': { scale: 1.0, padding: 0.08, rotation: 10 },
+  'NJ': { scale: 1.0, padding: 0.08, rotation: 10, offsetX: -0.5, offsetY: 0 },
   'CT': { scale: 1.4, padding: 0.05, rotation: 12.5, offsetX: 0, offsetY: 10 },
   'DE': { scale: 1.2, padding: 0.15, rotation: 13, offsetX: 0, offsetY: 5 },
   'RI': { scale: 1.2, padding: 0.15, rotation: 14, offsetX: 0, offsetY: 5 },
@@ -988,6 +983,13 @@ function setupCountyInteractions(stateCode) {
   countyPaths.forEach(path => {
     const countyId = path.id;
     const countyTitle = path.querySelector('title')?.textContent || 'Unknown County';
+    
+    // Extract county name (remove state suffix like ", AL")
+    const countyName = countyTitle.split(',')[0].trim();
+    
+    // Get election data for this county
+    const electionData = getCountyElectionData(stateCode, countyName);
+    const results = electionData ? calculateCountyResults(electionData) : null;
 
     // Hover effects
     path.addEventListener('mouseenter', (e) => {
@@ -995,13 +997,43 @@ function setupCountyInteractions(stateCode) {
       path.style.stroke = '#e9d8df';
       path.style.strokeWidth = '0.8';
       
-      countyTooltip.innerHTML = `
-        <div class="tooltip-header">${countyTitle}</div>
-        <div class="tooltip-content">
-          <div class="tooltip-row">
+      // Build tooltip with election data
+      let tooltipContent = `<div class="tooltip-header">${countyTitle}</div>`;
+      
+      if (results) {
+        const winnerClass = results.winner === 'Democrat' ? 'party-dem' : 'party-rep';
+        
+        tooltipContent += `
+          <div class="tooltip-content">
+            <div class="tooltip-row">
+              <span class="tooltip-label">${results.dem.candidate}:</span>
+              <span class="tooltip-value party-dem">${results.dem.percent}%</span>
+            </div>
+            <div class="tooltip-row">
+              <span class="tooltip-label">${results.gop.candidate}:</span>
+              <span class="tooltip-value party-rep">${results.gop.percent}%</span>
+            </div>
+            <div class="tooltip-row">
+              <span class="tooltip-label">Winner:</span>
+              <span class="tooltip-value ${winnerClass}">${results.winner === 'Democrat' ? results.dem.candidate : results.gop.candidate}</span>
+            </div>
+            <div class="tooltip-row">
+              <span class="tooltip-label">Margin:</span>
+              <span class="tooltip-value">${results.margin}%</span>
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      } else {
+        tooltipContent += `
+          <div class="tooltip-content">
+            <div class="tooltip-row">
+              <span class="tooltip-value">Election data not available</span>
+            </div>
+          </div>
+        `;
+      }
+      
+      countyTooltip.innerHTML = tooltipContent;
       countyTooltip.style.display = 'block';
       positionTooltip(e, countyTooltip);
     });
@@ -1020,7 +1052,7 @@ function setupCountyInteractions(stateCode) {
     // Click to show county details
     path.addEventListener('click', (e) => {
       e.stopPropagation();
-      showCountyDetails(countyTitle, countyId, stateCode);
+      showCountyDetails(countyTitle, countyId, stateCode, electionData, results);
     });
   });
 }
