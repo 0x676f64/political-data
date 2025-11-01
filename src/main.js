@@ -4,70 +4,53 @@ const stateInfoPanel = document.getElementById('state-info');
 
 // Store county election data
 let countyElectionData = {};
+let isDataLoaded = false;
 
-// Load county election data on page load
-async function loadCountyElectionData() {
+// Load election data from JSON
+async function loadElectionData() {
+  if (isDataLoaded) return;
+  
   try {
-    console.log('Attempting to load CSV from: data/us-county-numbers.csv');
-    const response = await fetch('data/us-county-numbers.csv');
-    
+    const response = await fetch('data/us-county-numbers.json');
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     
-    const csvText = await response.text();
-    console.log('CSV loaded, length:', csvText.length, 'characters');
+    const rawData = await response.json();
     
-    // Parse CSV - handle potential quoted fields
-    const lines = csvText.trim().split('\n');
-    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-    
-    console.log('CSV Headers found:', headers);
-    console.log('Total lines in CSV:', lines.length);
-    
-    // Create lookup object: "STATE_COUNTY" -> election data
-    for (let i = 1; i < lines.length; i++) {
-      const line = lines[i];
-      if (!line.trim()) continue;
+    // Transform array into lookup object grouped by county
+    // Key format: "STATE_COUNTY" (e.g., "NM_Lea")
+    rawData.forEach(record => {
+      const key = `${record.state}_${record.county.replace(/\s+/g, '_')}`;
       
-      // Simple CSV parsing (assuming no commas in values)
-      const values = line.split(',').map(v => v.trim());
-      const row = {};
-      headers.forEach((header, index) => {
-        row[header] = values[index];
-      });
-      
-      // Only include democratic and republican candidates (lowercase)
-      if (row.party === 'democratic' || row.party === 'republican') {
-        const key = `${row.state}_${row.county}`;
-        
-        if (!countyElectionData[key]) {
-          countyElectionData[key] = {
-            state: row.state,
-            county: row.county,
-            date: row.date,
-            totalVotes: parseInt(row.totalvotes) || 0,
-            candidates: []
-          };
-        }
-        
-        countyElectionData[key].candidates.push({
-          party: row.party === 'democratic' ? 'Democrat' : 'Republican',
-          candidate: row.candidate,
-          votes: parseInt(row.candidatevotes) || 0
-        });
+      if (!countyElectionData[key]) {
+        countyElectionData[key] = {
+          state: record.state,
+          county: record.county,
+          totalVotes: record.totalvotes,
+          candidates: []
+        };
       }
-    }
+      
+      countyElectionData[key].candidates.push({
+        name: record.candidate,
+        party: record.party === 'democratic' ? 'Democrat' : 
+               record.party === 'republican' ? 'Republican' : 
+               record.party.charAt(0).toUpperCase() + record.party.slice(1),
+        votes: record.candidatevotes
+      });
+    });
     
-    console.log('✅ County election data loaded:', Object.keys(countyElectionData).length, 'counties');
-    console.log('Sample keys:', Object.keys(countyElectionData).slice(0, 5));
+    isDataLoaded = true;
+    console.log(`Loaded election data for ${Object.keys(countyElectionData).length} counties`);
   } catch (error) {
-    console.error('❌ Failed to load county election data:', error);
-    console.error('Make sure the CSV file exists at: data/us-county-numbers.csv');
-    alert('Could not load election data. Please ensure data/us-county-numbers.csv exists in the correct location.');
+    console.error('Failed to load election data:', error);
+    alert('Election data file not found. Please ensure us-county-numbers.json exists in data/ folder.');
   }
 }
 
+// Call this on page load
+loadElectionData();
 
 // Calculate election results for a county
 function calculateCountyResults(countyData) {
@@ -95,30 +78,61 @@ function calculateCountyResults(countyData) {
 }
 
 // Get county election data by state code and county name
-function getCountyElectionData(stateCode, countyName) {
-  // Remove " County" or " Parish" suffix if present, and state suffix
-  const cleanCountyName = countyName
+function getCountyElectionData(stateCode, countyTitle) {
+  // The SVG title is in format "CountyName, STATE" (e.g., "Bergen, NJ" or "Ketchikan Gateway, AK")
+  // The CSV has: state column (e.g., "NJ") and county column
+  //   - Single word: "Bergen" 
+  //   - Multi-word: "Ketchikan_Gateway" (with underscore)
+  
+  let countyName = countyTitle;
+  let stateAbbr = stateCode;
+  
+  // If the title contains a comma, extract both parts
+  if (countyTitle.includes(',')) {
+    const parts = countyTitle.split(',').map(s => s.trim());
+    countyName = parts[0];
+    stateAbbr = parts[1]; // The state abbreviation from the SVG title
+  }
+  
+  // Remove " County" or " Parish" suffix if present (some SVGs might have it)
+  countyName = countyName
     .replace(/ County$/i, '')
     .replace(/ Parish$/i, '')
-    .replace(/, [A-Z]{2}$/i, '') // Remove state suffix if present
     .trim();
   
-  const key = `${stateCode}_${cleanCountyName}`;
+  // For multi-word counties, convert spaces to underscores to match CSV format
+  // "Ketchikan Gateway" → "Ketchikan_Gateway"
+  // "Bergen" → "Bergen" (no change)
+  const normalizedCountyName = countyName.replace(/\s+/g, '_');
+  
+  // Build the lookup key: STATE_COUNTY (matching CSV format)
+  const key = `${normalizedCountyName}`;
   const data = countyElectionData[key];
   
-  // Debug logging
+  // Debug logging only if still not found
   if (!data) {
-    console.log(`No data found for: ${key} (original: ${countyName})`);
-    // Try to find similar keys
-    const similarKeys = Object.keys(countyElectionData).filter(k => 
-      k.startsWith(stateCode + '_') && 
-      k.toLowerCase().includes(cleanCountyName.toLowerCase().substring(0, 5))
-    );
-    if (similarKeys.length > 0) {
-      console.log('Similar keys found:', similarKeys.slice(0, 3));
+    console.log(`No data found for: ${key} (original title: "${countyTitle}")`);
+    
+    // Try to find similar keys for debugging
+    const stateKeys = Object.keys(countyElectionData).filter(k => k.startsWith(stateAbbr + '_'));
+    
+    if (stateKeys.length > 0) {
+      // Look for partial matches
+      const searchTerm = normalizedCountyName.toLowerCase();
+      const similarKeys = stateKeys.filter(k => {
+        const csvCounty = k.substring(stateAbbr.length + 1).toLowerCase(); // Remove "STATE_" prefix
+        return csvCounty.includes(searchTerm.substring(0, Math.min(5, searchTerm.length))) ||
+               searchTerm.includes(csvCounty.substring(0, Math.min(5, csvCounty.length)));
+      });
+      
+      if (similarKeys.length > 0) {
+        console.log('  → Similar keys in CSV:', similarKeys.slice(0, 5));
+      }
+      
+      console.log(`  → All ${stateAbbr} counties in CSV (${stateKeys.length}):`, stateKeys.slice(0, 20));
+    } else {
+      console.log(`  → No counties found for state ${stateAbbr} in CSV data`);
     }
-  } else {
-    console.log(`Found data for: ${key}`, data);
   }
   
   return data;
