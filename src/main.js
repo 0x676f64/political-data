@@ -1301,6 +1301,18 @@ function updateTooltip(e, stateCode) {
         ? 'rep'
         : 'ind';
 
+      // ✅ Color the map based on winner
+      const statePath = document.getElementById(stateCode);
+      if (statePath) {
+        if (winnerParty === 'dem') {
+          statePath.style.fill = '#264b82'; // blue for Dem
+        } else if (winnerParty === 'rep') {
+          statePath.style.fill = '#d9534f'; // red for Rep
+        } else {
+          statePath.style.fill = '#bbbbbb52'; // neutral/independent
+        }
+      }
+
       // ✅ Construct tooltip
       tooltipContent += `
         <div class="tooltip-content">
@@ -1336,6 +1348,70 @@ function updateTooltip(e, stateCode) {
     positionTooltip(e, tooltipElement);
   }, 6);
 }
+
+function colorStatesByWinner() {
+  for (const stateCode in stateData) {
+    // ✅ Get ALL elements with this state code (both paths and circles)
+    const statePaths = document.querySelectorAll(`#${stateCode}, .${stateCode}`);
+    if (!statePaths.length) continue;
+
+    const winner = stateData[stateCode].lastElection.winner;
+
+    // Determine party
+    let winnerParty = 'neutral';
+    if (winner.includes('(D)') && !winner.includes('(R)')) winnerParty = 'dem';
+    else if (winner.includes('(R)') && !winner.includes('(D)')) winnerParty = 'rep';
+    else if (winner.includes('(R)') && winner.includes('(D)')) winnerParty = 'split';
+
+    // Apply fill to ALL matching elements
+    statePaths.forEach(statePath => {
+      if (winnerParty === 'dem') {
+        statePath.style.fill = '#264b82';
+      } else if (winnerParty === 'rep') {
+        statePath.style.fill = '#d9534f';
+      } else if (winnerParty === 'split') {
+        // Create striped pattern for split states
+        const patternId = `${stateCode}-pattern`;
+        if (!document.getElementById(patternId)) {
+          const svg = document.getElementById('svgdata');
+          const defs = svg.querySelector('defs') || (() => {
+            const d = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+            svg.prepend(d);
+            return d;
+          })();
+
+          const pattern = document.createElementNS('http://www.w3.org/2000/svg', 'pattern');
+          pattern.setAttribute('id', patternId);
+          pattern.setAttribute('patternUnits', 'userSpaceOnUse');
+          pattern.setAttribute('width', '10');
+          pattern.setAttribute('height', '10');
+
+          const rectBlue = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          rectBlue.setAttribute('width', '5');
+          rectBlue.setAttribute('height', '10');
+          rectBlue.setAttribute('fill', '#264b82');
+
+          const rectRed = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          rectRed.setAttribute('x', '5');
+          rectRed.setAttribute('width', '5');
+          rectRed.setAttribute('height', '10');
+          rectRed.setAttribute('fill', '#d9534f');
+
+          pattern.appendChild(rectBlue);
+          pattern.appendChild(rectRed);
+          defs.appendChild(pattern);
+        }
+
+        statePath.style.fill = `url(#${patternId})`;
+      } else {
+        statePath.style.fill = '#bbbbbb52';
+      }
+    });
+  }
+}
+// Call this once after your map and stateData are loaded
+colorStatesByWinner();
+
 
 // Handle window resize for tooltip positioning
 window.addEventListener('resize', () => {

@@ -559,26 +559,44 @@ function getPartyFullName(party) {
   return party;
 }
 
-// Helper function to format district ID from SVG format (e.g., "LA02" to "LA-2", "AKAL" to "AK-1")
+// Helper function to format district ID from SVG format
+// Handles formats: "LA__2", "LA02", "AK__0" (At-Large), "AK__AL"
 function formatDistrictId(svgId) {
   if (!svgId || svgId.length < 3) return svgId;
-  
-  // Check if this is an At-Large district (e.g., "AKAL", "VTAL", "WYAL", "NDAL", "SDAL", "DEAL")
-  if (svgId.length === 4 && svgId.endsWith('AL')) {
-    const stateCode = svgId.substring(0, 2);
-    return `${stateCode}-AL`; // At-Large districts are treated as district 1
+
+  // Support both "LA__2" and legacy "LA02"
+  let stateCode = svgId.substring(0, 2);
+  let districtPart = "";
+
+  // New format (with "__")
+  if (svgId.includes("__")) {
+    districtPart = svgId.split("__")[1];
+  } else {
+    // Legacy numeric format
+    districtPart = svgId.substring(2);
   }
-  
-  // Standard district format (e.g., "LA02" to "LA-2")
-  const stateCode = svgId.substring(0, 2);
-  const districtNum = svgId.substring(2);
-  
-  // Remove leading zero and format
-  const formattedNum = parseInt(districtNum, 10);
+
+  // Normalize districtPart
+  districtPart = districtPart.trim().toUpperCase();
+
+  // Handle At-Large districts:
+  // - Either explicitly marked "__AL"
+  // - Or "__0" or "0"
+  const atLargeStates = ["AK", "VT", "ND", "SD", "DE", "WY"];
+
+  if (districtPart === "AL" || districtPart === "0" || atLargeStates.includes(stateCode)) {
+    return `${stateCode}-AL`;
+  }
+
+  // Convert district numbers (remove leading zeros)
+  const formattedNum = parseInt(districtPart, 10);
+  if (isNaN(formattedNum)) return `${stateCode}-${districtPart}`; // fallback
+
   return `${stateCode}-${formattedNum}`;
 }
 
-// Helper function to get state name from state code
+
+// Helper function to get state name from code
 function getStateName(stateCode) {
   const stateNames = {
     AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California',
@@ -595,6 +613,7 @@ function getStateName(stateCode) {
   };
   return stateNames[stateCode] || stateCode;
 }
+
 
 // Export for use in main.js
 if (typeof module !== 'undefined' && module.exports) {

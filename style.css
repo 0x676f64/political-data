@@ -241,17 +241,17 @@ body {
 }
 
 .state-path {
-    fill: #264b82;
+    fill: #bbbbbb52;
     stroke: #e9d8df;
-    stroke-width: 1;
+    stroke-width: 0.35;
     cursor: pointer;
-    transition: all 0.3s ease;     
+    transition: all 0.3s ease;   
 }
 
 .state-path:hover {
     fill: #be1423;
     stroke: #e9d8df;
-    stroke-width: 2;
+    stroke-width: 0.45;
     transition: all 0.5s ease;
 }
 
@@ -261,10 +261,31 @@ body {
     filter: drop-shadow(0 4px 8px rgba(191, 13, 62, 0.5));
 }
 
+#outlines {
+    fill: #bbbbbb52;
+    stroke: #e9d8df;
+    stroke-width: 0.35;
+    cursor: pointer;
+    transition: all 0.3s ease;   
+}
+
+#outlines path:hover {
+    fill: #fd1d300c;
+    stroke: #e9d8df;
+    stroke-width: 1;
+    transition: all 0.5s ease;
+}
+
+#outlines path:active, #outlines path:focus {
+    fill: #ff1f31;
+    stroke: #dddb23;
+    filter: drop-shadow(0 4px 8px rgba(191, 13, 62, 0.5));
+}
+
 /* Tooltip */
 #tooltip {
     position: fixed;
-    background: rgba(4, 30, 66, 0.95);
+    background: rgba(2, 12, 26, 0.95);
     color: #e9d8df;
     padding: 1rem;
     border-radius: 8px;
@@ -465,6 +486,7 @@ body {
 .district-name {
     font-size: 1.8rem;
     font-weight: 800;
+    min-width: 15rem;
     margin-bottom: 1.5rem;
     color: #e9d8df;
     border-bottom: 2px solid #e9d8df;
@@ -557,8 +579,10 @@ body {
 #county-map {
     width: 100%;
     height: 500px;
-    fill: #264b82;
+    fill: #bbbbbb52;
     stroke: #e9d8df;
+    cursor: pointer;
+    transition: all 0.3s ease; 
     stroke-width: 0.55;
     paint-order: stroke fill;
     filter: drop-shadow(10px 10px 10px black) drop-shadow(10px 10px 13px black);
