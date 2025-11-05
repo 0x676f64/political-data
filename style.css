@@ -616,7 +616,7 @@ body {
 
 .county-tooltip {
     position: fixed;
-    background: rgba(4, 30, 66, 0.95);
+    background: rgba(2, 12, 26, 0.95);
     color: #e9d8df;
     padding: 1rem;
     border-radius: 8px;
@@ -626,6 +626,13 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+#tooltip, .county-tooltip {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+}
+
 
 /* County Election Results in Tooltip */
 .county-election-grid {
@@ -807,6 +814,23 @@ body {
 .party-vacant {
   color: #e9d8df;
 }
+
+#district-map-container, #state-map-container {
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.3s ease;
+}
+#district-map-container:not(.active),
+#state-map-container:not(.active) {
+  opacity: 0;
+  pointer-events: none;
+}
+#district-map-container.active,
+#state-map-container.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
 
 /* Animations */
 @keyframes fadeIn {

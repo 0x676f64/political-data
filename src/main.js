@@ -6,6 +6,14 @@ const stateInfoPanel = document.getElementById('state-info');
 let countyElectionData = {};
 let isDataLoaded = false;
 
+// District map state management
+const districtMapState = {
+  isLoaded: false,
+  svgDocs: {}, // Store loaded state SVGs
+  currentState: null,
+  originalMapContainer: null
+};
+
 // Load election data from JSON
 async function loadElectionData() {
   if (isDataLoaded) return;
@@ -19,7 +27,6 @@ async function loadElectionData() {
     const rawData = await response.json();
     
     // Transform array into lookup object grouped by county
-    // Key format: "STATE_COUNTY" (e.g., "NM_Lea")
     rawData.forEach(record => {
       const key = `${record.state}_${record.county.replace(/\s+/g, '_')}`;
       
@@ -78,65 +85,23 @@ function calculateCountyResults(countyData) {
 }
 
 // Get county election data by state code and county name
-function getCountyElectionData(stateCode, countyTitle) {
-  // The SVG title is in format "CountyName, STATE" (e.g., "Bergen, NJ" or "Ketchikan Gateway, AK")
-  // The CSV has: state column (e.g., "NJ") and county column
-  //   - Single word: "Bergen" 
-  //   - Multi-word: "Ketchikan_Gateway" (with underscore)
-  
-  let countyName = countyTitle;
-  let stateAbbr = stateCode;
-  
-  // If the title contains a comma, extract both parts
-  if (countyTitle.includes(',')) {
-    const parts = countyTitle.split(',').map(s => s.trim());
-    countyName = parts[0];
-    stateAbbr = parts[1]; // The state abbreviation from the SVG title
-  }
-  
-  // Remove " County" or " Parish" suffix if present (some SVGs might have it)
-  countyName = countyName
-    .replace(/ County$/i, '')
-    .replace(/ Parish$/i, '')
+// REPLACE THIS FUNCTION
+function getCountyElectionData(stateAbbr, countyName) {
+  if (!countyElectionData) return null;
+
+  const normalizedCountyName = countyName
+    .replace(/\s+/g, '_')
+    .replace(/\./g, '')
+    .replace(/County|Parish|City|Borough|Census_Area|Municipality|District/gi, '')
     .trim();
-  
-  // For multi-word counties, convert spaces to underscores to match CSV format
-  // "Ketchikan Gateway" → "Ketchikan_Gateway"
-  // "Bergen" → "Bergen" (no change)
-  const normalizedCountyName = countyName.replace(/\s+/g, '_');
-  
-  // Build the lookup key: STATE_COUNTY (matching CSV format)
-  const key = `${normalizedCountyName}`;
+
+  // Build correct key using state abbreviation
+  const key = `${stateAbbr}_${normalizedCountyName}`;
   const data = countyElectionData[key];
-  
-  // Debug logging only if still not found
-  if (!data) {
-    console.log(`No data found for: ${key} (original title: "${countyTitle}")`);
-    
-    // Try to find similar keys for debugging
-    const stateKeys = Object.keys(countyElectionData).filter(k => k.startsWith(stateAbbr + '_'));
-    
-    if (stateKeys.length > 0) {
-      // Look for partial matches
-      const searchTerm = normalizedCountyName.toLowerCase();
-      const similarKeys = stateKeys.filter(k => {
-        const csvCounty = k.substring(stateAbbr.length + 1).toLowerCase(); // Remove "STATE_" prefix
-        return csvCounty.includes(searchTerm.substring(0, Math.min(5, searchTerm.length))) ||
-               searchTerm.includes(csvCounty.substring(0, Math.min(5, csvCounty.length)));
-      });
-      
-      if (similarKeys.length > 0) {
-        console.log('  → Similar keys in CSV:', similarKeys.slice(0, 5));
-      }
-      
-      console.log(`  → All ${stateAbbr} counties in CSV (${stateKeys.length}):`, stateKeys.slice(0, 20));
-    } else {
-      console.log(`  → No counties found for state ${stateAbbr} in CSV data`);
-    }
-  }
-  
-  return data;
+
+  return data || null;
 }
+
 
 // State-specific stroke widths
 const STATE_STROKE_WIDTHS = {
@@ -738,13 +703,16 @@ function initializeDistrictInteractions() {
     clearTimeout(tooltipTimeout);
   });
 
-    // Click to show district details
+    // Click to show district details and zoom into state view
     path.addEventListener('click', (e) => {
-      e.stopPropagation();
-      showDistrictDetails(districtTitle, districtId, memberData);
-    });
+    e.stopPropagation();
+    const stateCode = districtId.substring(0, 2);
+    showDistrictStateMap(stateCode, districtId, memberData);
+  });
   });
 }
+
+
 
 // Update tooltip for districts
 function updateDistrictTooltip(e, districtName, districtId, memberData) {
@@ -849,6 +817,104 @@ function showDistrictDetails(districtName, districtId, memberData) {
       </div>
     </div>
   `;
+}
+
+// Load state-level SVG for districts
+async function loadStateDistrictSVG(stateName) {
+  const svgPath = `assets/maps/${stateName}.svg`;
+  try {
+    const response = await fetch(svgPath);
+    if (!response.ok) throw new Error(`SVG not found: ${stateName}`);
+    return await response.text();
+  } catch (err) {
+    console.error(`Error loading state SVG: ${stateName}`, err);
+    return null;
+  }
+}
+
+// Show zoomed-in state view for the clicked district
+async function showDistrictStateMap(stateCode, districtId, memberData) {
+  const districtMapContainer = document.getElementById('district-map-container');
+  const stateMapContainer = document.getElementById('state-map-container');
+
+  // Hide national district map, show the state-level one
+  districtMapContainer.classList.remove('active');
+  stateMapContainer.classList.add('active');
+
+  const stateName = getStateName(stateCode);
+  const svgContent = await loadStateDistrictSVG(stateName);
+
+  if (!svgContent) {
+    console.warn(`State SVG not found for ${stateName}`);
+    return;
+  }
+
+  // Insert the state SVG into the container
+  stateMapContainer.innerHTML = svgContent;
+
+  // Setup hover/click interactions for the state’s congressional districts
+  initializeStateDistrictInteractions(stateCode);
+
+  // Update right-side info panel
+  showDistrictDetails(`${stateName} ${districtId}`, districtId, memberData);
+}
+
+// Handle hover + click on state-level districts
+function initializeStateDistrictInteractions(stateCode) {
+  const tooltipElement = document.getElementById('tooltip');
+  const districtPaths = document.querySelectorAll('#state-map-container path');
+
+  districtPaths.forEach(path => {
+    const districtSvgId = path.id; // e.g., AL__1
+    if (!districtSvgId) return;
+
+    const districtId = formatDistrictId(districtSvgId.replace('__', '-')); // AL-1
+    const memberData = houseMembers[districtId];
+    const stateName = getStateName(stateCode);
+    const districtName = `${stateName} ${districtId.substring(3)}`;
+
+    // Hover
+    path.addEventListener('mouseenter', (e) => {
+      path.style.stroke = '#e9d8df';
+      path.style.strokeWidth = '1.5';
+      updateDistrictTooltip(e, districtName, districtId, memberData);
+    });
+
+    path.addEventListener('mousemove', (e) => positionTooltip(e, tooltipElement));
+
+    path.addEventListener('mouseleave', () => {
+      path.style.stroke = '';
+      path.style.strokeWidth = '';
+      tooltipElement.style.display = 'none';
+    });
+
+    // Click again (optional: zoom or reset)
+    path.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showDistrictDetails(districtName, districtId, memberData);
+    });
+  });
+
+  // Add back button to return to the full national view
+  addDistrictBackButton();
+}
+
+// Add "Back to District Map" button
+function addDistrictBackButton() {
+  const stateMapContainer = document.getElementById('state-map-container');
+  if (document.getElementById('back-to-districts')) return;
+
+  const backBtn = document.createElement('button');
+  backBtn.id = 'back-to-districts';
+  backBtn.classList.add('back-button');
+  backBtn.innerText = '← Back to District Map';
+
+  backBtn.addEventListener('click', () => {
+    document.getElementById('state-map-container').classList.remove('active');
+    document.getElementById('district-map-container').classList.add('active');
+  });
+
+  stateMapContainer.insertAdjacentElement('afterbegin', backBtn);
 }
 
 // Load the County SVG file for state zoom view
@@ -1008,8 +1074,9 @@ function setupCountyInteractions(stateCode) {
 
     // Hover effects
     path.addEventListener('mouseenter', (e) => {
-      path.style.stroke = '#e9d8df';
-      path.style.strokeWidth = '0.8';
+    path.dataset.originalStroke = path.getAttribute('stroke') || '';
+    path.style.stroke = '#e9d8df';
+    path.style.strokeWidth = '1';
       
       // Build tooltip with election data
       let tooltipContent = `<div class="tooltip-header">${countyTitle}</div>`;
@@ -1061,6 +1128,7 @@ function setupCountyInteractions(stateCode) {
       path.style.stroke = '';
       path.style.strokeWidth = '';
       countyTooltip.style.display = 'none';
+      path.style.stroke = path.dataset.originalStroke;
     });
 
     // Click to show county details
@@ -1419,7 +1487,7 @@ function getDistrictColor(districtId) {
   if (memberData && memberData.party) {
     const partyClass = getPartyClass(memberData.party);
     if (partyClass === 'party-rep') return '#d9534f';
-    if (partyClass === 'party-dem') return '#0275d8';
+    if (partyClass === 'party-dem') return '#264b82';
     if (partyClass === 'party-ind') return '#9b59b6';
   }
   return '#bbbbbb52';
