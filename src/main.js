@@ -716,9 +716,8 @@ function initializeDistrictInteractions() {
 
     // Hover effects
     path.addEventListener('mouseenter', (e) => {
-      path.style.fill = '#be1423';
       path.style.stroke = '#e9d8df';
-      path.style.strokeWidth = '1.5';
+      path.style.strokeWidth = '2.5';
       
       updateDistrictTooltip(e, districtTitle, districtId, memberData);
     });
@@ -730,12 +729,14 @@ function initializeDistrictInteractions() {
     });
 
     path.addEventListener('mouseleave', () => {
-      path.style.fill = '';
-      path.style.stroke = '';
-      path.style.strokeWidth = '';
-      tooltipElement.style.display = 'none';
-      clearTimeout(tooltipTimeout);
-    });
+    // Restore original party color
+    const districtId = formatDistrictId(path.id);
+    path.style.fill = getDistrictColor(districtId);
+    path.style.stroke = '';
+    path.style.strokeWidth = '';
+    tooltipElement.style.display = 'none';
+    clearTimeout(tooltipTimeout);
+  });
 
     // Click to show district details
     path.addEventListener('click', (e) => {
@@ -1007,7 +1008,6 @@ function setupCountyInteractions(stateCode) {
 
     // Hover effects
     path.addEventListener('mouseenter', (e) => {
-      path.style.fill = '#be1423';
       path.style.stroke = '#e9d8df';
       path.style.strokeWidth = '0.8';
       
@@ -1411,6 +1411,55 @@ function colorStatesByWinner() {
 }
 // Call this once after your map and stateData are loaded
 colorStatesByWinner();
+
+// Helper function to get district party color
+function getDistrictColor(districtId) {
+  const memberData = houseMembers[districtId];
+  
+  if (memberData && memberData.party) {
+    const partyClass = getPartyClass(memberData.party);
+    if (partyClass === 'party-rep') return '#d9534f';
+    if (partyClass === 'party-dem') return '#0275d8';
+    if (partyClass === 'party-ind') return '#9b59b6';
+  }
+  return '#bbbbbb52';
+}
+
+// Color congressional districts by party
+function colorDistrictsByParty() {
+  const districtPaths = document.querySelectorAll('#outlines path[id]');
+  
+  districtPaths.forEach(path => {
+    const svgDistrictId = path.id; // e.g., "LA__2" or "LA02"
+    const districtId = formatDistrictId(svgDistrictId); // e.g., "LA-2"
+    
+    // Skip state borders or invalid districts
+    if (!districtId || districtId.toLowerCase().includes('border')) return;
+    
+    const memberData = houseMembers[districtId];
+    
+    if (memberData && memberData.party) {
+      const partyClass = getPartyClass(memberData.party);
+      
+      // Apply colors based on party class
+      if (partyClass === 'party-rep') {
+        path.style.fill = '#d9534f'; // Red for Republican
+      } else if (partyClass === 'party-dem') {
+        path.style.fill = '#264b82'; // Blue for Democrat
+      } else if (partyClass === 'party-ind') {
+        path.style.fill = '#9b59b6'; // Purple for Independent
+      } else {
+        path.style.fill = '#bbbbbb52'; // Gray for unknown/other
+      }
+    } else {
+      // No data available - use gray
+      path.style.fill = '#bbbbbb52';
+    }
+  });
+}
+
+// Call this after district map and houseMembers data are loaded
+colorDistrictsByParty();
 
 
 // Handle window resize for tooltip positioning

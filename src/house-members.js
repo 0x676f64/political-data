@@ -133,7 +133,7 @@ const houseMembers = {
   'FL-25': { name: 'Mario Díaz-Balart', party: 'R', electionYear: 2024, margin: '+22.4%' },
   'FL-26': { name: 'Carlos Giménez', party: 'R', electionYear: 2024, margin: '+18.7%' },
   'FL-27': { name: 'María Elvira Salazar', party: 'R', electionYear: 2024, margin: '+12.3%' },
-  'FL-28': { name: 'Vacant', party: 'Vacant', electionYear: 2024, margin: 'N/A' },
+  'FL-28': { name: 'Carlos Gimenez', party: 'R', electionYear: 2024, margin: '+29.1%' },
 
   // Georgia
   'GA-1': { name: 'Buddy Carter', party: 'R', electionYear: 2024, margin: '+28.4%' },
