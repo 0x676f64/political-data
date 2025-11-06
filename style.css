@@ -475,8 +475,16 @@ body {
     text-align: right;
 }
 
+#svgdata {
+    width: 100%;
+    height: auto;
+    padding-right: 10rem;
+    margin-top: 2rem;
+}
+
 .district-info {
-    padding: 1.5rem;
+    padding: 5rem;
+    margin-top: 3rem;
 }
 
 .district-name {
@@ -576,12 +584,10 @@ body {
     width: 100%;
     height: 500px;
     fill: #bbbbbb52;
-    stroke: #e9d8df;
+    stroke: rgb(24, 25, 34);
     cursor: pointer;
     transition: all 0.3s ease; 
-    stroke-width: 0.55;
-    paint-order: stroke fill;
-    filter: drop-shadow(10px 10px 10px black) drop-shadow(10px 10px 13px black);
+    stroke-width: 0.35px;
 }
 
 /* Back button */
@@ -829,7 +835,7 @@ body {
 #state-map-container.active {
   opacity: 1;
   pointer-events: all;
-}
+} 
 
 
 /* Animations */
