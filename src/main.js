@@ -601,24 +601,26 @@ document.addEventListener('DOMContentLoaded', () => {
   const toggleButtons = document.querySelectorAll('.toggle-btn');
   const statesMapContainer = document.getElementById('states-map-container');
   const districtMapContainer = document.getElementById('district-map-container');
-  
+  const stateInfoPanel = document.getElementById('state-info');
+
   toggleButtons.forEach(button => {
     button.addEventListener('click', () => {
       const view = button.dataset.view;
-      
+
       // Update active states
       toggleButtons.forEach(btn => btn.classList.remove('active'));
       button.classList.add('active');
-      
-      // Toggle map views with animation
+
+      // 🔁 Refresh if switching back to "States" tab
       if (view === 'states') {
-        if (districtMapContainer) districtMapContainer.classList.remove('active');
-        setTimeout(() => {
-          statesMapContainer.classList.add('active');
-          initializeStateInteractions();
-        }, 100);
-      } else if (view === 'districts') {
-        statesMapContainer.classList.remove('active');
+        // Full refresh to clear any district SVGs or tooltips
+        window.location.reload();
+        return; // Stop here, page will reload
+      }
+
+      // Otherwise handle "Districts" view
+      if (view === 'districts') {
+        if (statesMapContainer) statesMapContainer.classList.remove('active');
         setTimeout(() => {
           if (districtMapContainer) {
             districtMapContainer.classList.add('active');
@@ -626,17 +628,17 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }, 100);
       }
-      
+
       // Clear state info when switching
       if (stateInfoPanel) {
         stateInfoPanel.innerHTML = '<div class="no-selection"></div>';
       }
     });
   });
-  
+
   // Initialize state interactions on load
   initializeStateInteractions();
-  
+
   // Apply custom stroke widths to state paths
   applyCustomStrokeWidths();
 });
@@ -653,6 +655,244 @@ function applyCustomStrokeWidths() {
     // Store original stroke width for hover effects
     path.dataset.originalStroke = strokeWidth;
   });
+}
+
+// Show state-level congressional district map
+function showDistrictStateMap(stateCode, selectedDistrictId, memberData) {
+  const districtMapContainer = document.getElementById('district-map-container');
+  const stateInfoPanel = document.getElementById('state-info');
+  
+  // Get state name and format for file
+  const stateName = getStateName(stateCode);
+  const stateFileName = stateName.replace(/\s+/g, '_'); // Convert spaces to underscores
+  const stateMapPath = `assets/maps/${stateFileName}.svg`;
+  
+  // Hide the national district map
+  districtMapContainer.style.display = 'none';
+  
+  // Create state map container if it doesn't exist
+  let stateMapContainer = document.getElementById('state-map-container');
+  if (!stateMapContainer) {
+    stateMapContainer = document.createElement('div');
+    stateMapContainer.id = 'state-map-container';
+    stateMapContainer.style.cssText = `
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 65%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+    `;
+    districtMapContainer.parentNode.insertBefore(stateMapContainer, districtMapContainer);
+  } else {
+    stateMapContainer.style.cssText = `
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 65%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+    `;
+  }
+  
+  // Position info panel on the right
+  if (stateInfoPanel) {
+    stateInfoPanel.style.cssText = `
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 35%;
+      height: 100%;
+      overflow-y: auto;
+      padding: 20px;
+      box-sizing: border-box;
+    `;
+  }
+  
+  // Create back button if it doesn't exist
+  let backButton = document.getElementById('back-to-national');
+  if (!backButton) {
+    backButton = document.createElement('button');
+    backButton.id = 'back-to-national';
+    backButton.innerHTML = '← Back to National Map';
+    backButton.style.cssText = `
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      padding: 10px 20px;
+      background: #2c3e50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      z-index: 1000;
+      transition: background 0.3s;
+    `;
+    backButton.addEventListener('mouseenter', () => {
+      backButton.style.background = '#34495e';
+    });
+    backButton.addEventListener('mouseleave', () => {
+      backButton.style.background = '#2c3e50';
+    });
+    backButton.addEventListener('click', returnToNationalMap);
+    document.querySelector('.map-container').appendChild(backButton);
+  }
+  backButton.style.display = 'block';
+  
+  // Load the state SVG map
+  fetch(stateMapPath)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`State map not found: ${stateMapPath}`);
+      }
+      return response.text();
+    })
+    .then(svgContent => {
+      stateMapContainer.innerHTML = svgContent;
+      stateMapContainer.style.display = 'flex';
+      
+      // Style the SVG to fit properly
+      const svg = stateMapContainer.querySelector('svg#svgdata');
+      if (svg) {
+        svg.style.cssText = `
+          max-width: 100%;
+          max-height: 100%;
+          width: auto;
+          height: auto;
+        `;
+      }
+      
+      // Initialize interactions for state map districts
+      initializeStateMapInteractions(stateCode);
+      
+      // Show selected district details
+      const districtNumber = selectedDistrictId.substring(3);
+      const districtTitle = `${stateName} ${districtNumber}`;
+      showDistrictDetails(districtTitle, selectedDistrictId, memberData);
+      
+      // Highlight the selected district on the state map
+      highlightDistrictOnStateMap(selectedDistrictId);
+    })
+    .catch(error => {
+      console.error('Error loading state map:', error);
+      stateMapContainer.innerHTML = `
+        <div style="padding: 40px; text-align: center; color: #666;">
+          <p>State map not available</p>
+          <p style="font-size: 12px;">${error.message}</p>
+        </div>
+      `;
+      stateMapContainer.style.display = 'flex';
+    });
+}
+
+// Initialize interactions for state-level district map
+function initializeStateMapInteractions(stateCode) {
+  const districtPaths = document.querySelectorAll('#state-map-container path, #state-map-container polygon');
+  const tooltipElement = document.getElementById('tooltip');
+  
+  districtPaths.forEach(path => {
+    const svgDistrictId = path.id;
+    const districtId = formatDistrictId(svgDistrictId);
+    
+    // Skip if not a valid district for this state
+    if (!districtId || !districtId.startsWith(stateCode)) return;
+    
+    const memberData = houseMembers[districtId];
+    const stateName = getStateName(stateCode);
+    const districtNumber = districtId.substring(3);
+    const districtTitle = `${stateName} ${districtNumber}`;
+    
+    // Apply party colors
+    path.style.fill = getDistrictColor(districtId);
+    path.style.transition = 'all 0.3s';
+    
+    // Hover effects
+    path.addEventListener('mouseenter', (e) => {
+      path.style.stroke = '#e9d8df';
+      path.style.strokeWidth = '2.5';
+      updateDistrictTooltip(e, districtTitle, districtId, memberData);
+    });
+    
+    path.addEventListener('mousemove', (e) => {
+      if (tooltipElement.style.display === 'block') {
+        positionTooltip(e, tooltipElement);
+      }
+    });
+    
+    path.addEventListener('mouseleave', () => {
+      path.style.fill = getDistrictColor(districtId);
+      path.style.stroke = '';
+      path.style.strokeWidth = '';
+      tooltipElement.style.display = 'none';
+    });
+    
+    // Click to show district details
+    path.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showDistrictDetails(districtTitle, districtId, memberData);
+      highlightDistrictOnStateMap(districtId);
+    });
+  });
+}
+
+// Highlight selected district on state map
+function highlightDistrictOnStateMap(districtId) {
+  const districtPaths = document.querySelectorAll('#state-map-container path, #state-map-container polygon');
+  
+  districtPaths.forEach(path => {
+    const pathDistrictId = formatDistrictId(path.id);
+    
+    if (pathDistrictId === districtId) {
+      path.style.stroke = '#ffffff';
+      path.style.strokeWidth = '3';
+      path.style.filter = 'brightness(1.2)';
+    } else {
+      path.style.stroke = '';
+      path.style.strokeWidth = '';
+      path.style.filter = '';
+    }
+  });
+}
+
+// Return to national map view
+function returnToNationalMap() {
+  const districtMapContainer = document.getElementById('district-map-container');
+  const stateMapContainer = document.getElementById('state-map-container');
+  const backButton = document.getElementById('back-to-national');
+  const stateInfoPanel = document.getElementById('state-info');
+  
+  // Hide state map and back button
+  if (stateMapContainer) {
+    stateMapContainer.style.display = 'none';
+  }
+  if (backButton) {
+    backButton.style.display = 'none';
+  }
+  
+  // Show national map
+  districtMapContainer.style.display = 'block';
+  
+  // Clear info panel
+  stateInfoPanel.innerHTML = `
+    <div class="placeholder-text">
+      <p>Click on a congressional district to view details</p>
+    </div>
+  `;
+  
+  // Hide tooltip
+  const tooltipElement = document.getElementById('tooltip');
+  if (tooltipElement) {
+    tooltipElement.style.display = 'none';
+  }
 }
 
 // Initialize district map interactions
@@ -711,8 +951,6 @@ function initializeDistrictInteractions() {
   });
   });
 }
-
-
 
 // Update tooltip for districts
 function updateDistrictTooltip(e, districtName, districtId, memberData) {
@@ -907,15 +1145,19 @@ function addDistrictBackButton() {
   const backBtn = document.createElement('button');
   backBtn.id = 'back-to-districts';
   backBtn.classList.add('back-button');
-  backBtn.innerText = '← Back to District Map';
+  backBtn.innerText = '← ';
 
   backBtn.addEventListener('click', () => {
-    document.getElementById('state-map-container').classList.remove('active');
-    document.getElementById('district-map-container').classList.add('active');
+    // Clear the state map container
+    stateMapContainer.innerHTML = '';
+
+    // Refresh the view by simply reloading the page (cleanest way)
+    window.location.reload();
   });
 
   stateMapContainer.insertAdjacentElement('afterbegin', backBtn);
 }
+
 
 // Load the County SVG file for state zoom view
 async function loadCountySVG() {
