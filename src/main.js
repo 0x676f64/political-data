@@ -1012,11 +1012,11 @@ function showDistrictDetails(districtName, districtId, memberData) {
           <h3>Congressional District ${districtId}</h3>
           <div class="data-grid">
             <div class="data-item">
-              <span class="data-label">District ID:</span>
+              <span class="data-label">District:</span>
               <span class="data-value">${districtId}</span>
             </div>
             <div class="data-item">
-              <span class="data-label">Status:</span>
+              <span class="data-label">Rep:</span>
               <span class="data-value">Data not available</span>
             </div>
           </div>
@@ -1035,6 +1035,10 @@ function showDistrictDetails(districtName, districtId, memberData) {
       <div class="data-section">
         <h3>Congressional District ${districtId}</h3>
         <div class="data-grid">
+          <div class="data-item">
+            <span class="data-label">District:</span>
+            <span class="data-value">${districtId}</span>
+          </div>
           <div class="data-item">
             <span class="data-label">Rep:</span>
             <span class="data-value ${partyClass}">${memberData.name}</span>
@@ -1057,17 +1061,44 @@ function showDistrictDetails(districtName, districtId, memberData) {
   `;
 }
 
-// Load state-level SVG for districts
+// Load state-level SVG for districts and attach event listeners
 async function loadStateDistrictSVG(stateName) {
   const svgPath = `assets/maps/${stateName}.svg`;
   try {
     const response = await fetch(svgPath);
     if (!response.ok) throw new Error(`SVG not found: ${stateName}`);
-    return await response.text();
+    const svgText = await response.text();
+    
+    // After loading, we need to attach district event listeners
+    // This should be called after the SVG is inserted into the DOM
+    setTimeout(() => attachDistrictListeners(), 100);
+    
+    return svgText;
   } catch (err) {
     console.error(`Error loading state SVG: ${stateName}`, err);
     return null;
   }
+}
+
+// Helper function to attach event listeners to district paths
+function attachDistrictListeners() {
+  const districtPaths = document.querySelectorAll('.district-path, path[id*="district"]');
+  
+  districtPaths.forEach(path => {
+    path.addEventListener('mousemove', (e) => {
+      const districtId = path.getAttribute('data-district') || path.id;
+      const districtName = path.getAttribute('data-name') || districtId;
+      const memberDataStr = path.getAttribute('data-member');
+      const memberData = memberDataStr ? JSON.parse(memberDataStr) : null;
+      
+      updateDistrictTooltip(e, districtName, districtId, memberData);
+    });
+    
+    path.addEventListener('mouseout', () => {
+      const tooltipElement = document.getElementById('tooltip');
+      if (tooltipElement) tooltipElement.style.display = 'none';
+    });
+  });
 }
 
 // Show zoomed-in state view for the clicked district
@@ -1100,16 +1131,52 @@ async function showDistrictStateMap(stateCode, districtId, memberData) {
 // Handle hover + click on state-level districts
 function initializeStateDistrictInteractions(stateCode) {
   const tooltipElement = document.getElementById('tooltip');
-  const districtPaths = document.querySelectorAll('#state-map-container path');
+  const districtPaths = document.querySelectorAll('#state-map-container path, #state-map-container polygon');
+
+  // At-Large states
+  const atLargeStates = ['AK', 'WY', 'ND', 'SD', 'VT', 'DE'];
 
   districtPaths.forEach(path => {
-    const districtSvgId = path.id; // e.g., AL__1
+    const districtSvgId = path.id; // e.g., AL__1 or AL01
     if (!districtSvgId) return;
 
-    const districtId = formatDistrictId(districtSvgId.replace('__', '-')); // AL-1
+    // Handle different SVG ID formats
+    let districtId;
+    if (districtSvgId.includes('__')) {
+      // Format: AL__1 -> AL-1
+      const parts = districtSvgId.split('__');
+      let districtNum = parseInt(parts[1], 10);
+      
+      // Check if this is an At-Large state
+      if (atLargeStates.includes(parts[0]) && (districtNum === 0 || districtNum === 1)) {
+        districtId = `${parts[0]}-AL`;
+      } else {
+        districtId = `${parts[0]}-${districtNum}`;
+      }
+    } else {
+      // Format: AL01 -> AL-1
+      const stateCode = districtSvgId.substring(0, 2);
+      let districtNum = parseInt(districtSvgId.substring(2), 10);
+      
+      // Check if this is an At-Large state
+      if (atLargeStates.includes(stateCode) && (districtNum === 0 || districtNum === 1)) {
+        districtId = `${stateCode}-AL`;
+      } else {
+        districtId = `${stateCode}-${districtNum}`;
+      }
+    }
+    
     const memberData = houseMembers[districtId];
     const stateName = getStateName(stateCode);
-    const districtName = `${stateName} ${districtId.substring(3)}`;
+    const districtNumber = districtId.split('-')[1]; // Get part after hyphen (could be "AL" or a number)
+    const districtName = districtNumber === 'AL' 
+      ? `${stateName} At-Large` 
+      : `${stateName} ${districtNumber}`;
+
+    // Apply initial color based on party
+    if (memberData) {
+      path.style.fill = getDistrictColor(districtId);
+    }
 
     // Hover
     path.addEventListener('mouseenter', (e) => {
@@ -1118,15 +1185,23 @@ function initializeStateDistrictInteractions(stateCode) {
       updateDistrictTooltip(e, districtName, districtId, memberData);
     });
 
-    path.addEventListener('mousemove', (e) => positionTooltip(e, tooltipElement));
+    path.addEventListener('mousemove', (e) => {
+      if (tooltipElement.style.display === 'block') {
+        positionTooltip(e, tooltipElement);
+      }
+    });
 
     path.addEventListener('mouseleave', () => {
+      // Restore original party color
+      if (memberData) {
+        path.style.fill = getDistrictColor(districtId);
+      }
       path.style.stroke = '';
       path.style.strokeWidth = '';
       tooltipElement.style.display = 'none';
     });
 
-    // Click again (optional: zoom or reset)
+    // Click to update info panel
     path.addEventListener('click', (e) => {
       e.stopPropagation();
       showDistrictDetails(districtName, districtId, memberData);
@@ -1314,9 +1389,21 @@ function setupCountyInteractions(stateCode) {
     const electionData = getCountyElectionData(stateCode, countyName);
     const results = electionData ? calculateCountyResults(electionData) : null;
 
+   // Color county by winner
+    if (results) {
+      if (results.winner === 'Democrat') {
+        path.style.fill = 'rgb(38, 75, 130)'; // Blue for Democrat
+      } else if (results.winner === 'Republican') {
+        path.style.fill = 'rgb(217, 83, 79)'; // Red for Republican
+      } else {
+        path.style.fill = '#bbbbbb52'; // Gray for no data/other
+      }
+    }
+
     // Hover effects
     path.addEventListener('mouseenter', (e) => {
     path.dataset.originalStroke = path.getAttribute('stroke') || '';
+    path.dataset.originalFill = path.style.fill || ''; // Store original fill
     path.style.stroke = '#e9d8df';
     path.style.strokeWidth = '1';
       
@@ -1366,7 +1453,7 @@ function setupCountyInteractions(stateCode) {
     });
 
     path.addEventListener('mouseleave', () => {
-      path.style.fill = '';
+      path.style.fill = path.dataset.originalFill || ''; // Restore original fill
       path.style.stroke = '';
       path.style.strokeWidth = '';
       countyTooltip.style.display = 'none';
