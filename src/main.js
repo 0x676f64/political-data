@@ -84,24 +84,38 @@ function calculateCountyResults(countyData) {
   };
 }
 
-// Get county election data by state code and county name
-// REPLACE THIS FUNCTION
 function getCountyElectionData(stateAbbr, countyName) {
   if (!countyElectionData) return null;
 
-  const normalizedCountyName = countyName
-    .replace(/\s+/g, '_')
-    .replace(/\./g, '')
-    .replace(/County|Parish|City|Borough|Census_Area|Municipality|District/gi, '')
-    .trim();
+  // Normalize: remove state suffix, punctuation, and county-type suffixes
+  const normalized = countyName
+    .replace(/,.*$/, '')
+    .replace(/[_''.\s]+/g, '_')
+    .replace(/_(county|parish|city|borough|census_area|municipality|district)$/i, '')
+    .replace(/^_|_$/g, '')
+    .toLowerCase();
 
-  // Build correct key using state abbreviation
-  const key = `${stateAbbr}_${normalizedCountyName}`;
-  const data = countyElectionData[key];
+  // Generate variants to handle different naming conventions
+  const variants = [
+    normalized,
+    normalized.replace(/_s$/, 's'),
+    normalized.replace(/s$/, '_s')
+  ];
 
-  return data || null;
+  // Try exact matches first
+  for (const variant of variants) {
+    const key = `${stateAbbr}_${variant}`;
+    if (key in countyElectionData) return countyElectionData[key];
+  }
+
+  // Fallback: case-insensitive search
+  const lowerKeys = variants.map(v => `${stateAbbr}_${v}`.toLowerCase());
+  const match = Object.keys(countyElectionData).find(k => 
+    lowerKeys.includes(k.toLowerCase())
+  );
+
+  return match ? countyElectionData[match] : null;
 }
-
 
 // State-specific stroke widths
 const STATE_STROKE_WIDTHS = {
@@ -185,6 +199,14 @@ const stateData = {
     electoralVotes: 7,
     lastElection: { winner: 'Harris (D)', margin: '+14.5%', turnout: '65.4%' },
     campaignFinance: { total: '$145M', topDonor: 'Financial Services', pacSpending: '$55M' }
+  },
+  DC: {
+    name: 'District of Columbia',
+    governor: '---',
+    senators: ['---', '---'],
+    electoralVotes: 3,
+    lastElection: { winner: 'Harris (D)', margin: '+83.8%', turnout: '86.8%' },
+    campaignFinance: { total: '$600K', topDonor: 'Securities & Investments', pacSpending: '$18M' }
   },
   DE: {
     name: 'Delaware',
@@ -1482,12 +1504,10 @@ function showCountyDetails(countyName, countyId, stateCode) {
             <span class="data-label">State:</span>
             <span class="data-value">${stateNames[stateCode]}</span>
           </div>
+          <div class="data-item">
+            <span class="data-label">County ID:</span>
+            <span class="data-value">${countyName}</span>
         </div>
-      </div>
-      <div class="data-section">
-        <p class="info-message">
-          <em>Additional county data can be loaded here from your data source.</em>
-        </p>
       </div>
     </div>
   `;
