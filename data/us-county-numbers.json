@@ -28631,7 +28631,7 @@
   {
     "date": "11/5/2024",
     "state": "IL",
-    "county": "DeWitt",
+    "county": "De_Witt",
     "candidate": "Harris",
     "party": "democratic",
     "candidatevotes": 2058,
@@ -28640,7 +28640,7 @@
   {
     "date": "11/5/2024",
     "state": "IL",
-    "county": "DeWitt",
+    "county": "De_Witt",
     "candidate": "Kennedy",
     "party": "independent",
     "candidatevotes": 149,
@@ -28649,7 +28649,7 @@
   {
     "date": "11/5/2024",
     "state": "IL",
-    "county": "DeWitt",
+    "county": "De_Witt",
     "candidate": "Trump",
     "party": "republican",
     "candidatevotes": 5529,
@@ -57278,7 +57278,7 @@
   {
     "date": "11/5/2024",
     "state": "MN",
-    "county": "Saint_Louis",
+    "county": "St_Louis",
     "candidate": "Harris",
     "party": "democratic",
     "candidatevotes": 66335,
@@ -57287,7 +57287,7 @@
   {
     "date": "11/5/2024",
     "state": "MN",
-    "county": "Saint_Louis",
+    "county": "St_Louis",
     "candidate": "Stein",
     "party": "green",
     "candidatevotes": 425,
@@ -57296,7 +57296,7 @@
   {
     "date": "11/5/2024",
     "state": "MN",
-    "county": "Saint_Louis",
+    "county": "St_Louis",
     "candidate": "West",
     "party": "independent",
     "candidatevotes": 71,
@@ -57305,7 +57305,7 @@
   {
     "date": "11/5/2024",
     "state": "MN",
-    "county": "Saint_Louis",
+    "county": "St_Louis",
     "candidate": "Kennedy",
     "party": "independent",
     "candidatevotes": 975,
@@ -57314,7 +57314,7 @@
   {
     "date": "11/5/2024",
     "state": "MN",
-    "county": "Saint_Louis",
+    "county": "St_Louis",
     "candidate": "Oliver",
     "party": "libertarian",
     "candidatevotes": 507,
@@ -57323,7 +57323,7 @@
   {
     "date": "11/5/2024",
     "state": "MN",
-    "county": "Saint_Louis",
+    "county": "St_Louis",
     "candidate": "Trump",
     "party": "republican",
     "candidatevotes": 50065,
@@ -61940,7 +61940,7 @@
   {
     "date": "11/5/2024",
     "state": "MO",
-    "county": "St_Louis_County",
+    "county": "St_Louis",
     "candidate": "Harris",
     "party": "democratic",
     "candidatevotes": 305635,
@@ -61949,7 +61949,7 @@
   {
     "date": "11/5/2024",
     "state": "MO",
-    "county": "St_Louis_County",
+    "county": "St_Louis",
     "candidate": "Stein",
     "party": "green",
     "candidatevotes": 4250,
@@ -61958,7 +61958,7 @@
   {
     "date": "11/5/2024",
     "state": "MO",
-    "county": "St_Louis_County",
+    "county": "St_Louis",
     "candidate": "Oliver",
     "party": "libertarian",
     "candidatevotes": 4489,
@@ -61967,7 +61967,7 @@
   {
     "date": "11/5/2024",
     "state": "MO",
-    "county": "St_Louis_County",
+    "county": "St_Louis",
     "candidate": "Trump",
     "party": "republican",
     "candidatevotes": 187982,
@@ -80390,7 +80390,7 @@
   {
     "date": "11/5/2024",
     "state": "NM",
-    "county": "Dona_Ana",
+    "county": "Doña_Ana",
     "candidate": "Harris",
     "party": "democratic",
     "candidatevotes": 45937,
@@ -80399,7 +80399,7 @@
   {
     "date": "11/5/2024",
     "state": "NM",
-    "county": "Dona_Ana",
+    "county": "Doña_Ana",
     "candidate": "Stein",
     "party": "green",
     "candidatevotes": 387,
@@ -80408,7 +80408,7 @@
   {
     "date": "11/5/2024",
     "state": "NM",
-    "county": "Dona_Ana",
+    "county": "Doña_Ana",
     "candidate": "Kennedy",
     "party": "independent",
     "candidatevotes": 857,
@@ -80417,7 +80417,7 @@
   {
     "date": "11/5/2024",
     "state": "NM",
-    "county": "Dona_Ana",
+    "county": "Doña_Ana",
     "candidate": "Oliver",
     "party": "libertarian",
     "candidatevotes": 306,
@@ -80426,7 +80426,7 @@
   {
     "date": "11/5/2024",
     "state": "NM",
-    "county": "Dona_Ana",
+    "county": "Doña_Ana",
     "candidate": "Trump",
     "party": "republican",
     "candidatevotes": 37594,
