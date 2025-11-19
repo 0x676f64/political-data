@@ -554,6 +554,15 @@ body {
     font-size: 1.2rem;
 }
 
+.county-name {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    color: #e9d8df;
+    border-bottom: 2px solid #e9d8df;
+    padding-bottom: 0.75rem;
+}
+
 /* District map wrapper */
 .county-map-wrapper {
     width: 100%;

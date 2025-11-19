@@ -565,7 +565,7 @@ const countyMapState = {
 // State-specific sizing configuration
 const STATE_SIZE_CONFIG = {
   'TX': { scale: 1.0, padding: 0.00, rotation: -3, offsetX: -1, offsetY: 0 },
-  'CA': { scale: 1.2, padding: 0.05, rotation: -15, offsetX: 0, offsetY: 50 },
+  'CA': { scale: 1.0, padding: -0.10, rotation: -15, offsetX: 0, offsetY: 50 },
   'MT': { scale: 1.5, padding: 0.00, rotation: -8, offsetX: 0, offsetY: 30 },
   'AK': { scale: 1.2, padding: 0.00, rotation: 15, offsetX: 0, offsetY: 20 },
   'NM': { scale: 1.4, padding: 0.05, rotation: -6, offsetX: 0, offsetY: 30 },
@@ -1498,14 +1498,14 @@ function showCountyDetails(countyName, countyId, stateCode) {
     <div class="county-info">
       <h2 class="county-name">${countyName}</h2>
       <div class="data-section">
-        <h3>County Information</h3>
+      <br>
         <div class="data-grid">
           <div class="data-item">
             <span class="data-label">State:</span>
             <span class="data-value">${stateNames[stateCode]}</span>
           </div>
           <div class="data-item">
-            <span class="data-label">County ID:</span>
+            <span class="data-label">County:</span>
             <span class="data-value">${countyName}</span>
         </div>
       </div>
