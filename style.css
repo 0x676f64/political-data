@@ -420,6 +420,7 @@ body {
 /* State Info */
 .state-info {
     padding: 1.5rem;
+    margin-top: 4rem;
 }
 
 .state-name {
@@ -627,6 +628,14 @@ body {
 
 .back-button:hover svg {
     transform: translateX(-3px);
+}
+
+#back-to-states {
+    display: flex;
+    align-items: center;;
+    margin-bottom: 1rem;
+    justify-content: center;
+    
 }
 
 .county-tooltip {

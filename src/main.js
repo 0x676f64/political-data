@@ -1256,153 +1256,147 @@ function addDistrictBackButton() {
 }
 
 
-// Load the County SVG file for state zoom view
-async function loadCountySVG() {
-  if (countyMapState.isLoaded) return countyMapState.svgDoc;
-  
-  try {
-    // This loads the COUNTY map for when users click individual states
-    const response = await fetch('assets/svg-items/Usa_counties_large.svg');
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const svgText = await response.text();
-    const parser = new DOMParser();
-    const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
-    
-    const parserError = svgDoc.querySelector('parsererror');
-    if (parserError) {
-      throw new Error('SVG parsing error: ' + parserError.textContent);
-    }
-    
-    countyMapState.svgDoc = svgDoc;
-    countyMapState.isLoaded = true;
-    return countyMapState.svgDoc;
-  } catch (error) {
-    console.error('Failed to load county map:', error);
-    alert('County map file not found. Please ensure Usa_counties_large.svg exists in assets/svg-items/ folder.');
-    return null;
-  }
-}
-
 // Extract and display counties for a specific state (when clicking on States tab)
 async function showCountyMap(stateCode) {
   const stateName = stateNames[stateCode];
   if (!stateName) return;
 
-  // Load COUNTY SVG (not district) for state zoom view
-  const countyDoc = await loadCountySVG();
-  if (!countyDoc) {
-    console.error('County map not available');
-    return;
-  }
-
-  // Convert state name to SVG ID format (spaces to underscores)
-  const stateGroupId = stateName.replace(/ /g, '_');
-  
-  // Find the state group in the county SVG
-  const stateGroup = countyDoc.getElementById(stateGroupId);
-  if (!stateGroup) {
-    console.error(`No county data found for ${stateName} (looked for ID: ${stateGroupId})`);
-    return;
-  }
-
-  // Store reference to original map container
   const mapContainer = document.querySelector('.map-container');
   if (!countyMapState.originalMapContainer) {
     countyMapState.originalMapContainer = mapContainer.innerHTML;
   }
 
-  // Create county map display (counties for the clicked state)
-  createCountyMapDisplay(mapContainer, stateGroup, stateCode, stateName);
+  const stateFileName = stateName.replace(/\s+/g, '_');
+  const countyMapPath = `assets/maps/county-map/${stateName}.svg`;
+
+  try {
+    const response = await fetch(countyMapPath);
+    if (!response.ok) {
+      throw new Error(`County map not found for ${stateName} at ${countyMapPath}`);
+    }
+    const svgContent = await response.text();
+
+    createCountyMapDisplay(mapContainer, svgContent, stateCode, stateName);
+
+  } catch (error) {
+    console.error(error);
+    mapContainer.innerHTML = `<div class="county-map-wrapper"><p>Could not load county map for ${stateName}.</p><button id="back-to-states" class="back-button">Back</button></div>`;
+    document.getElementById('back-to-states').addEventListener('click', returnToStatesMap);
+  }
 }
 
-function createCountyMapDisplay(container, stateGroup, stateCode, stateName) {
-  // Clone the state group to avoid modifying the original
-  const stateClone = stateGroup.cloneNode(true);
-  
-  // Create a temporary SVG to get proper bounding box
-  const tempSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  tempSvg.style.position = 'absolute';
-  tempSvg.style.visibility = 'visible';
-  tempSvg.style.width = '10rem';
-  tempSvg.style.height = '10rem';
-  document.body.appendChild(tempSvg);
-  tempSvg.appendChild(stateClone);
-  
-  // Get the bounding box with the element in the DOM
-  const bbox = stateClone.getBBox();
-  
-  // Remove temporary SVG
-  document.body.removeChild(tempSvg);
-
-  // Get state-specific configuration
-  const config = STATE_SIZE_CONFIG[stateCode] || STATE_SIZE_CONFIG['DEFAULT'];
-  
-  // Apply state-specific scaling and padding
-  const scaledWidth = bbox.width * config.scale;
-  const scaledHeight = bbox.height * config.scale;
-  
-  // Add padding around the state
-  const paddedWidth = scaledWidth * (1 + config.padding * 2);
-  const paddedHeight = scaledHeight * (1 + config.padding * 2);
-  
-  // Calculate centered position with padding, scaling, and offsets
-  const viewBoxX = bbox.x - (paddedWidth - bbox.width) / 2 + (config.offsetX || 0);
-  const viewBoxY = bbox.y - (paddedHeight - bbox.height) / 2 + (config.offsetY || 0);
-
-  // Calculate the center of the bounding box for rotation
-  const centerX = bbox.x + bbox.width / 2;
-  const centerY = bbox.y + bbox.height / 2;
-  
-  // Build transform string with rotation if specified
-  const rotationTransform = config.rotation !== 0 
-    ? `transform="rotate(${config.rotation} ${centerX} ${centerY})"` 
-    : '';
-
-  const strokeScale = config.strokeScale || 1.0;
-  stateClone.querySelectorAll('path, polygon, line').forEach(el => {
-    const baseWidth = parseFloat(el.getAttribute('stroke-width')) || 1;
-    el.setAttribute('stroke-width', baseWidth * strokeScale);
-  });
-  
-  // Create new SVG for county display (showing counties within the state)
+function createCountyMapDisplay(container, svgContent, stateCode, stateName) {
   const countyMapHTML = `
     <div class="county-map-wrapper">
       <div class="county-map-header">
         <button id="back-to-states" class="back-button">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M120-120v-240h80v104l124-124 56 56-124 124h104v80H120Zm480 0v-80h104L580-324l56-56 124 124v-104h80v240H600ZM324-580 200-704v104h-80v-240h240v80H256l124 124-56 56Zm312 0-56-56 124-124H600v-80h240v240h-80v-104L636-580ZM480-400q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Z"/></svg>
+          ←
         </button>
       </div>
-      <svg id="county-map"
-           viewBox="${viewBoxX} ${viewBoxY} ${paddedWidth} ${paddedHeight}"
-           preserveAspectRatio="xMidYMid meet"
-           style="flex: 1; width: 100%; min-height: 0;">
-        <g ${rotationTransform}>
-          ${stateGroup.innerHTML}
-        </g>
-      </svg>
-      <div id="county-tooltip" class="county-tooltip"></div>
+      <div id="county-map-container">
+        ${svgContent}
+      </div>
     </div>
   `;
 
   container.innerHTML = countyMapHTML;
+  
+  // Assign ID to SVG element for easier selection
+  const svgElement = container.querySelector('#county-map-container > svg');
+  if (svgElement) {
+    svgElement.id = 'county-map';
+    svgElement.style.width = '100%';
+    svgElement.style.height = '100%';
+  }
+  
+  // Make sure tooltip exists in the document
+  let tooltipElement = document.getElementById('tooltip');
+  if (!tooltipElement) {
+    tooltipElement = document.createElement('div');
+    tooltipElement.id = 'tooltip';
+    tooltipElement.className = 'tooltip';
+    tooltipElement.style.display = 'none';
+    document.body.appendChild(tooltipElement);
+  }
+  
+  // Initialize interactions AFTER the SVG is in the DOM with proper ID
   setupCountyInteractions(stateCode);
   document.getElementById('back-to-states').addEventListener('click', returnToStatesMap);
+
   updateStateInfoForCounties(stateCode, stateName);
 }
+// Show detailed county information in state zoom view
+function showCountyDetails(countyName, countyId, stateCode) {
+  const infoPanel = document.getElementById('state-info');
+  const electionData = getCountyElectionData(stateCode, countyName.split(',')[0].trim());
+  const results = electionData ? calculateCountyResults(electionData) : null;
+
+  let detailsHTML = `
+    <div class="county-info">
+      <h2 class="county-name">${countyName.split(',')[0].trim()}</h2>
+      <div class="data-section">
+        <div class="data-grid">
+          <div class="data-item">
+            <span class="data-label">State:</span>
+            <span class="data-value">${stateNames[stateCode]}</span>
+          </div>
+  `;
+
+  if (results) {
+    const winnerClass = results.winner === 'Democrat' ? 'party-dem' : 'party-rep';
+    const winnerName = results.winner === 'Democrat' ? results.dem.name : results.gop.name;
+
+    detailsHTML += `
+          <div class="data-item">
+            <span class="data-label">${results.dem.name} (D):</span>
+            <span class="data-value party-dem">${results.dem.percent}%</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">${results.gop.name} (R):</span>
+            <span class="data-value party-rep">${results.gop.percent}%</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">Winner:</span>
+            <span class="data-value ${winnerClass}">${winnerName}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">Margin:</span>
+            <span class="data-value ${winnerClass}">${results.margin}%</span>
+          </div>
+    `;
+  } else {
+    detailsHTML += `
+          <div class="data-item"><span class="data-value">Election data not available.</span></div>
+    `;
+  }
+
+  detailsHTML += `</div></div></div>`;
+  infoPanel.innerHTML = detailsHTML;
+}
+
 
 
 // Set up hover and click interactions for counties within state zoom view
 function setupCountyInteractions(stateCode) {
+  // More flexible selector that handles IDs with spaces and nested structure
   const countyPaths = document.querySelectorAll('#county-map path, #county-map polygon');
-  const countyTooltip = document.getElementById('county-tooltip');
+  const tooltipElement = document.getElementById('tooltip');
+
+  if (!tooltipElement) {
+    console.error('Tooltip element not found!');
+    return;
+  }
+
+  let interactiveCount = 0;
 
   countyPaths.forEach(path => {
+    // Skip paths without IDs or with non-county IDs
     const countyId = path.id;
-    const countyTitle = path.querySelector('title')?.textContent || 'Unknown County';
+    if (!countyId || countyId === 'svgdata' || countyId === 'outlines counties') return;
+    
+    // Get county name from title element or ID
+    const titleElement = path.querySelector('title');
+    const countyTitle = titleElement?.textContent || countyId.replace(/_/g, ' ');
     
     // Extract county name (remove state suffix like ", AL")
     const countyName = countyTitle.split(',')[0].trim();
@@ -1411,47 +1405,55 @@ function setupCountyInteractions(stateCode) {
     const electionData = getCountyElectionData(stateCode, countyName);
     const results = electionData ? calculateCountyResults(electionData) : null;
 
-   // Color county by winner
+    // Color county by winner
     if (results) {
-      if (results.winner === 'Democrat') {
-        path.style.fill = 'rgb(38, 75, 130)'; // Blue for Democrat
-      } else if (results.winner === 'Republican') {
-        path.style.fill = 'rgb(217, 83, 79)'; // Red for Republican
+      if (results.winner.toLowerCase() === 'democrat') {
+        path.style.fill = 'rgb(38, 75, 130)'; 
+      } else if (results.winner.toLowerCase() === 'republican') {
+        path.style.fill = 'rgb(217, 83, 79)'; 
       } else {
-        path.style.fill = '#bbbbbb52'; // Gray for no data/other
+        path.style.fill = '#bbbbbb52'; 
       }
+    } else {
+      path.style.fill = '#bbbbbb52';
     }
+
+    // Add cursor pointer and smooth transitions
+    path.style.cursor = 'pointer';
+    path.style.transition = 'all 0.3s ease';
+    interactiveCount++;
 
     // Hover effects
     path.addEventListener('mouseenter', (e) => {
-    path.dataset.originalStroke = path.getAttribute('stroke') || '';
-    path.dataset.originalFill = path.style.fill || ''; // Store original fill
-    path.style.stroke = '#e9d8df';
-    path.style.strokeWidth = '1';
+      path.dataset.originalFill = path.style.fill;
+      path.style.stroke = '#e9d8df';
+      path.style.strokeWidth = '2';
+      path.style.filter = 'brightness(1.2)';
       
       // Build tooltip with election data
       let tooltipContent = `<div class="tooltip-header">${countyTitle}</div>`;
       
       if (results) {
         const winnerClass = results.winner === 'Democrat' ? 'party-dem' : 'party-rep';
+        const winnerName = results.winner === 'Democrat' ? results.dem.name : results.gop.name;
         
         tooltipContent += `
           <div class="tooltip-content">
-            <div class="tooltip-row">
-              <span class="tooltip-label">${results.dem.candidate}:</span>
+            <div class="tooltip-row" style="margin-bottom: 8px;">
+              <span class="tooltip-label">${results.dem.name} (D):</span>
               <span class="tooltip-value party-dem">${results.dem.percent}%</span>
             </div>
-            <div class="tooltip-row">
-              <span class="tooltip-label">${results.gop.candidate}:</span>
+            <div class="tooltip-row" style="margin-bottom: 8px;">
+              <span class="tooltip-label">${results.gop.name} (R):</span>
               <span class="tooltip-value party-rep">${results.gop.percent}%</span>
             </div>
-            <div class="tooltip-row">
+            <div class="tooltip-row" style="margin-bottom: 8px;">
               <span class="tooltip-label">Winner:</span>
-              <span class="tooltip-value ${winnerClass}">${results.winner === 'Democrat' ? results.dem.candidate : results.gop.candidate}</span>
+              <span class="tooltip-value ${winnerClass}">${winnerName}</span>
             </div>
             <div class="tooltip-row">
               <span class="tooltip-label">Margin:</span>
-              <span class="tooltip-value">${results.margin}%</span>
+              <span class="tooltip-value ${winnerClass}">${results.margin}%</span>
             </div>
           </div>
         `;
@@ -1465,52 +1467,44 @@ function setupCountyInteractions(stateCode) {
         `;
       }
       
-      countyTooltip.innerHTML = tooltipContent;
-      countyTooltip.style.display = 'block';
-      positionTooltip(e, countyTooltip);
+      tooltipElement.innerHTML = tooltipContent;
+      tooltipElement.style.display = 'block';
+      tooltipElement.style.fontSize = '0.80rem';
+      positionTooltip(e, tooltipElement);
     });
 
     path.addEventListener('mousemove', (e) => {
-      positionTooltip(e, countyTooltip);
+      if (tooltipElement.style.display === 'block') {
+        positionTooltip(e, tooltipElement);
+      }
     });
 
     path.addEventListener('mouseleave', () => {
-      path.style.fill = path.dataset.originalFill || ''; // Restore original fill
+      path.style.fill = path.dataset.originalFill;
       path.style.stroke = '';
       path.style.strokeWidth = '';
-      countyTooltip.style.display = 'none';
-      path.style.stroke = path.dataset.originalStroke;
+      path.style.filter = '';
+      tooltipElement.style.display = 'none';
     });
 
     // Click to show county details
     path.addEventListener('click', (e) => {
       e.stopPropagation();
-      showCountyDetails(countyTitle, countyId, stateCode, electionData, results);
+      showCountyDetails(countyTitle, countyId, stateCode);
+      
+      // Highlight selected county
+      countyPaths.forEach(p => {
+        if (p !== path) {
+          p.style.filter = '';
+          p.style.strokeWidth = '';
+        }
+      });
+      path.style.strokeWidth = '3';
+      path.style.stroke = '#ffffff';
     });
   });
-}
 
-// Show detailed county information in state zoom view
-function showCountyDetails(countyName, countyId, stateCode) {
-  const infoPanel = document.getElementById('state-info');
-  
-  infoPanel.innerHTML = `
-    <div class="county-info">
-      <h2 class="county-name">${countyName}</h2>
-      <div class="data-section">
-      <br>
-        <div class="data-grid">
-          <div class="data-item">
-            <span class="data-label">State:</span>
-            <span class="data-value">${stateNames[stateCode]}</span>
-          </div>
-          <div class="data-item">
-            <span class="data-label">County:</span>
-            <span class="data-value">${countyName}</span>
-        </div>
-      </div>
-    </div>
-  `;
+  console.log(`Initialized ${interactiveCount} interactive counties for ${stateCode}`);
 }
 
 // Update state info panel for county zoom view
