@@ -283,7 +283,7 @@ body {
     position: fixed;
     background: rgba(2, 12, 26, 0.95);
     color: #e9d8df;
-    padding: 1rem;
+    padding: 2rem;
     border-radius: 8px;
     pointer-events: none;
     display: none;
@@ -553,6 +553,11 @@ body {
     border-radius: 20px;
     font-weight: bold;
     font-size: 1.2rem;
+}
+
+.county-info {
+    margin-top: 2rem;
+    margin-left: 4rem;
 }
 
 .county-name {
